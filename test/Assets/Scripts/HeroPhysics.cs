@@ -10,15 +10,17 @@ public class HeroPhysics : MonoBehaviour {
 	public float maxSpeed = 5f;
 	public float jumpforce = 1000f;
 	public Transform groundCheck;
+	public float bottomOfScreen = -10f;
 
-	private bool grounded = false;
+	private bool grounded = true;
 	private Animator anim;
 	private Rigidbody2D rb2d;
-
+	private Vector2 startPosition;
 	// Use this for initialization
 	void Awake () {
 		anim = GetComponent<Animator> ();
 		rb2d = GetComponent<Rigidbody2D> ();
+		startPosition = transform.position;
 	}
 	
 	// Update is called once per frame
@@ -27,6 +29,10 @@ public class HeroPhysics : MonoBehaviour {
 		if (grounded && Input.GetButtonDown("Jump")) {
 			jump = true;
 		}
+		if (rb2d.position.y < bottomOfScreen){
+			transform.position = startPosition;
+		}
+
 	}
 
 	void FixedUpdate () {
@@ -38,7 +44,7 @@ public class HeroPhysics : MonoBehaviour {
 		}
 
 		if (Mathf.Abs(rb2d.velocity.x) > maxSpeed) {
-			rb2d.velocity = new Vector2 (Mathf.Sign(rb2d.velocity.x), rb2d.velocity.y);
+			rb2d.velocity = new Vector2 (Mathf.Sign(rb2d.velocity.x) * maxSpeed, rb2d.velocity.y);
 		}
 
 		if (h > 0 && !facingRight){
