@@ -14,21 +14,21 @@ Number,Name,Type,Color,Top Text,Bottom Text,Space Name,In Unity
 13,,,,,,,No
 14,,,,,,,No
 15,,,,,,,No
-16,,,,,,,No
+16,Regeneration,Heal,Green,Heal 1. Ready a Level 1 or 2 Unit you control.,"Heal 2. Ready a Level 1, 2, or 3 Unit you control.",Mk.2 Nanobots,No
 17,,,,,,,No
 18,,,,,,,No
-19,,,,,,,No
+19,Diplomacy,"Influence, Combat",White,Influence 2. You may use Influence as Block this turn.,,,No
 20,,,,,,,No
 21,,,,,,,No
 22,,,,,,,No
 23,,,,,,,No
-24,,,,,,,No
+24,Ambush,Move,Green,"Move 2. Add +1 to your first Attack card of any type or +2 to your first Block card of any type, whichever you play first this turn.","Move 4. Add 2 to your first Attack card of any type or +4 to your first Block type of any type, whichever you play first this turn.",Ambush,No
 25,,,,,,,No
 26,,,,,,,No
 27,,,,,,,No
 28,,,,,,,No
 29,,,,,,,No
-30,Ritual Attack,Combat,Red,"Throw away another action card. Depending on its color, you get: Attack 5 for red, Ice Attack 3 for blue, Ranged Attack 3 for white, Siege Attack 2 for green",,,No
+30,Ritual Attack,Combat,Red,"Throw away another action card. Depending on its color, you get: Attack 5 for red, Ice Attack 3 for blue, Ranged Attack 3 for white, Siege Attack 2 for green","Throw away another action card. Depending on its color, you get: Fire Attack 6 for red, Cold Fire Attack 4 for blue, Ranged Fire Attack 4 for white, Siege Fire Attack 3 for green.",Junk Cannon,No
 31,,,,,,,No
 32,,,,,,,No
 33,Temporal Portal,Action,Blue,"Play as your action for this turn. You may move to an adjacent revealed safe space (without provoking rampaging aliens). Whether you move or not, your hand limit is higher by 1 the next time you draw cards.","As above, except you can either move two spaces to a revealed safe space instead of one, or get your Hand limit increased by 2 instead of 1.",Spacetime Bender,No
