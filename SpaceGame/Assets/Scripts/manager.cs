@@ -14,13 +14,23 @@ public class manager : MonoBehaviour {
 	}
 }
 
+/// <summary>
+/// Toolbox is where we'll put all of our globals and things that should be known project-wide
+/// </summary>
 public class Toolbox : Singleton<Toolbox> {
 	protected Toolbox () {} // guarantee this will be always a singleton only - can't use the constructor!
 
-	public enum CardType{Action, DMD, Artifact};
+	public enum CardType{Action, DMD, Artifact, Wound};
 	public enum ActionType{Move, Influence, Combat, Heal, Special, Action};
-	public enum CardColour{Red, Blue, Green, White, Artifact};
-	
+	public enum CardColour{Red, Blue, Green, White, Artifact, Wound};
+	public enum TileType{Green, Brown, City};
+	public enum TerrainType{Plains, Hills, Forrest, Desert, Mountains, Lake, Swamp, Wasteland};
+	public enum HexType{Empty, Adventure, Interaction, Garrison, Rampage};
+	public enum HexFeature{Portal, RampageGreen, RampageRed, MineBlue, MineRed, MineGreen, MineWhite,
+						   Glade, Town, Monastary, Den, Dungeon, Base, DarkMatterResearch, SpawningGrounds,
+						   TerrorLair, CityWhite, CityRed, CityGreen, CityBlue, Maze, Labyrinth, RefugeeCamp,
+						   MineDeep};
+
 	public string myGlobalVar = "whatever";
 	
 	public Language language = new Language();
@@ -37,11 +47,7 @@ public class Language {
 }
 
 /// <summary>
-/// Be aware this will not prevent a non singleton constructor
-///   such as `T myT = new T();`
-/// To prevent that, add `protected T () {}` to your singleton class.
-/// 
-/// As a note, this is made as MonoBehaviour because we need Coroutines.
+/// Don't worry about this class, its here so we can use globals effectively
 /// </summary>
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
