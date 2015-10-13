@@ -30,6 +30,16 @@ public class Toolbox : Singleton<Toolbox> {
 						   Glade, Town, Monastary, Den, Dungeon, Base, DarkMatterResearch, SpawningGrounds,
 						   TerrorLair, CityWhite, CityRed, CityGreen, CityBlue, Maze, Labyrinth, RefugeeCamp,
 						   MineDeep};
+	public enum EnemyColour{Green, Grey, Purple, Brown, Red, White};
+	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, FireResist, IceResist, PhysicalResist,
+							 Elusive, Brutal, Swiftness, Poison, Assassination, NegReputation, PosReputation};
+	public enum AttackType{Physical, Fire, Ice, ColdFire, Summon};
+
+	[System.Serializable] 
+	public class EnemyAttack {
+		public int value;
+		public Toolbox.AttackType type;
+	};
 
 	public string myGlobalVar = "whatever";
 	
