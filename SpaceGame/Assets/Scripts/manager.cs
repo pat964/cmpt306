@@ -34,6 +34,9 @@ public class Toolbox : Singleton<Toolbox> {
 	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, FireResist, IceResist, PhysicalResist,
 							 Elusive, Brutal, Swiftness, Poison, Assassination, NegReputation, PosReputation};
 	public enum AttackType{Physical, Fire, Ice, ColdFire, Summon};
+	public enum RuinType{Battle, Energy};
+	public enum EnergyColour{Red, Green, White, Blue, Gold, Dark};
+	public enum Reward{sevenFame, tenFame, Unit, DMD, AdvancedAction, Artifact};
 
 	[System.Serializable] 
 	public class EnemyAttack {
