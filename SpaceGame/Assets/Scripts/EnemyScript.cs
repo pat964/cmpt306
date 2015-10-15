@@ -7,6 +7,7 @@ public class EnemyScript : MonoBehaviour {
 	public int armor;
 	public List<Toolbox.EnemyAttack> attacks;
 	public List<Toolbox.EnemySpecial> specials;
+	public List<Toolbox.Resistance> resistances;
 	public int fame;
 
 	// Use this for initialization

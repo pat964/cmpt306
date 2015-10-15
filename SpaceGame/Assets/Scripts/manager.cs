@@ -22,6 +22,8 @@ public class Toolbox : Singleton<Toolbox> {
 
 	public enum CardType{Action, DMD, Artifact, Wound};
 	public enum ActionType{Move, Influence, Combat, Heal, Special, Action};
+	public enum BasicAction{Influence, Move, FireAttack, IceAttack, ColdFireAttack, FireBlock,
+						    IceBlock, ColdFireBlock, Heal, ReduceAttack};
 	public enum CardColour{Red, Blue, Green, White, Artifact, Wound};
 	public enum TileType{Green, Brown, City};
 	public enum TerrainType{Plains, Hills, Forrest, Desert, Mountains, Lake, Swamp, Wasteland};
@@ -31,8 +33,9 @@ public class Toolbox : Singleton<Toolbox> {
 						   TerrorLair, CityWhite, CityRed, CityGreen, CityBlue, Maze, Labyrinth, RefugeeCamp,
 						   MineDeep};
 	public enum EnemyColour{Green, Grey, Purple, Brown, Red, White};
-	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, FireResist, IceResist, PhysicalResist,
-							 Elusive, Brutal, Swiftness, Poison, Assassination, NegReputation, PosReputation};
+	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, Elusive, Brutal, Swiftness, Poison,
+							 Assassination, NegReputation, PosReputation};
+	public enum Resistance{Fire, Ice, Physical};
 	public enum AttackType{Physical, Fire, Ice, ColdFire, Summon};
 	public enum RuinType{Battle, Energy};
 	public enum EnergyColour{Red, Green, White, Blue, Gold, Dark};
