@@ -27,12 +27,12 @@ public class Toolbox : Singleton<Toolbox> {
 						    IceBlock, ColdFireBlock, Heal, ReduceAttack};
 	public enum CardColour{Red, Blue, Green, White, Artifact, Wound};
 	public enum TileType{Green, Brown, City};
-	public enum TerrainType{Plains, Hills, Forrest, Desert, Mountains, Lake, Swamp, Wasteland};
-	public enum HexType{Empty, Adventure, Interaction, Garrison, Rampage};
-	public enum HexFeature{Portal, RampageGreen, RampageRed, MineBlue, MineRed, MineGreen, MineWhite,
-						   Glade, Town, Monastary, Den, Dungeon, Base, DarkMatterResearch, SpawningGrounds,
+	public enum TerrainType{Plains, Hills, Forest, Desert, Mountains, Lake, Swamp, Wasteland}; // CHANGED
+	public enum HexType{Empty, Adventure, Interaction, Garrison, Rampage}; 
+	public enum HexFeature{Empty, Portal, RampageGreen, RampageRed, MineBlue, MineRed, MineGreen, MineWhite,
+						   Glade, Town, Monastary, Den, Dungeon, Base, DarkMatterResearch, Ruins, SpawningGrounds,
 						   TerrorLair, CityWhite, CityRed, CityGreen, CityBlue, Maze, Labyrinth, RefugeeCamp,
-						   MineDeep};
+						   MineDeep}; // CHANGED
 	public enum EnemyColour{Green, Grey, Purple, Brown, Red, White};
 	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, Elusive, Brutal, Swiftness, Poison,
 							 Assassination, Paralyze, NegReputation, PosReputation};
