@@ -18,6 +18,7 @@ public class manager : MonoBehaviour {
 /// Toolbox is where we'll put all of our globals and things that should be known project-wide
 /// </summary>
 public class Toolbox : Singleton<Toolbox> {
+	public static System.Random random = new System.Random();
 	protected Toolbox () {} // guarantee this will be always a singleton only - can't use the constructor!
 
 	public enum CardType{Action, DMD, Artifact, Wound};
@@ -26,15 +27,15 @@ public class Toolbox : Singleton<Toolbox> {
 						    IceBlock, ColdFireBlock, Heal, ReduceAttack};
 	public enum CardColour{Red, Blue, Green, White, Artifact, Wound};
 	public enum TileType{Green, Brown, City};
-	public enum TerrainType{Plains, Hills, Forrest, Desert, Mountains, Lake, Swamp, Wasteland};
-	public enum HexType{Empty, Adventure, Interaction, Garrison, Rampage};
-	public enum HexFeature{Portal, RampageGreen, RampageRed, MineBlue, MineRed, MineGreen, MineWhite,
-						   Glade, Town, Monastary, Den, Dungeon, Base, DarkMatterResearch, SpawningGrounds,
+	public enum TerrainType{Plains, Hills, Forest, Desert, Mountains, Lake, Swamp, Wasteland}; // CHANGED
+	public enum HexType{Empty, Adventure, Interaction, Garrison, Rampage}; 
+	public enum HexFeature{Empty, Portal, RampageGreen, RampageRed, MineBlue, MineRed, MineGreen, MineWhite,
+						   Glade, Town, Monastary, Den, Dungeon, Base, DarkMatterResearch, Ruins, SpawningGrounds,
 						   TerrorLair, CityWhite, CityRed, CityGreen, CityBlue, Maze, Labyrinth, RefugeeCamp,
-						   MineDeep};
+						   MineDeep}; // CHANGED
 	public enum EnemyColour{Green, Grey, Purple, Brown, Red, White};
 	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, Elusive, Brutal, Swiftness, Poison,
-							 Assassination, NegReputation, PosReputation};
+							 Assassination, Paralyze, NegReputation, PosReputation};
 	public enum Resistance{Fire, Ice, Physical};
 	public enum AttackType{Physical, Fire, Ice, ColdFire, Summon};
 	public enum RuinType{Battle, Energy};
