@@ -18,6 +18,7 @@ public class manager : MonoBehaviour {
 /// Toolbox is where we'll put all of our globals and things that should be known project-wide
 /// </summary>
 public class Toolbox : Singleton<Toolbox> {
+	public static System.Random random = new System.Random();
 	protected Toolbox () {} // guarantee this will be always a singleton only - can't use the constructor!
 
 	public enum CardType{Action, DMD, Artifact, Wound};
@@ -34,7 +35,7 @@ public class Toolbox : Singleton<Toolbox> {
 						   MineDeep};
 	public enum EnemyColour{Green, Grey, Purple, Brown, Red, White};
 	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, Elusive, Brutal, Swiftness, Poison,
-							 Assassination, NegReputation, PosReputation};
+							 Assassination, Paralyze, NegReputation, PosReputation};
 	public enum Resistance{Fire, Ice, Physical};
 	public enum AttackType{Physical, Fire, Ice, ColdFire, Summon};
 	public enum RuinType{Battle, Energy};
