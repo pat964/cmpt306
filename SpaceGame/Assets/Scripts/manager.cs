@@ -35,7 +35,7 @@ public class Toolbox : Singleton<Toolbox> {
 						   MineDeep}; 
 	public enum EnemyColour{Green, Grey, Purple, Brown, Red, White};
 	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, Elusive, Brutal, Swiftness, Poison,
-							 Assassination, Paralyze, NegReputation, PosReputation};
+		Assassination, Paralyze, Cumbersome, NegReputation, PosReputation};
 	public enum Resistance{Fire, Ice, Physical};
 	public enum AttackType{Physical, Fire, Ice, ColdFire, Summon};
 	public enum RuinType{Battle, Energy};
