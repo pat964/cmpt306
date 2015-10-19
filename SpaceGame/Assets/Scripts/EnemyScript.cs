@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class EnemyScript : MonoBehaviour {
+	public string enemyName;
 	public Toolbox.EnemyColour colour;
 	public int armor;
 	public List<Toolbox.EnemyAttack> attacks;
