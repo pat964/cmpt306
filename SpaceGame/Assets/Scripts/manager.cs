@@ -18,6 +18,8 @@ public class manager : MonoBehaviour {
 /// Toolbox is where we'll put all of our globals and things that should be known project-wide
 /// </summary>
 public class Toolbox : Singleton<Toolbox> {
+	public static float UNIT_LENGTH = 1f;
+
 	public static System.Random random = new System.Random();
 	protected Toolbox () {} // guarantee this will be always a singleton only - can't use the constructor!
 

@@ -9,9 +9,13 @@ public class playerScript : MonoBehaviour {
 	public int handSize = 5;
 	public int reputation = 0;
 	public int fame = 0;
+
+	private GameObject portalHex;
 	// Use this for initialization
 	void Start () {
-
+		//portal hex is the seventh child of green tile one.
+		portalHex = GameObject.Find("Green Tile 0").transform.GetChild(6).gameObject;
+		transform.position = portalHex.transform.position;
 	}
 	
 	// Update is called once per frame
