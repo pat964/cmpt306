@@ -3,14 +3,21 @@ using System.Collections;
 
 public class manager : MonoBehaviour {
 
+	public Transform tileFrame;
 	// Use this for initialization
 	void Start () {
-	
+		GameObject gameBoard = GameObject.Find("Game Board");
+		BuildMapFrame(gameBoard);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
+	}
+	
+	private void BuildMapFrame(GameObject gameBoard) {
+		GameObject newFrame = GameObject.Instantiate(tileFrame, gameBoard.transform.position, Quaternion.identity) as GameObject;
+		newFrame.transform.SetParent(gameBoard.transform);
 	}
 }
 
@@ -51,6 +58,7 @@ public class Toolbox : Singleton<Toolbox> {
 	};
 
 	public string myGlobalVar = "whatever";
+	public bool isDay = true;
 	
 	public Language language = new Language();
 	
@@ -148,3 +156,4 @@ static public class MethodExtensionForMonoBehaviourTransform {
 		return result;
 	}
 }
+

@@ -9,6 +9,7 @@ public class playerScript : MonoBehaviour {
 	public int handSize = 5;
 	public int reputation = 0;
 	public int fame = 0;
+	public int moves = 0;
 
 	private GameObject portalHex;
 	// Use this for initialization
@@ -20,7 +21,9 @@ public class playerScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (Input.GetKeyDown(KeyCode.M)){
+			moves++;
+		}
 	}
 
 	public void IncreaseFame(int amount){

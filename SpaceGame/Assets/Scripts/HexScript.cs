@@ -11,16 +11,17 @@ public class HexScript : MonoBehaviour {
 
 	public bool isSafe;
 	public float radius;
-	private GameObject player;
+	private playerScript player;
 	private Renderer myRenderer;
 	private float playerProximity;
 
 	// Use this for initialization
 	void Start () {
+		player = (playerScript) FindObjectOfType(typeof(playerScript));
 		myRenderer = GetComponent<Renderer>();
 		radius = (myRenderer.bounds.size.y / 4) * Mathf.Sqrt(3);
-		player = GameObject.Find("Player");
 		print (myRenderer.bounds.size.y);
+		LoadTerrainSprite();
 	}
 
 	void FixedUpdate() {
@@ -54,14 +55,84 @@ public class HexScript : MonoBehaviour {
 	}
 
 	void HexClicked() {
-		if (playerAdjacent) {
+		if (playerAdjacent && player.moves >= HexScript.TerrainTypeToVal(terrainType)) {
 			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
 			if(GetComponent<Collider2D>().OverlapPoint(mousePosition))
 			{
-				player.transform.position = transform.position;
+				player.moves -= HexScript.TerrainTypeToVal(terrainType);
+				MovePlayerHere();
 			}
 
+		}
+	}
+
+	static int TerrainTypeToVal(Toolbox.TerrainType terrain){
+		int plainsVal = 2;
+		int hillsVal = 3;
+		int desertVal = 5;
+		int forrestVal = 5;
+		int lakeVal = 999;
+		int mountainsVal = 999;
+		int wastelandVal = 4;
+		int swampVal = 5;
+		if (Toolbox.Instance.isDay) {
+			forrestVal = 3;
+		} else {
+			desertVal = 3;
+		}
+
+		switch (terrain){
+		case Toolbox.TerrainType.Plains:
+			return plainsVal;
+		case Toolbox.TerrainType.Hills:
+			return hillsVal;
+		case Toolbox.TerrainType.Desert:
+			return desertVal;
+		case Toolbox.TerrainType.Wasteland:
+			return wastelandVal;
+		case Toolbox.TerrainType.Forest:
+			return forrestVal;
+		case Toolbox.TerrainType.Lake:
+			return lakeVal;
+		case Toolbox.TerrainType.Mountains:
+			return mountainsVal;
+		case Toolbox.TerrainType.Swamp:
+			return swampVal;
+		default:
+			throw new UnityException("Terrain type does not exist in Hex class");
+		}
+	}
+
+	private void LoadTerrainSprite() {
+		SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+		switch (terrainType){
+		case Toolbox.TerrainType.Plains:
+			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexGreen");
+			break;
+		case Toolbox.TerrainType.Hills:
+			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexBrown");
+			break;
+		case Toolbox.TerrainType.Desert:
+			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexYellow");
+			break;
+		case Toolbox.TerrainType.Wasteland:
+			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexRed");
+			break;
+		case Toolbox.TerrainType.Forest:
+			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexDarkGreen");
+			break;
+		case Toolbox.TerrainType.Lake:
+			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexBlue");
+			break;
+		case Toolbox.TerrainType.Mountains:
+			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexGrey");
+			break;
+		case Toolbox.TerrainType.Swamp:
+			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexBlack");
+			break;
+		default:
+			throw new UnityException("Terrain type does not exist in Hex class");
 		}
 	}
 }
