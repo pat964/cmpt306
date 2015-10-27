@@ -20,7 +20,6 @@ public class HexScript : MonoBehaviour {
 		player = (playerScript) FindObjectOfType(typeof(playerScript));
 		myRenderer = GetComponent<Renderer>();
 		radius = (myRenderer.bounds.size.y / 4) * Mathf.Sqrt(3);
-		print (myRenderer.bounds.size.y);
 		LoadTerrainSprite();
 	}
 
@@ -37,7 +36,7 @@ public class HexScript : MonoBehaviour {
 
 	void CheckProximity() {
 		playerProximity = Vector2.Distance(player.GetComponent<Renderer>().bounds.center,
-		                                   GetComponent<Renderer>().bounds.center);
+		                                   myRenderer.bounds.center);
 		if (playerProximity == 0) {
 			playerOn = true;
 			playerAdjacent = false;
@@ -61,6 +60,7 @@ public class HexScript : MonoBehaviour {
 			if(GetComponent<Collider2D>().OverlapPoint(mousePosition))
 			{
 				player.moves -= HexScript.TerrainTypeToVal(terrainType);
+				player.UpdateMovesMessage();
 				MovePlayerHere();
 			}
 

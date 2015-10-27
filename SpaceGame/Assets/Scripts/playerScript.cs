@@ -23,6 +23,7 @@ public class playerScript : MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.M)){
 			moves++;
+			UpdateMovesMessage();
 		}
 	}
 
@@ -41,5 +42,9 @@ public class playerScript : MonoBehaviour {
 		}
 		Text repTrack = GameObject.Find ("Reputation Track").GetComponent<Text>();
 		repTrack.text = "Reputation: " + reputation.ToString();
+	}
+
+	public void UpdateMovesMessage(){
+		GameObject.Find ("Move UI").GetComponent<Text>().text = "Moves: " + moves.ToString();
 	}
 }

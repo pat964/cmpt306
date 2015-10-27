@@ -3,21 +3,89 @@ using System.Collections;
 
 public class manager : MonoBehaviour {
 
+	private static float HEX_RAD = 1.643f;
+	private static float HEX_SIDE_LENGTH = 1.9267f;
+	public int MAP_HEIGHT = 8;
+	private static int NUM_GREEN_TILES = 8; 
+	private static int NUM_BROWN_TILES = 3; 
+	private static int NUM_CITY_TILES = 1; 
+	private GameObject gameBoard;
+
 	public Transform tileFrame;
 	// Use this for initialization
 	void Start () {
-		GameObject gameBoard = GameObject.Find("Game Board");
-		BuildMapFrame(gameBoard);
+		gameBoard = GameObject.Find("Game Board");
+		BuildTileDeck();
+		BuildMapFrame();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+	private void BuildTileDeck() {
+		GameObject tileDeck = GameObject.Find("Tile Deck");
+		GameObject greenTiles = GameObject.Find("Green Tiles");
+		GameObject brownTiles = GameObject.Find("Brown Tiles");
+		GameObject cityTiles = GameObject.Find("City Tiles");
+
+		for (int i = 0; i<NUM_GREEN_TILES; i++){
+			int index = Toolbox.random.Next(0, greenTiles.transform.childCount);
+			greenTiles.transform.GetChild(index).SetParent(tileDeck.transform);
+		}
+		
+		for (int i = 0; i<NUM_BROWN_TILES; i++){
+			int index = Toolbox.random.Next(0, brownTiles.transform.childCount);
+			brownTiles.transform.GetChild(index).SetParent(tileDeck.transform);
+		}
+		
+		for (int i = 0; i<NUM_CITY_TILES; i++){
+			int index = Toolbox.random.Next(0, cityTiles.transform.childCount);
+			cityTiles.transform.GetChild(index).SetParent(tileDeck.transform);
+		}
+	}
 	
-	private void BuildMapFrame(GameObject gameBoard) {
-		GameObject newFrame = GameObject.Instantiate(tileFrame, gameBoard.transform.position, Quaternion.identity) as GameObject;
-		newFrame.transform.SetParent(gameBoard.transform);
+	private void BuildMapFrame() {
+		Transform rootFrame = (Transform) GameObject.Instantiate(tileFrame, gameBoard.transform.position, Quaternion.Euler(0,0,90));
+		rootFrame.SetParent(gameBoard.transform);
+		BuildHorizontalRow(MAP_HEIGHT, rootFrame.position);
+		BuildVerticalRow(MAP_HEIGHT, rootFrame.position);
+		GameObject.Find("Green Tile 0").transform.position = rootFrame.position;
+		GameObject.Find("Green Tile 0").transform.rotation = rootFrame.rotation;
+		Destroy(rootFrame.gameObject);
+
+	}
+
+	private void BuildHorizontalRow(int loopVar, Vector2 position){
+		if (loopVar > 0){
+			Vector2 newPosition = new Vector2(position.x + 4 * HEX_RAD + 0.09f, position.y + (3f * HEX_SIDE_LENGTH));
+			Transform newFrame = (Transform) GameObject.Instantiate(tileFrame, newPosition, Quaternion.Euler(0,0,90));
+			newFrame.SetParent(gameBoard.transform);
+			BuildHorizontalRow(loopVar - 1, newFrame.position);
+			BuildVerticalRow(loopVar - 1, newFrame.position);
+			if (loopVar == MAP_HEIGHT){
+				GameObject.Find("Tile Deck").transform.GetChild(0).position = newFrame.position;
+				GameObject.Find("Tile Deck").transform.GetChild(0).rotation = newFrame.rotation;
+				GameObject.Find("Tile Deck").transform.GetChild(0).SetParent(gameBoard.transform);
+				Destroy(newFrame.gameObject);
+			}
+		}
+	}
+
+	private void BuildVerticalRow(int loopVar, Vector2 position){
+		if (loopVar > 0){
+			Vector2 newPosition = new Vector2(position.x - HEX_RAD, position.y + (4.5f * HEX_SIDE_LENGTH));
+			Transform newFrame = (Transform) GameObject.Instantiate(tileFrame, newPosition, Quaternion.Euler(0,0,90));
+			newFrame.SetParent(gameBoard.transform);
+			BuildVerticalRow(loopVar - 1, newFrame.position);
+			if (loopVar == MAP_HEIGHT){
+				GameObject.Find("Tile Deck").transform.GetChild(0).position = newFrame.position;
+				GameObject.Find("Tile Deck").transform.GetChild(0).rotation = newFrame.rotation;
+				GameObject.Find("Tile Deck").transform.GetChild(0).SetParent(gameBoard.transform);
+				Destroy(newFrame.gameObject);
+			}
+		}
 	}
 }
 
