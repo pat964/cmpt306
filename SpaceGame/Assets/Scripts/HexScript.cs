@@ -8,6 +8,7 @@ public class HexScript : MonoBehaviour {
 	public Toolbox.HexType hexType;
 	public Toolbox.HexFeature hexFeature;
 	public Toolbox.TerrainType terrainType;
+	public List<EnemyScript> enemiesOnHex;
 
 	public bool isSafe;
 	public float radius;
@@ -17,6 +18,7 @@ public class HexScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		enemiesOnHex = new List<EnemyScript>();
 		player = (playerScript) FindObjectOfType(typeof(playerScript));
 		myRenderer = GetComponent<Renderer>();
 		radius = (myRenderer.bounds.size.y / 4) * Mathf.Sqrt(3);
@@ -37,7 +39,7 @@ public class HexScript : MonoBehaviour {
 	void CheckProximity() {
 		playerProximity = Vector2.Distance(player.GetComponent<Renderer>().bounds.center,
 		                                   myRenderer.bounds.center);
-		if (playerProximity == 0) {
+		if (playerProximity <= 0.5) {
 			playerOn = true;
 			playerAdjacent = false;
 		} else if (playerProximity <= radius * 2){
@@ -50,7 +52,7 @@ public class HexScript : MonoBehaviour {
 	}
 
 	void MovePlayerHere(){
-		player.transform.position = transform.position;
+		player.MoveToHex(this);
 	}
 
 	void HexClicked() {

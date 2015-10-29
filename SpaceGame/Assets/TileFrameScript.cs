@@ -50,7 +50,9 @@ public class TileFrameScript : MonoBehaviour {
 			player.UpdateMovesMessage();
 			GameObject.Find("Tile Deck").transform.GetChild(0).position = transform.position;
 			GameObject.Find("Tile Deck").transform.GetChild(0).rotation = transform.rotation;
+			GameObject.Find("Tile Deck").transform.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
 			GameObject.Find("Tile Deck").transform.GetChild(0).SetParent(gameBoard.transform);
+
 			Destroy(gameObject);
 		}
 	}

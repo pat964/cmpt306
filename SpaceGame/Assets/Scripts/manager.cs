@@ -87,6 +87,16 @@ public class manager : MonoBehaviour {
 			}
 		}
 	}
+
+	public static void SwitchToTurnPhase(Toolbox.TurnPhase phase){
+		if (phase == Toolbox.TurnPhase.Move){
+			//stuff
+		} else if (phase == Toolbox.TurnPhase.Action){
+			//stuff
+		} else if (phase == Toolbox.TurnPhase.End){
+			//stuff
+		}
+	}
 }
 
 /// <summary>
@@ -98,6 +108,7 @@ public class Toolbox : Singleton<Toolbox> {
 	public static System.Random random = new System.Random();
 	protected Toolbox () {} // guarantee this will be always a singleton only - can't use the constructor!
 
+	public enum TurnPhase{Move, Action, End};
 	public enum CardType{Action, DMD, Artifact, Wound};
 	public enum ActionType{Move, Influence, Combat, Heal, Special, Action};
 	public enum BasicAction{Influence, Move, FireAttack, IceAttack, ColdFireAttack, FireBlock,

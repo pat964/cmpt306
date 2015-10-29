@@ -10,12 +10,14 @@ public class playerScript : MonoBehaviour {
 	public int reputation = 0;
 	public int fame = 0;
 	public int moves = 0;
+	public HexScript onHex;
 
 	private GameObject portalHex;
 	// Use this for initialization
 	void Start () {
 		//portal hex is the seventh child of green tile one.
 		portalHex = GameObject.Find("Green Tile 0").transform.GetChild(6).gameObject;
+		onHex = portalHex.GetComponent<HexScript>();
 		transform.position = portalHex.transform.position;
 	}
 	
@@ -46,5 +48,24 @@ public class playerScript : MonoBehaviour {
 
 	public void UpdateMovesMessage(){
 		GameObject.Find ("Move UI").GetComponent<Text>().text = "Moves: " + moves.ToString();
+	}
+
+	public void MoveToHex(HexScript hex){
+		transform.position = hex.transform.position;
+		if (hex.hexType == Toolbox.HexType.Garrison){
+			//do garrison battle
+			manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action);
+			DoGarrisonBattle(hex.hexFeature);
+		} else if (hex.hexType == Toolbox.HexType.Adventure){
+			//prompt battle
+		} else if (hex.hexType == Toolbox.HexType.Interaction){
+			//prompt interaction
+		} 
+	}
+
+	public void DoGarrisonBattle(Toolbox.HexFeature feature) {
+		if (feature == Toolbox.HexFeature.Base){
+
+		}
 	}
 }

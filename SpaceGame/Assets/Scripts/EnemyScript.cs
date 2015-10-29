@@ -10,6 +10,7 @@ public class EnemyScript : MonoBehaviour {
 	public List<Toolbox.EnemySpecial> specials;
 	public List<Toolbox.Resistance> resistances;
 	public int fame;
+	public bool faceDown = true;
 
 	// Use this for initialization
 	void Start () {
