@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class manager : MonoBehaviour {
 
@@ -15,6 +16,7 @@ public class manager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		gameBoard = GameObject.Find("Game Board");
+		ShuffleAllEnemies();
 		BuildTileDeck();
 		BuildMapFrame();
 	}
@@ -67,6 +69,7 @@ public class manager : MonoBehaviour {
 			if (loopVar == MAP_HEIGHT){
 				GameObject.Find("Tile Deck").transform.GetChild(0).position = newFrame.position;
 				GameObject.Find("Tile Deck").transform.GetChild(0).rotation = newFrame.rotation;
+				GameObject.Find("Tile Deck").transform.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
 				GameObject.Find("Tile Deck").transform.GetChild(0).SetParent(gameBoard.transform);
 				Destroy(newFrame.gameObject);
 			}
@@ -82,6 +85,7 @@ public class manager : MonoBehaviour {
 			if (loopVar == MAP_HEIGHT){
 				GameObject.Find("Tile Deck").transform.GetChild(0).position = newFrame.position;
 				GameObject.Find("Tile Deck").transform.GetChild(0).rotation = newFrame.rotation;
+				GameObject.Find("Tile Deck").transform.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
 				GameObject.Find("Tile Deck").transform.GetChild(0).SetParent(gameBoard.transform);
 				Destroy(newFrame.gameObject);
 			}
@@ -96,6 +100,33 @@ public class manager : MonoBehaviour {
 		} else if (phase == Toolbox.TurnPhase.End){
 			//stuff
 		}
+	}
+
+	public static void ShuffleAllEnemies(){
+		foreach(Toolbox.EnemyColour colour in System.Enum.GetValues(typeof(Toolbox.EnemyColour))){
+			ShuffleEnemyStack(colour);
+		}
+	}
+
+	public static void ShuffleEnemyStack(Toolbox.EnemyColour colour){
+		string colourString = colour.ToString();
+		List<GameObject> enemies = new List<GameObject>();
+		GameObject enemyStack = GameObject.Find(colourString + " Enemies");
+		GameObject discard = enemyStack.transform.FindChild("Discard Pile").gameObject;
+		discard.transform.SetParent(null);
+		for(int i = 0; i < discard.transform.childCount; i++){
+			enemies.Add(discard.transform.GetChild(i).gameObject);
+		}
+		discard.transform.DetachChildren();
+		for (int i = 0; i < enemyStack.transform.childCount; i++){
+			enemies.Add(enemyStack.transform.GetChild(i).gameObject);
+		}
+		enemyStack.transform.DetachChildren();
+		Toolbox.Shuffle(enemies);
+		foreach(GameObject enemy in enemies){
+			enemy.transform.SetParent(enemyStack.transform);
+		}
+		discard.transform.SetParent(enemyStack.transform);
 	}
 }
 
@@ -120,7 +151,7 @@ public class Toolbox : Singleton<Toolbox> {
 	public enum HexFeature{Empty, Portal, RampageGreen, RampageRed, MineBlue, MineRed, MineGreen, MineWhite,
 						   Glade, Town, Monastary, Den, Dungeon, Base, DarkMatterResearch, Ruins, SpawningGrounds,
 						   TerrorLair, CityWhite, CityRed, CityGreen, CityBlue, Maze, Labyrinth, RefugeeCamp,
-						   MineDeep}; 
+						   MineDeep};
 	public enum EnemyColour{Green, Grey, Purple, Brown, Red, White};
 	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, Elusive, Brutal, Swiftness, Poison,
 		Assassination, Paralyze, Cumbersome, NegReputation, PosReputation};
@@ -143,6 +174,17 @@ public class Toolbox : Singleton<Toolbox> {
 	
 	void Awake () {
 		// Your initialization code here
+	}
+	
+	public static void Shuffle<T>(IList<T> list) {
+		int n = list.Count;
+		while (n > 1) {
+			int k = (random.Next(0, n) % n);
+			n--;
+			T value = list[k];
+			list[k] = list[n];
+			list[n] = value;
+		}
 	}
 }
 

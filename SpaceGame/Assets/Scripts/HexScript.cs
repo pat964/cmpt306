@@ -56,7 +56,8 @@ public class HexScript : MonoBehaviour {
 	}
 
 	void HexClicked() {
-		if (playerAdjacent && player.moves >= HexScript.TerrainTypeToVal(terrainType)) {
+		if (playerAdjacent && player.moves >= HexScript.TerrainTypeToVal(terrainType) &&
+		    (hexType != Toolbox.HexType.Rampage || enemiesOnHex.Count == 0)) {
 			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
 			if(GetComponent<Collider2D>().OverlapPoint(mousePosition))

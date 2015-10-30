@@ -11,6 +11,7 @@ public class EnemyScript : MonoBehaviour {
 	public List<Toolbox.Resistance> resistances;
 	public int fame;
 	public bool faceDown = true;
+	public bool siteFortification = false;
 
 	// Use this for initialization
 	void Start () {
@@ -20,5 +21,9 @@ public class EnemyScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	public void SetFacing(bool faceUp){
+		//do stuff
 	}
 }
