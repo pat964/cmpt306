@@ -27,10 +27,6 @@ public class playerScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.M)){
-			moves++;
-			UpdateMovesMessage();
-		}
 	}
 
 	public void IncreaseFame(int amount){
@@ -67,17 +63,17 @@ public class playerScript : MonoBehaviour {
 		}
 		if (hex.hexType == Toolbox.HexType.Garrison){
 			//do garrison battle
-			manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action);
+			Manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action);
 			DoGarrisonBattle(hex);
 		} else if (hex.hexType == Toolbox.HexType.Adventure){
-			manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action);
+			Manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action);
 			if (rampagingEnemies.Count > 0){
 				DoBattle(rampagingEnemies);
 			} else {
 				//prompt adventure
 			}
 		} else if (hex.hexType == Toolbox.HexType.Interaction){
-			manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action);
+			Manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action);
 			if (rampagingEnemies.Count > 0){
 				DoBattle(rampagingEnemies);
 			} else {
@@ -101,7 +97,7 @@ public class playerScript : MonoBehaviour {
 	}
 
 	public void DoBattle(List<EnemyScript> enemies){
-		print ("Do battle!");
+		Manager.InitiateBattle(enemies);
 	}
 
 	private List<HexScript> GetAdjacentRampagers(){

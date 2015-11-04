@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class EnemyScript : MonoBehaviour {
 	public string enemyName;
@@ -12,10 +13,11 @@ public class EnemyScript : MonoBehaviour {
 	public int fame;
 	public bool faceDown = true;
 	public bool siteFortification = false;
+	public List<GameObject> myLabels;
 
 	// Use this for initialization
 	void Start () {
-	
+		myLabels = new List<GameObject>();
 	}
 	
 	// Update is called once per frame

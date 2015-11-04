@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 
@@ -31,7 +31,7 @@ public class TileScript : MonoBehaviour {
 				switch (hex.hexFeature) {
 				case Toolbox.HexFeature.RampageGreen:
 					if (greenPile.transform.childCount == 1){
-						manager.ShuffleEnemyStack(Toolbox.EnemyColour.Green);
+						Manager.ShuffleEnemyStack(Toolbox.EnemyColour.Green);
 					}
 					newEnemy = greenPile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
 					newEnemy.SetFacing(true);
@@ -40,7 +40,7 @@ public class TileScript : MonoBehaviour {
 					break;
 				case Toolbox.HexFeature.RampageRed:
 					if (redPile.transform.childCount == 1){
-						manager.ShuffleEnemyStack(Toolbox.EnemyColour.Red);
+						Manager.ShuffleEnemyStack(Toolbox.EnemyColour.Red);
 					}
 					newEnemy = redPile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
 					newEnemy.SetFacing(true);
@@ -49,7 +49,7 @@ public class TileScript : MonoBehaviour {
 					break;
 				case Toolbox.HexFeature.Base:
 					if (greyPile.transform.childCount == 1){
-						manager.ShuffleEnemyStack(Toolbox.EnemyColour.Grey);
+						Manager.ShuffleEnemyStack(Toolbox.EnemyColour.Grey);
 					}
 					newEnemy = greyPile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
 					hex.enemiesOnHex.Add(newEnemy);
@@ -61,7 +61,7 @@ public class TileScript : MonoBehaviour {
 					break;
 				case Toolbox.HexFeature.DarkMatterResearch:
 					if (purplePile.transform.childCount == 1){
-						manager.ShuffleEnemyStack(Toolbox.EnemyColour.Purple);
+						Manager.ShuffleEnemyStack(Toolbox.EnemyColour.Purple);
 					}
 					newEnemy = purplePile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
 					hex.enemiesOnHex.Add(newEnemy);
