@@ -63,7 +63,7 @@ public class HexScript : MonoBehaviour {
 			if(GetComponent<Collider2D>().OverlapPoint(mousePosition))
 			{
 				player.moves -= HexScript.TerrainTypeToVal(terrainType);
-				player.UpdateMovesMessage();
+				player.UpdateLabels();
 				MovePlayerHere();
 			}
 

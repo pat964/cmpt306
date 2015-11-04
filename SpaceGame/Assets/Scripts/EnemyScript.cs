@@ -14,6 +14,9 @@ public class EnemyScript : MonoBehaviour {
 	public bool faceDown = true;
 	public bool siteFortification = false;
 	public List<GameObject> myLabels;
+	public Toggle myToggle;
+	public HexScript homeHex;
+	public bool defeated = false;
 
 	// Use this for initialization
 	void Start () {

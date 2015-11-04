@@ -12,17 +12,23 @@ public class playerScript : MonoBehaviour {
 	public int reputation = 0;
 	public int fame = 0;
 	public int moves = 0;
+	// Physical, Ice, Fire, Cold Fire
+	public int[] attacks = Enumerable.Repeat(0, 4).ToArray();
+	public int[] blocks = Enumerable.Repeat(0, 4).ToArray();
 	public HexScript onHex;
-	public List<EnemyScript> rampagingEnemies;
+	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
 
-	private GameObject portalHex;
+	private GameObject portalHex, attackLabel, blockLabel;
 	// Use this for initialization
 	void Start () {
 		//portal hex is the seventh child of green tile one.
 		portalHex = GameObject.Find("Green Tile 0").transform.GetChild(6).gameObject;
 		onHex = portalHex.GetComponent<HexScript>();
 		transform.position = portalHex.transform.position;
-		rampagingEnemies = new List<EnemyScript>();
+		attackLabel = GameObject.Find("Attack Label");
+		blockLabel = GameObject.Find("Block Label");
+		attackLabel.SetActive(false);
+		blockLabel.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -46,8 +52,18 @@ public class playerScript : MonoBehaviour {
 		repTrack.text = "Reputation: " + reputation.ToString();
 	}
 
-	public void UpdateMovesMessage(){
+	public void UpdateLabels() {
 		GameObject.Find ("Move UI").GetComponent<Text>().text = "Moves: " + moves.ToString();
+		if (attackLabel.activeSelf && blockLabel.activeSelf){
+			GameObject.Find ("Physical Attack Label").GetComponent<Text>().text = "P: " + attacks[0].ToString();
+			GameObject.Find ("Ice Attack Label").GetComponent<Text>().text = "I: " + attacks[1].ToString();
+			GameObject.Find ("Fire Attack Label").GetComponent<Text>().text = "F: " + attacks[2].ToString();
+			GameObject.Find ("Cold Fire Attack Label").GetComponent<Text>().text = "CF: " + attacks[3].ToString();
+			GameObject.Find ("Physical Block Label").GetComponent<Text>().text = "P: " + blocks[0].ToString();
+			GameObject.Find ("Ice Block Label").GetComponent<Text>().text = "I: " + blocks[1].ToString();
+			GameObject.Find ("Fire Block Label").GetComponent<Text>().text = "F: " + blocks[2].ToString();
+			GameObject.Find ("Cold Fire Block Label").GetComponent<Text>().text = "CF: " + blocks[3].ToString();
+		}
 	}
 
 	public void MoveToHex(HexScript hex){
@@ -98,6 +114,12 @@ public class playerScript : MonoBehaviour {
 
 	public void DoBattle(List<EnemyScript> enemies){
 		Manager.InitiateBattle(enemies);
+	}
+
+	public void SetBattleUI (bool active)
+	{
+		attackLabel.SetActive(active);
+		blockLabel.SetActive(active);
 	}
 
 	private List<HexScript> GetAdjacentRampagers(){

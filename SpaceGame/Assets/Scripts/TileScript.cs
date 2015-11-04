@@ -35,6 +35,7 @@ public class TileScript : MonoBehaviour {
 					}
 					newEnemy = greenPile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
 					newEnemy.SetFacing(true);
+					newEnemy.homeHex = hex;
 					hex.enemiesOnHex.Add(newEnemy);
 					greenPile.transform.GetChild(0).SetParent(hex.transform, false);
 					break;
@@ -44,6 +45,7 @@ public class TileScript : MonoBehaviour {
 					}
 					newEnemy = redPile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
 					newEnemy.SetFacing(true);
+					newEnemy.homeHex = hex;
 					hex.enemiesOnHex.Add(newEnemy);
 					redPile.transform.GetChild(0).SetParent(hex.transform, false);
 					break;
@@ -57,6 +59,7 @@ public class TileScript : MonoBehaviour {
 					if (Toolbox.Instance.isDay){
 						newEnemy.SetFacing(true);
 					}
+					newEnemy.homeHex = hex;
 					newEnemy.siteFortification = true;
 					break;
 				case Toolbox.HexFeature.DarkMatterResearch:
@@ -69,6 +72,7 @@ public class TileScript : MonoBehaviour {
 					if (Toolbox.Instance.isDay){
 						newEnemy.SetFacing(true);
 					}
+					newEnemy.homeHex = hex;
 					newEnemy.siteFortification = true;
 					break;
 				default:

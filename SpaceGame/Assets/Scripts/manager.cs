@@ -1,21 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine.UI;
 
-public class manager : MonoBehaviour {
+public class Manager : MonoBehaviour {
 
 	private static float HEX_RAD = 1.643f;
 	private static float HEX_SIDE_LENGTH = 1.9267f;
 	public int MAP_HEIGHT = 8;
+	public bool devTools = true;
 	private static int NUM_GREEN_TILES = 8; 
 	private static int NUM_BROWN_TILES = 3; 
 	private static int NUM_CITY_TILES = 1; 
 	private GameObject gameBoard;
+	private static Camera mainCamera, battleCamera;
+	private static Canvas battleArea;
+	private static playerScript player;
 
 	public Transform tileFrame;
 	// Use this for initialization
 	void Start () {
+		player = GameObject.Find("Player").GetComponent<playerScript>();
 		gameBoard = GameObject.Find("Game Board");
+		mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+		battleCamera = GameObject.Find("Battle Camera").GetComponent<Camera>();
+		battleArea = GameObject.Find ("Battle Area").GetComponent<Canvas>();
 		ShuffleAllEnemies();
 		BuildTileDeck();
 		BuildMapFrame();
@@ -23,7 +33,47 @@ public class manager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (devTools){
+			if (Input.GetKeyDown(KeyCode.M)){
+				player.moves += 20;
+				player.UpdateLabels();
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha1)){
+				player.attacks[0] += 1;
+				player.UpdateLabels();
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha2)){
+				player.attacks[1] += 1;
+				player.UpdateLabels();
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha3)){
+				player.attacks[2] += 1;
+				player.UpdateLabels();
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha4)){
+				player.attacks[3] += 1;
+				player.UpdateLabels();
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha5)){
+				player.blocks[0] += 1;
+				player.UpdateLabels();
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha6)){
+				player.blocks[1] += 1;
+				player.UpdateLabels();
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha7)){
+				player.blocks[2] += 1;
+				player.UpdateLabels();
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha8)){
+				player.blocks[3] += 1;
+				player.UpdateLabels();
+			}
+			if (Input.GetKeyDown(KeyCode.C)){
+				ChangeCameras ();
+			}
+		}
 	}
 
 	private void BuildTileDeck() {
@@ -128,6 +178,152 @@ public class manager : MonoBehaviour {
 		}
 		discard.transform.SetParent(enemyStack.transform);
 	}
+
+	private static void ChangeCameras ()
+	{
+		if (mainCamera.isActiveAndEnabled) {
+			mainCamera.enabled = false;
+			battleCamera.enabled = true;
+		}
+		else {
+			mainCamera.enabled = true;
+			battleCamera.enabled = false;
+		}
+	}
+
+	public static void InitiateBattle (List<EnemyScript> enemies)
+	{
+		Manager.ChangeCameras();
+		player.SetBattleUI(true);
+		Toolbox.Instance.isBattling = true;
+		player.attacks = Enumerable.Repeat(0, 4).ToArray();
+		player.blocks = Enumerable.Repeat(0, 4).ToArray();
+		SetupEnemies(enemies);
+		SetUpRangedPhase(enemies);
+	}
+
+	private static void SetupEnemies (List<EnemyScript> enemies)
+	{
+		int screenPartitions = enemies.Count - 1;
+		float partitionWidth = battleCamera.pixelWidth / enemies.Count;
+		for (int i = 0; i < enemies.Count; i++){
+			enemies[i].SetFacing(true);
+			enemies[i].transform.SetParent(battleCamera.gameObject.transform, false);
+			enemies[i].transform.localScale = new Vector3(20, 20, 0);
+			enemies[i].transform.position =
+				battleCamera.ScreenToWorldPoint(new Vector3(partitionWidth * i + partitionWidth / 2,
+				                                            battleCamera.pixelHeight / 2,
+				                                            1));
+			//Initiate enemy name label
+			Text enemyNameLabel = ((GameObject)Instantiate(Resources.Load("Prefabs/Label"))).GetComponent<Text>();
+			enemyNameLabel.transform.SetParent(battleArea.transform, false);
+			enemyNameLabel.transform.position = (enemies[i].transform.position);
+			enemyNameLabel.transform.position = new Vector3(enemyNameLabel.transform.position.x, enemyNameLabel.transform.position.y + 5, enemyNameLabel.transform.position.z);
+			enemies[i].myLabels.Add(enemyNameLabel.gameObject);
+			enemyNameLabel.text = enemies[i].enemyName;
+
+			//Initiate enemy armor label
+			Text enemyArmorLabel = ((GameObject)Instantiate(Resources.Load("Prefabs/Label"))).GetComponent<Text>();
+			enemyArmorLabel.transform.SetParent(battleArea.transform, false);
+			enemyArmorLabel.transform.position = (enemies[i].transform.position);
+			enemyArmorLabel.transform.position = new Vector3(enemyArmorLabel.transform.position.x, enemyArmorLabel.transform.position.y + 2.5f, enemyArmorLabel.transform.position.z);
+			enemies[i].myLabels.Add(enemyArmorLabel.gameObject);
+			enemyArmorLabel.text = string.Format("Armour: {0} ", enemies[i].armor.ToString());
+			if (enemies[i].resistances.Count > 0) {
+				if (enemies[i].resistances.Contains(Toolbox.Resistance.Physical)){
+					enemyArmorLabel.text += "P ";
+				}
+				if (enemies[i].resistances.Contains(Toolbox.Resistance.Fire)){
+					enemyArmorLabel.text += "F ";
+				}
+				if (enemies[i].resistances.Contains(Toolbox.Resistance.Ice)){
+					enemyArmorLabel.text += "I";
+				}
+			}
+
+			//Intantiate Attack labels
+			Text enemyAttackLabel = ((GameObject)Instantiate(Resources.Load("Prefabs/Label"))).GetComponent<Text>();
+			enemyAttackLabel.transform.SetParent(battleArea.transform, false);
+			enemyAttackLabel.transform.position = (enemies[i].transform.position);
+			enemyAttackLabel.transform.position = new Vector3(enemyAttackLabel.transform.position.x - 8, enemyAttackLabel.transform.position.y, enemyAttackLabel.transform.position.z);
+			enemies[i].myLabels.Add(enemyAttackLabel.gameObject);
+			for (int j = 0; j < enemies[i].attacks.Count; j++){
+				if (j == 0){
+					enemyAttackLabel.text = "";
+				} else {
+					enemyAttackLabel.text += "\n";
+				}
+				enemyAttackLabel.text += string.Format("Attack: {0} ", enemies[i].attacks[j].value);
+				switch (enemies[i].attacks[j].type) {
+				case Toolbox.AttackType.Physical:
+					enemyAttackLabel.text += "P";
+					break;
+				case Toolbox.AttackType.Fire:
+					enemyAttackLabel.text += "F";
+					break;
+				case Toolbox.AttackType.Ice:
+					enemyAttackLabel.text += "I";
+					break;
+				case Toolbox.AttackType.ColdFire:
+					enemyAttackLabel.text += "CF";
+					break;
+				case Toolbox.AttackType.Summon:
+					enemyAttackLabel.text += "S";
+					break;
+				}
+			}
+
+			//Initiate Fame Label
+			Text enemyFameLabel = ((GameObject)Instantiate(Resources.Load("Prefabs/Label"))).GetComponent<Text>();
+			enemyFameLabel.transform.SetParent(battleArea.transform, false);
+			enemyFameLabel.transform.position = (enemies[i].transform.position);
+			enemyFameLabel.transform.position = new Vector3(enemyFameLabel.transform.position.x, enemyFameLabel.transform.position.y - 4f, enemyFameLabel.transform.position.z);
+			enemies[i].myLabels.Add(enemyFameLabel.gameObject);
+			enemyFameLabel.text = string.Format("Fame: {0}", enemies[i].fame);
+
+			//Initiate Checkbox
+			Toggle enemyToggle = ((GameObject)Instantiate(Resources.Load("Prefabs/Toggle"))).GetComponent<Toggle>();
+			enemyToggle.transform.SetParent(battleArea.transform, false);
+			enemyToggle.transform.position = (enemies[i].transform.position);
+			enemyToggle.transform.position = new Vector3(enemyToggle.transform.position.x, enemyToggle.transform.position.y - 6f, enemyToggle.transform.position.z);
+			enemies[i].myToggle = enemyToggle;
+			enemyToggle.transform.GetComponentInChildren<Text>().text = "Attack?";
+		}
+
+	}
+
+	private static void SetUpRangedPhase (List<EnemyScript> enemies) {
+		//Init Attack Button
+		Button attackButton = ((GameObject)Instantiate(Resources.Load("Prefabs/Button"))).GetComponent<Button>();
+		attackButton.transform.SetParent(battleArea.transform, false);
+		attackButton.transform.position = new Vector3(attackButton.transform.position.x + 8, attackButton.transform.position.y - 12f, attackButton.transform.position.z);
+		attackButton.transform.GetComponentInChildren<Text>().text = "Attack";
+		attackButton.onClick.AddListener(() => { DoAttack(enemies); });
+
+		
+		//Init Skip Button
+		Button skipButton = ((GameObject)Instantiate(Resources.Load("Prefabs/Button"))).GetComponent<Button>();
+		skipButton.transform.SetParent(battleArea.transform, false);
+		skipButton.transform.position = new Vector3(skipButton.transform.position.x - 2, skipButton.transform.position.y - 12f, skipButton.transform.position.z);
+		skipButton.transform.GetComponentInChildren<Text>().text = "Skip Phase";
+		skipButton.onClick.AddListener(() => { FinishRangedPhase(); });
+	}
+
+	private static void DoAttack(List<EnemyScript> enemies){
+		List<EnemyScript> selectedEnemies = new List<EnemyScript>();
+		foreach (EnemyScript enemy in enemies){
+			if (enemy.myToggle.isOn){
+				selectedEnemies.Add(enemy);
+			}
+		}
+		if (selectedEnemies.Count == 0){
+			return;
+		}
+	}
+
+	private static void FinishRangedPhase() {
+
+	}
 }
 
 /// <summary>
@@ -167,7 +363,7 @@ public class Toolbox : Singleton<Toolbox> {
 		public Toolbox.AttackType type;
 	};
 
-	public string myGlobalVar = "whatever";
+	public bool isBattling = false;
 	public bool isDay = true;
 	
 	public Language language = new Language();

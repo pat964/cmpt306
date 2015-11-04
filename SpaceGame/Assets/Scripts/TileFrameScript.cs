@@ -47,7 +47,7 @@ public class TileFrameScript : MonoBehaviour {
 	void ExploreNewTile() {
 		if (GameObject.Find("Tile Deck").transform.childCount > 0) {
 			player.moves -= 2;
-			player.UpdateMovesMessage();
+			player.UpdateLabels();
 			GameObject.Find("Tile Deck").transform.GetChild(0).position = transform.position;
 			GameObject.Find("Tile Deck").transform.GetChild(0).rotation = transform.rotation;
 			GameObject.Find("Tile Deck").transform.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
