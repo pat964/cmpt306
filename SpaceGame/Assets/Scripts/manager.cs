@@ -22,13 +22,15 @@ public class Manager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		player = GameObject.Find("Player").GetComponent<playerScript>();
-		gameBoard = GameObject.Find("Game Board");
-		mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
-		battleCamera = GameObject.Find("Battle Camera").GetComponent<Camera>();
-		battleArea = GameObject.Find ("Battle Area").GetComponent<Canvas>();
-		ShuffleAllEnemies();
-		BuildTileDeck();
-		BuildMapFrame();
+//		if (PhotonNetwork.isMasterClient) {
+			gameBoard = GameObject.Find ("Game Board");
+			mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
+			battleCamera = GameObject.Find ("Battle Camera").GetComponent<Camera> ();
+			battleArea = GameObject.Find ("Battle Area").GetComponent<Canvas> ();
+			ShuffleAllEnemies ();
+			BuildTileDeck ();
+			BuildMapFrame ();
+//		}
 	}
 	
 	// Update is called once per frame
