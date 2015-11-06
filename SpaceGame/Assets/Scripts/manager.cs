@@ -293,12 +293,14 @@ public class Manager : MonoBehaviour {
 	}
 
 	private static void SetUpRangedPhase (List<EnemyScript> enemies) {
+		GameObject.Find("Batle Phase Label").GetComponent<Text>().text = "Phase: Ranged Attack";
+
 		//Init Attack Button
 		Button attackButton = ((GameObject)Instantiate(Resources.Load("Prefabs/Button"))).GetComponent<Button>();
 		attackButton.transform.SetParent(battleArea.transform, false);
 		attackButton.transform.position = new Vector3(attackButton.transform.position.x + 8, attackButton.transform.position.y - 12f, attackButton.transform.position.z);
 		attackButton.transform.GetComponentInChildren<Text>().text = "Attack";
-		attackButton.onClick.AddListener(() => { DoAttack(enemies); });
+		attackButton.onClick.AddListener(() => { DoAttack(enemies, true); });
 
 		
 		//Init Skip Button
@@ -309,8 +311,9 @@ public class Manager : MonoBehaviour {
 		skipButton.onClick.AddListener(() => { FinishRangedPhase(); });
 	}
 
-	private static void DoAttack(List<EnemyScript> enemies){
+	private static void DoAttack(List<EnemyScript> enemies, bool isRanged){
 		List<EnemyScript> selectedEnemies = new List<EnemyScript>();
+		float armorSum = 0f;
 		foreach (EnemyScript enemy in enemies){
 			if (enemy.myToggle.isOn){
 				selectedEnemies.Add(enemy);
@@ -319,6 +322,48 @@ public class Manager : MonoBehaviour {
 		if (selectedEnemies.Count == 0){
 			return;
 		}
+		foreach(EnemyScript enemy in selectedEnemies){
+			if (enemy.specials.Contains(Toolbox.EnemySpecial.Fortified) ||
+			    enemy.specials.Contains(Toolbox.EnemySpecial.DoubleFortified) ) {
+				return;
+			}
+			armorSum += enemy.armor;
+		}
+
+		//Apply Damage
+		if (selectedEnemies.Exists(x => x.resistances.Contains(Toolbox.Resistance.Physical))){
+			armorSum -= player.attacks[0] /2f;
+		} else {
+			armorSum -= player.attacks[0];
+		}
+
+		if (selectedEnemies.Exists(x => x.resistances.Contains(Toolbox.Resistance.Ice))){
+			armorSum -= player.attacks[1] /2f;
+		} else {
+			armorSum -= player.attacks[1];
+		}
+
+		if (selectedEnemies.Exists(x => x.resistances.Contains(Toolbox.Resistance.Fire))){
+			armorSum -= player.attacks[2] /2f;
+		} else {
+			armorSum -= player.attacks[2];
+		}
+
+		if (selectedEnemies.Exists(x => x.resistances.Contains(Toolbox.Resistance.Ice)) &&
+		    selectedEnemies.Exists(x => x.resistances.Contains(Toolbox.Resistance.Fire))){
+			armorSum -= player.attacks[3] /2f;
+		} else {
+			armorSum -= player.attacks[3];
+		}
+
+		//Did the player provide enough attack?
+		if (armorSum <= 0){
+			foreach(EnemyScript enemy in selectedEnemies){
+				enemy.defeated = true;
+				enemy.SetFacing(false);
+			}
+		}
+
 	}
 
 	private static void FinishRangedPhase() {
