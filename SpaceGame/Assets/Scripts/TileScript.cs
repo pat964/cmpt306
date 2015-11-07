@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 
-public class TileScript : MonoBehaviour {
+public class TileScript : Photon.MonoBehaviour {
 
 	public Toolbox.TileType tileType;
 	public int tileNumber;
@@ -17,6 +17,14 @@ public class TileScript : MonoBehaviour {
 	
 	}
 
+	[PunRPC] // adds the child to the parent across the whole network
+	void Parenting(int child, int parent, bool worldPositionStays){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		
+		x.transform.SetParent(y.transform, worldPositionStays);
+	}
+	
 	public void SetEnemies(){
 		GameObject greenPile = GameObject.Find("Green Enemies");
 		GameObject redPile = GameObject.Find("Red Enemies");
@@ -37,7 +45,7 @@ public class TileScript : MonoBehaviour {
 					newEnemy.SetFacing(true);
 					newEnemy.homeHex = hex;
 					hex.enemiesOnHex.Add(newEnemy);
-					greenPile.transform.GetChild(0).SetParent(hex.transform, false);
+					photonView.RPC("Parenting", PhotonTargets.AllBuffered, greenPile.transform.GetChild(0).gameObject.GetPhotonView().viewID, hex.gameObject.GetPhotonView().viewID, false);
 					break;
 				case Toolbox.HexFeature.RampageRed:
 					if (redPile.transform.childCount == 1){
@@ -47,7 +55,7 @@ public class TileScript : MonoBehaviour {
 					newEnemy.SetFacing(true);
 					newEnemy.homeHex = hex;
 					hex.enemiesOnHex.Add(newEnemy);
-					redPile.transform.GetChild(0).SetParent(hex.transform, false);
+					photonView.RPC("Parenting", PhotonTargets.AllBuffered, redPile.transform.GetChild(0).gameObject.GetPhotonView().viewID, hex.gameObject.GetPhotonView().viewID, false);
 					break;
 				case Toolbox.HexFeature.Base:
 					if (greyPile.transform.childCount == 1){
@@ -55,7 +63,7 @@ public class TileScript : MonoBehaviour {
 					}
 					newEnemy = greyPile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
 					hex.enemiesOnHex.Add(newEnemy);
-					greyPile.transform.GetChild(0).SetParent(hex.transform, false);
+					photonView.RPC("Parenting", PhotonTargets.AllBuffered, greyPile.transform.GetChild(0).gameObject.GetPhotonView().viewID, hex.gameObject.GetPhotonView().viewID, false);
 					if (Toolbox.Instance.isDay){
 						newEnemy.SetFacing(true);
 					}
@@ -68,7 +76,7 @@ public class TileScript : MonoBehaviour {
 					}
 					newEnemy = purplePile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
 					hex.enemiesOnHex.Add(newEnemy);
-					purplePile.transform.GetChild(0).SetParent(hex.transform, false);
+					photonView.RPC("Parenting", PhotonTargets.AllBuffered, purplePile.transform.GetChild(0).gameObject.GetPhotonView().viewID, hex.gameObject.GetPhotonView().viewID, false);
 					if (Toolbox.Instance.isDay){
 						newEnemy.SetFacing(true);
 					}

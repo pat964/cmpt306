@@ -2,28 +2,30 @@
 using System.Collections;
 using System.Text.RegularExpressions;
 
+
+// Made following photon demo
 public class NetworkManager : MonoBehaviour {
 	
 	private const string VERSION = "v0.0.1";
-	public string roomName = "Roomname";
-	public string roomSize = "4";
+	public string roomName = "Roomname"; // Default room name
+	public string roomSize = "4"; // Default room size
+	private bool offline; // true if playing offline, false otherwise
 	
-	public Vector2 widthAndHeight = new Vector2(600, 400);
-	private Vector2 scrollPos = Vector2.zero;
-	private RoomInfo[] roomsList;
-	
-	public int numAI;
-	
+	public Vector2 widthAndHeight = new Vector2(600, 400); // menu size
+	private Vector2 scrollPos = Vector2.zero; 
+	private RoomInfo[] roomsList; // list of rooms
 	
 	public void Awake()
 	{
-		// this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
+		// sync levels automatically
 		PhotonNetwork.automaticallySyncScene = true;
-		
-		// the following line checks if this client was just created (and not yet online). if so, we connect
+
+		offline = false;
+
+		// checks if this client was just created (and not yet online). if so, we connect
 		if (PhotonNetwork.connectionStateDetailed == PeerState.PeerCreated)
 		{
-			// Connect to the photon master-server. We use the settings saved in PhotonServerSettings (a .asset file in this project)
+			// Connect to the photon master-server.
 			PhotonNetwork.ConnectUsingSettings("0.9");
 		}
 		
@@ -57,15 +59,19 @@ public class NetworkManager : MonoBehaviour {
 		GUILayout.BeginHorizontal();
 		GUILayout.Space(20);
 		GUILayout.Label("Player name:", GUILayout.Width(100)); 
-		PhotonNetwork.playerName = GUILayout.TextField(PhotonNetwork.playerName, 30); // max length of textbox is 32
-		GUILayout.Space(184);
+		PhotonNetwork.playerName = GUILayout.TextField(PhotonNetwork.playerName, 25, GUILayout.Width(292)); 
+		GUILayout.Space(45);
 		if (GUI.changed)
 		{
 			// Save name
 			PlayerPrefs.SetString("playerName", PhotonNetwork.playerName); // TODO - Do something with this
 		}
-		GUILayout.EndHorizontal();
+
+		// play offline
+		offline = GUILayout.Toggle (offline, "    Play offline");
 		GUILayout.Space(15);
+		GUILayout.EndHorizontal();
+		GUILayout.Space(25);
 		
 		// Create room
 		GUILayout.BeginHorizontal();
@@ -79,10 +85,17 @@ public class NetworkManager : MonoBehaviour {
 		GUILayout.Space(37); // create room button
 		if (GUILayout.Button("Create Room", GUILayout.Width(125)))
 		{
-			PhotonNetwork.CreateRoom(this.roomName, new RoomOptions() {maxPlayers = byte.Parse(roomSize)}, null);
+			if (offline) {
+				PhotonNetwork.Disconnect ();
+
+				PhotonNetwork.offlineMode = true;
+				PhotonNetwork.CreateRoom("Offline");
+			}
+			else {
+				PhotonNetwork.CreateRoom(this.roomName, new RoomOptions() {maxPlayers = byte.Parse(roomSize)}, null);
+			}
 		}
 		GUILayout.Space(15);
-		
 		
 		GUILayout.EndHorizontal();
 		GUILayout.Space(50);
@@ -129,10 +142,10 @@ public class NetworkManager : MonoBehaviour {
 				GUILayout.Space(15);
 				GUILayout.EndHorizontal();
 			}
-			
 			GUILayout.EndScrollView();
+
 		}
-		
+
 		GUILayout.EndArea();
 	}
 	
@@ -148,7 +161,7 @@ public class NetworkManager : MonoBehaviour {
 		Debug.Log("OnCreatedRoom");
 		PhotonNetwork.LoadLevel(1);
 	}
-	
+
 	// error stuff
 	// TODO - labels not appearing
 	public void OnPhotonCreateRoomFailed()

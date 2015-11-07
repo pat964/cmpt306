@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TileFrameScript : MonoBehaviour {
+public class TileFrameScript : Photon.MonoBehaviour {
 	public bool playerAdjacent;
 	public float radius = 8f;
 	private playerScript player;
@@ -45,15 +45,25 @@ public class TileFrameScript : MonoBehaviour {
 	}
 
 	void ExploreNewTile() {
-		if (GameObject.Find("Tile Deck").transform.childCount > 0) {
+		Transform tileDeck = GameObject.Find ("Tile Deck").transform;
+		if (tileDeck.childCount > 0) {
 			player.moves -= 2;
 			player.UpdateLabels();
-			GameObject.Find("Tile Deck").transform.GetChild(0).position = transform.position;
-			GameObject.Find("Tile Deck").transform.GetChild(0).rotation = transform.rotation;
-			GameObject.Find("Tile Deck").transform.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
-			GameObject.Find("Tile Deck").transform.GetChild(0).SetParent(gameBoard.transform);
+			tileDeck.GetChild(0).position = transform.position;
+			tileDeck.GetChild(0).rotation = transform.rotation;
+			tileDeck.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
 
 			Destroy(gameObject);
 		}
 	}
+
+	[PunRPC] // adds the child to the parent across the whole network
+	void Parenting(int child, int parent){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		
+		x.transform.SetParent(y.transform);
+	}
+
 }

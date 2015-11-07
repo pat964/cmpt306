@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 
-public class HexScript : MonoBehaviour {
+public class HexScript : Photon.MonoBehaviour {
 	public bool playerAdjacent;
 	public bool playerOn;
 	public Toolbox.HexType hexType;
@@ -111,31 +111,37 @@ public class HexScript : MonoBehaviour {
 		SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
 		switch (terrainType){
 		case Toolbox.TerrainType.Plains:
-			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexGreen");
+			photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/HexGreen");
 			break;
 		case Toolbox.TerrainType.Hills:
-			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexBrown");
+			photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/HexBrown");
 			break;
 		case Toolbox.TerrainType.Desert:
-			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexYellow");
+			photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/HexYellow" );
 			break;
 		case Toolbox.TerrainType.Wasteland:
-			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexRed");
+			photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/HexRed");
 			break;
 		case Toolbox.TerrainType.Forest:
-			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexDarkGreen");
+			photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/HexDarkGreen");
 			break;
 		case Toolbox.TerrainType.Lake:
-			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexBlue");
+			photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/HexBlue");
 			break;
 		case Toolbox.TerrainType.Mountains:
-			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexGrey");
+			photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/HexGrey");
 			break;
 		case Toolbox.TerrainType.Swamp:
-			spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/HexBlack");
+			photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/HexBlack");
 			break;
 		default:
 			throw new UnityException("Terrain type does not exist in Hex class");
 		}
+	}
+
+	[PunRPC] // changes color
+	void ChangeColor(string color){
+		GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(color);
+		
 	}
 }

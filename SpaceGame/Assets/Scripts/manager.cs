@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
 
-public class Manager : MonoBehaviour {
+public class Manager : Photon.MonoBehaviour {
 
 	private static float HEX_RAD = 1.643f;
 	private static float HEX_SIDE_LENGTH = 1.9267f;
@@ -23,7 +23,7 @@ public class Manager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		player = GameObject.Find("Player").GetComponent<playerScript>();
-//		if (PhotonNetwork.isMasterClient) {
+		if (PhotonNetwork.isMasterClient) {
 			gameBoard = GameObject.Find ("Game Board");
 			mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
 			battleCamera = GameObject.Find ("Battle Camera").GetComponent<Camera> ();
@@ -31,7 +31,7 @@ public class Manager : MonoBehaviour {
 			ShuffleAllEnemies ();
 			BuildTileDeck ();
 			BuildMapFrame ();
-//		}
+		}
 	}
 	
 	// Update is called once per frame
@@ -79,6 +79,14 @@ public class Manager : MonoBehaviour {
 		}
 	}
 
+	[PunRPC] // adds the child to the parent across the whole network
+	void Parenting(int child, int parent){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		
+		x.transform.SetParent(y.transform);
+	}
+
 	private void BuildTileDeck() {
 		GameObject tileDeck = GameObject.Find("Tile Deck");
 		GameObject greenTiles = GameObject.Find("Green Tiles");
@@ -87,23 +95,24 @@ public class Manager : MonoBehaviour {
 
 		for (int i = 0; i<NUM_GREEN_TILES; i++){
 			int index = Toolbox.random.Next(0, greenTiles.transform.childCount);
-			greenTiles.transform.GetChild(index).SetParent(tileDeck.transform);
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, greenTiles.transform.GetChild(index).gameObject.GetPhotonView().viewID, tileDeck.GetPhotonView().viewID);
 		}
 		
 		for (int i = 0; i<NUM_BROWN_TILES; i++){
 			int index = Toolbox.random.Next(0, brownTiles.transform.childCount);
-			brownTiles.transform.GetChild(index).SetParent(tileDeck.transform);
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, brownTiles.transform.GetChild(index).gameObject.GetPhotonView().viewID, tileDeck.GetPhotonView().viewID);
 		}
 		
 		for (int i = 0; i<NUM_CITY_TILES; i++){
 			int index = Toolbox.random.Next(0, cityTiles.transform.childCount);
-			cityTiles.transform.GetChild(index).SetParent(tileDeck.transform);
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, cityTiles.transform.GetChild(index).gameObject.GetPhotonView().viewID, tileDeck.GetPhotonView().viewID);
 		}
 	}
 	
 	private void BuildMapFrame() {
-		Transform rootFrame = (Transform) GameObject.Instantiate(tileFrame, gameBoard.transform.position, Quaternion.Euler(0,0,90));
-		rootFrame.SetParent(gameBoard.transform);
+		Transform rootFrame = PhotonNetwork.Instantiate("Prefabs/TileFrame", gameBoard.transform.position, Quaternion.Euler(0,0,90), 0).transform;
+		photonView.RPC("Parenting", PhotonTargets.AllBuffered, rootFrame.gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
+
 		BuildHorizontalRow(MAP_HEIGHT, rootFrame.position);
 		BuildVerticalRow(MAP_HEIGHT, rootFrame.position);
 		GameObject.Find("Green Tile 0").transform.position = rootFrame.position;
@@ -115,15 +124,17 @@ public class Manager : MonoBehaviour {
 	private void BuildHorizontalRow(int loopVar, Vector2 position){
 		if (loopVar > 0){
 			Vector2 newPosition = new Vector2(position.x + 4 * HEX_RAD + 0.09f, position.y + (3f * HEX_SIDE_LENGTH));
-			Transform newFrame = (Transform) GameObject.Instantiate(tileFrame, newPosition, Quaternion.Euler(0,0,90));
-			newFrame.SetParent(gameBoard.transform);
+			Transform newFrame = PhotonNetwork.Instantiate("Prefabs/TileFrame", newPosition, Quaternion.Euler(0,0,90), 0).transform;
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, newFrame.gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
+
 			BuildHorizontalRow(loopVar - 1, newFrame.position);
 			BuildVerticalRow(loopVar - 1, newFrame.position);
 			if (loopVar == MAP_HEIGHT){
-				GameObject.Find("Tile Deck").transform.GetChild(0).position = newFrame.position;
-				GameObject.Find("Tile Deck").transform.GetChild(0).rotation = newFrame.rotation;
-				GameObject.Find("Tile Deck").transform.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
-				GameObject.Find("Tile Deck").transform.GetChild(0).SetParent(gameBoard.transform);
+				Transform tileDeck = GameObject.Find("Tile Deck").transform;
+				tileDeck.GetChild(0).position = newFrame.position;
+				tileDeck.GetChild(0).rotation = newFrame.rotation;
+				tileDeck.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
+				photonView.RPC("Parenting", PhotonTargets.AllBuffered, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
 				Destroy(newFrame.gameObject);
 			}
 		}
@@ -132,14 +143,16 @@ public class Manager : MonoBehaviour {
 	private void BuildVerticalRow(int loopVar, Vector2 position){
 		if (loopVar > 0){
 			Vector2 newPosition = new Vector2(position.x - HEX_RAD, position.y + (4.5f * HEX_SIDE_LENGTH));
-			Transform newFrame = (Transform) GameObject.Instantiate(tileFrame, newPosition, Quaternion.Euler(0,0,90));
-			newFrame.SetParent(gameBoard.transform);
+			Transform newFrame = PhotonNetwork.Instantiate("Prefabs/TileFrame", newPosition, Quaternion.Euler(0,0,90), 0).transform;
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, newFrame.gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
+
 			BuildVerticalRow(loopVar - 1, newFrame.position);
 			if (loopVar == MAP_HEIGHT){
-				GameObject.Find("Tile Deck").transform.GetChild(0).position = newFrame.position;
-				GameObject.Find("Tile Deck").transform.GetChild(0).rotation = newFrame.rotation;
-				GameObject.Find("Tile Deck").transform.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
-				GameObject.Find("Tile Deck").transform.GetChild(0).SetParent(gameBoard.transform);
+				Transform tileDeck = GameObject.Find("Tile Deck").transform;
+				tileDeck.GetChild(0).position = newFrame.position;
+				tileDeck.GetChild(0).rotation = newFrame.rotation;
+				tileDeck.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
+				photonView.RPC("Parenting", PhotonTargets.AllBuffered, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
 				Destroy(newFrame.gameObject);
 			}
 		}
@@ -166,6 +179,8 @@ public class Manager : MonoBehaviour {
 		List<GameObject> enemies = new List<GameObject>();
 		GameObject enemyStack = GameObject.Find(colourString + " Enemies");
 		GameObject discard = enemyStack.transform.FindChild("Discard Pile").gameObject;
+//		photonView.RPC("Parenting", PhotonTargets.AllBuffered, discard.GetPhotonView().viewID, null);
+
 		discard.transform.SetParent(null);
 		for(int i = 0; i < discard.transform.childCount; i++){
 			enemies.Add(discard.transform.GetChild(i).gameObject);
