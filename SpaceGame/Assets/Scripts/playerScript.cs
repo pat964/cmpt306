@@ -17,6 +17,7 @@ public class playerScript : MonoBehaviour {
 	public int[] blocks = Enumerable.Repeat(0, 4).ToArray();
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
+	private GameObject hand;
 
 	private GameObject portalHex, attackLabel, blockLabel;
 	// Use this for initialization
@@ -29,6 +30,7 @@ public class playerScript : MonoBehaviour {
 		blockLabel = GameObject.Find("Block Label");
 		attackLabel.SetActive(false);
 		blockLabel.SetActive(false);
+		hand = transform.GetChild(0).gameObject;
 	}
 	
 	// Update is called once per frame
@@ -120,6 +122,10 @@ public class playerScript : MonoBehaviour {
 	{
 		attackLabel.SetActive(active);
 		blockLabel.SetActive(active);
+	}
+
+	public void AddCardToHand(DeedCardScript card){
+		card.transform.SetParent(hand.transform, false);
 	}
 
 	private List<HexScript> GetAdjacentRampagers(){
