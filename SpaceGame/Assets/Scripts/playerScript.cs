@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
 
-public class playerScript : MonoBehaviour {
+public class playerScript : Photon.MonoBehaviour {
 	private static int MAX_REP = 5;
 	private static int MIN_REP = -5;
 	public int armor = 2;
@@ -125,7 +125,7 @@ public class playerScript : MonoBehaviour {
 	}
 
 	public void AddCardToHand(DeedCardScript card){
-		card.transform.SetParent(hand.transform, false);
+		photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, hand.gameObject.GetPhotonView().viewID);
 	}
 
 	private List<HexScript> GetAdjacentRampagers(){
@@ -138,5 +138,13 @@ public class playerScript : MonoBehaviour {
 			}
 		}
 		return myReturn;
+	}
+
+	[PunRPC] // adds the child to the parent across the whole network
+	void Parenting(int child, int parent){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		
+		x.transform.SetParent(y.transform);
 	}
 }
