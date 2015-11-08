@@ -361,7 +361,32 @@ public class Manager : Photon.MonoBehaviour {
 	}
 
 	private static void SetUpAttackPhase() {
+		GameObject.Find("Battle Phase Label").GetComponent<Text>().text = "Phase: Attack";
+		
+		//active all undefeated enemy toggles
+		foreach(EnemyScript enemy in battleEnemies){
+			if (!enemy.defeated){
+				enemy.myToggle.gameObject.SetActive(true);
+			}
+		}
+		
+		//Convert Block button to attack button
+		Button attackButton = GameObject.Find ("Block Button").GetComponent<Button>();
+		attackButton.name = "Attack Button";
+		attackButton.transform.GetComponentInChildren<Text>().text = "Attack";
+		attackButton.onClick.RemoveAllListeners();
+		attackButton.onClick.AddListener(() => { DoAttack(false); });
+		
+		//Convert Skip Button
+		Button skipButton = GameObject.Find ("Skip Button").GetComponent<Button>();
+		skipButton.transform.GetComponentInChildren<Text>().text = "Skip Phase";
+		skipButton.onClick.RemoveAllListeners();
+		skipButton.onClick.AddListener(() => { SetUpEndPhase(); });
+	}
 
+	private static void SetUpEndPhase ()
+	{
+		throw new System.NotImplementedException ();
 	}
 
 	private static void DoAttack(bool isRanged){
@@ -376,8 +401,8 @@ public class Manager : Photon.MonoBehaviour {
 			return;
 		}
 		foreach(EnemyScript enemy in selectedEnemies){
-			if (enemy.specials.Contains(Toolbox.EnemySpecial.Fortified) ||
-			    enemy.specials.Contains(Toolbox.EnemySpecial.DoubleFortified) ) {
+			if (isRanged && 
+			    (enemy.specials.Contains(Toolbox.EnemySpecial.Fortified) || enemy.specials.Contains(Toolbox.EnemySpecial.DoubleFortified)) ) {
 				return;
 			}
 			armorSum += enemy.armor;
@@ -414,21 +439,22 @@ public class Manager : Photon.MonoBehaviour {
 			foreach(EnemyScript enemy in selectedEnemies){
 				enemy.defeated = true;
 				enemy.SetFacing(false);
-				player.fame += enemy.fame;
+				player.IncreaseFame(enemy.fame);
 				Text enemyDefeatedLabel = ((GameObject)Instantiate(Resources.Load("Prefabs/Label"))).GetComponent<Text>();
 				enemyDefeatedLabel.text = "Defeated";
 				enemyDefeatedLabel.transform.SetParent(battleArea.transform, false);
 				enemyDefeatedLabel.transform.position = (enemy.myToggle.transform.position);
-				enemyDefeatedLabel.transform.position = new Vector3(enemyDefeatedLabel.transform.position.x, enemyDefeatedLabel.transform.position.y - 4f, enemyDefeatedLabel.transform.position.z);
+				enemyDefeatedLabel.transform.position = new Vector3(enemyDefeatedLabel.transform.position.x, enemyDefeatedLabel.transform.position.y, enemyDefeatedLabel.transform.position.z);
 				enemy.myLabels.Add(enemyDefeatedLabel.gameObject);
 				enemy.myToggle.gameObject.SetActive(false);
-				player.attacks = Enumerable.Repeat(0, 4).ToArray();
 			}
+			player.attacks = Enumerable.Repeat(0, 4).ToArray();
+			player.UpdateLabels();
 		}
 
 		//Check if all enemies are defeated
 		if (battleEnemies.All(x => x.defeated == true)){
-			CleanUpBattle();
+			SetUpEndPhase();
 		}
 
 	}
@@ -500,10 +526,20 @@ public class Manager : Photon.MonoBehaviour {
 
 		foreach(Toolbox.EnemyAttack attack in landedAttacks){
 			int damage = attack.value;
-			do {
-				player.AddCardToHand(GameObject.Find("Wound Deck").transform.GetComponentInChildren<DeedCardScript>());
-				damage -= player.armor;
-			} while (damage > 0);
+			int woundsTaken = 0;
+			if (damage > 0){
+				do {
+					player.AddCardToHand(GameObject.Find("Wound Deck").transform.GetComponentInChildren<DeedCardScript>());
+					damage -= player.armor;
+					woundsTaken++;
+				} while (damage > 0);
+			}
+			if (woundsTaken == 1){
+				attack.label.text ="Took 1 Hit!";
+			} else{
+				attack.label.text = string.Format("Took {0} Hits!", woundsTaken);
+			}
+			attack.myToggle.gameObject.SetActive(false);
 		}
 		SetUpAttackPhase();
 	}
