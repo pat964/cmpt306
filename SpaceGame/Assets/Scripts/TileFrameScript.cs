@@ -23,7 +23,7 @@ public class TileFrameScript : Photon.MonoBehaviour {
 	}
 	
 	void CheckProximity() {
-		playerProximity = Vector2.Distance(player.GetComponent<Renderer>().bounds.center,
+		playerProximity = Vector2.Distance(player.getPlayer().GetComponent<Renderer>().bounds.center,
 		                                   myRenderer.bounds.center);
 		if (playerProximity <= radius){
 			playerAdjacent = true;

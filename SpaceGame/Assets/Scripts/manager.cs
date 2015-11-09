@@ -22,7 +22,7 @@ public class Manager : Photon.MonoBehaviour {
 	public Transform tileFrame;
 	// Use this for initialization
 	void Start () {
-		player = GameObject.Find("Player").GetComponent<playerScript>();
+		player = GameObject.Find("PlayerContainer").GetComponent<playerScript>();
 		if (PhotonNetwork.isMasterClient) {
 			gameBoard = GameObject.Find ("Game Board");
 			mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera> ();

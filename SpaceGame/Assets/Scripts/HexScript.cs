@@ -37,7 +37,7 @@ public class HexScript : Photon.MonoBehaviour {
 	}
 
 	void CheckProximity() {
-		playerProximity = Vector2.Distance(player.GetComponent<Renderer>().bounds.center,
+		playerProximity = Vector2.Distance(player.getPlayer().GetComponent<Renderer>().bounds.center,
 		                                   myRenderer.bounds.center);
 		if (playerProximity <= 0.5) {
 			playerOn = true;

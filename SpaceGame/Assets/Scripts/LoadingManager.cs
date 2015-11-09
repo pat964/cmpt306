@@ -17,6 +17,8 @@ public class LoadingManager : Photon.MonoBehaviour {
 		if (PhotonNetwork.room.playerCount == PhotonNetwork.room.maxPlayers) {
 			PhotonNetwork.LoadLevel (2);
 		} 
+		// TODO - time out after certain amount of time
+		// TODO - Add 'start' button so it will with players in room even if max is not reached
 		rBody.MovePosition (new Vector2 (rBody.position.x - moveLength, rBody.position.y));
 		
 	}

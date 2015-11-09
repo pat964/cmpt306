@@ -18,19 +18,26 @@ public class playerScript : Photon.MonoBehaviour {
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
 	private GameObject hand;
-
-	private GameObject portalHex, attackLabel, blockLabel;
+	public GameObject attackLabel,blockLabel;
+	private GameObject portalHex;
+	private Transform player;
 	// Use this for initialization
 	void Start () {
+		player = transform.GetChild (0);
 		//portal hex is the seventh child of green tile one.
 		portalHex = GameObject.Find("Green Tile 0").transform.GetChild(6).gameObject;
 		onHex = portalHex.GetComponent<HexScript>();
-		transform.position = portalHex.transform.position;
-		attackLabel = GameObject.Find("Attack Label");
-		blockLabel = GameObject.Find("Block Label");
+		player.position = portalHex.transform.position;
+		attackLabel = transform.GetChild (9).transform.GetChild (3).gameObject;
+		blockLabel = transform.GetChild (9).transform.GetChild (4).gameObject;
 		attackLabel.SetActive(false);
 		blockLabel.SetActive(false);
-		hand = transform.GetChild(0).gameObject;
+
+		hand = transform.GetChild(1).gameObject;
+	}
+
+	public Transform getPlayer() {
+		return player;
 	}
 	
 	// Update is called once per frame
@@ -39,7 +46,7 @@ public class playerScript : Photon.MonoBehaviour {
 
 	public void IncreaseFame(int amount){
 		fame += amount;
-		Text fameTrack = GameObject.Find ("Fame Track").GetComponent<Text>();
+		Text fameTrack = transform.GetChild (9).transform.GetChild (1).GetComponent<Text>();
 		fameTrack.text = "Fame: " + fame.ToString();
 	}
 	
@@ -50,27 +57,27 @@ public class playerScript : Photon.MonoBehaviour {
 		} else if(reputation > MAX_REP){
 			reputation = MAX_REP;
 		}
-		Text repTrack = GameObject.Find ("Reputation Track").GetComponent<Text>();
+		Text repTrack = transform.GetChild (9).transform.GetChild (0).GetComponent<Text>();
 		repTrack.text = "Reputation: " + reputation.ToString();
 	}
 
 	public void UpdateLabels() {
-		GameObject.Find ("Move UI").GetComponent<Text>().text = "Moves: " + moves.ToString();
+		transform.GetChild (9).transform.GetChild (2).GetComponent<Text>().text = "Moves: " + moves.ToString();
 		if (attackLabel.activeSelf && blockLabel.activeSelf){
-			GameObject.Find ("Physical Attack Label").GetComponent<Text>().text = "P: " + attacks[0].ToString();
-			GameObject.Find ("Ice Attack Label").GetComponent<Text>().text = "I: " + attacks[1].ToString();
-			GameObject.Find ("Fire Attack Label").GetComponent<Text>().text = "F: " + attacks[2].ToString();
-			GameObject.Find ("Cold Fire Attack Label").GetComponent<Text>().text = "CF: " + attacks[3].ToString();
-			GameObject.Find ("Physical Block Label").GetComponent<Text>().text = "P: " + blocks[0].ToString();
-			GameObject.Find ("Ice Block Label").GetComponent<Text>().text = "I: " + blocks[1].ToString();
-			GameObject.Find ("Fire Block Label").GetComponent<Text>().text = "F: " + blocks[2].ToString();
-			GameObject.Find ("Cold Fire Block Label").GetComponent<Text>().text = "CF: " + blocks[3].ToString();
+			attackLabel.transform.GetChild(0).GetComponent<Text>().text = "P: " + attacks[0].ToString();
+			attackLabel.transform.GetChild(1).GetComponent<Text>().text = "I: " + attacks[1].ToString();
+			attackLabel.transform.GetChild(2).GetComponent<Text>().text = "F: " + attacks[2].ToString();
+			attackLabel.transform.GetChild(3).GetComponent<Text>().text = "CF: " + attacks[3].ToString();
+			blockLabel.transform.GetChild(0).GetComponent<Text>().text = "P: " + blocks[0].ToString();
+			blockLabel.transform.GetChild(1).GetComponent<Text>().text = "I: " + blocks[1].ToString();
+			blockLabel.transform.GetChild(2).GetComponent<Text>().text = "F: " + blocks[2].ToString();
+			blockLabel.transform.GetChild(3).GetComponent<Text>().text = "CF: " + blocks[3].ToString();
 		}
 	}
 
 	public void MoveToHex(HexScript hex){
 		List<HexScript> oldAdjacentRampagers = GetAdjacentRampagers();
-		transform.position = hex.transform.position;
+		player.position = hex.transform.position;
 		List<HexScript> newAdjacentRampagers = GetAdjacentRampagers();
 		if(oldAdjacentRampagers.Count > 0 && newAdjacentRampagers.Count > 0){
 			foreach (HexScript rampager in oldAdjacentRampagers.Intersect(newAdjacentRampagers)){
@@ -129,7 +136,7 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	private List<HexScript> GetAdjacentRampagers(){
-		Collider2D[] AdjacentHexes = Physics2D.OverlapCircleAll(transform.position, GetComponent<Renderer>().bounds.size.y);
+		Collider2D[] AdjacentHexes = Physics2D.OverlapCircleAll(player.position, player.GetComponent<Renderer>().bounds.size.y);
 		List<HexScript> myReturn = new List<HexScript>();
 		foreach(Collider2D hexCollider in AdjacentHexes){
 			HexScript hex = hexCollider.gameObject.GetComponent<HexScript>();
