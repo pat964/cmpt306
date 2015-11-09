@@ -8,7 +8,7 @@ public class NetworkManager : MonoBehaviour {
 	
 	private const string VERSION = "v0.0.1";
 	public string roomName = "Roomname"; // Default room name
-	public string roomSize = "4"; // Default room size
+	public string roomSize = "1"; // Default room size
 	private bool offline; // true if playing offline, false otherwise
 	
 	public Vector2 widthAndHeight = new Vector2(600, 400); // menu size
