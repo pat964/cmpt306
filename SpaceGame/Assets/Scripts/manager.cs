@@ -211,6 +211,7 @@ public class Manager : Photon.MonoBehaviour {
 
 	public static void InitiateBattle (List<EnemyScript> enemies)
 	{
+		// TODO: Go through battle, and add info popups
 		battleEnemies.InsertRange(0, enemies);
 		Manager.ChangeCameras();
 		player.SetBattleUI(true);
@@ -386,7 +387,35 @@ public class Manager : Photon.MonoBehaviour {
 
 	private static void SetUpEndPhase ()
 	{
-		throw new System.NotImplementedException ();
+		//Change label and add summary
+		GameObject.Find("Battle Phase Label").GetComponent<Text>().text = "Phase: Battle Finished";
+		Text summaryLabel = ((GameObject)Instantiate(Resources.Load("Prefabs/Label"))).GetComponent<Text>();
+		summaryLabel.name = "Summary Label";
+		summaryLabel.transform.SetParent(GameObject.Find("Battle Phase Label").transform, false);
+		summaryLabel.transform.localPosition = new Vector3(0, -25, 0);
+		if (battleEnemies.All(x => x.defeated)){
+			summaryLabel.text = "Victory! All Enemies Defeated!";
+		} else {
+			Toolbox.Instance.isRetreating = true;
+			int defeatedCount = 0;
+			foreach (EnemyScript enemy in battleEnemies){
+				if (enemy.defeated){
+					defeatedCount++;
+				} else {
+					enemy.myToggle.gameObject.SetActive(false);
+				}
+			}
+			summaryLabel.text = string.Format("Retreat! {0} out of {1} enemy(s) defeated!", defeatedCount, battleEnemies.Count);
+		}
+
+		//destroy one button and convert other
+		Destroy(GameObject.Find ("Attack Button"));
+		Button skipButton = GameObject.Find ("Skip Button").GetComponent<Button>();
+		skipButton.transform.GetComponentInChildren<Text>().text = "Finish";
+		skipButton.transform.position = new Vector2(battleArea.transform.position.x, skipButton.transform.position.y);
+		skipButton.onClick.RemoveAllListeners();
+		skipButton.onClick.AddListener(() => { CleanUpBattle(); });
+
 	}
 
 	private static void DoAttack(bool isRanged){
@@ -545,7 +574,96 @@ public class Manager : Photon.MonoBehaviour {
 	}
 
 	private static void CleanUpBattle(){
+		//Destroy Skip Button and summary label
+		Destroy (GameObject.Find("Skip Button"));
+		Destroy (GameObject.Find ("Summary Label"));
+		//Resolve each enemy seperately
+		foreach(EnemyScript enemy in battleEnemies){
+			CleanUpEnemy(enemy);
+		}
+		battleEnemies = new List<EnemyScript>();
 
+		//if player is retreating and on a safe space, end phase, else must retreat first
+		if (Toolbox.Instance.isRetreating){
+			if(player.onHex.isSafe){
+				Toolbox.Instance.isRetreating = false;
+				Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End);
+			}
+		}
+
+		//return camera to board
+		ChangeCameras ();
+	}
+
+	private static void CleanUpEnemy(EnemyScript enemy){
+		//reset enemy scale
+		enemy.transform.localScale = new Vector2(10,10);
+		//clean up all attacks
+		foreach(Toolbox.EnemyAttack attack in enemy.attacks){
+			Destroy(attack.myToggle);
+			Destroy(attack.label);
+			attack.blocked = false;
+		}
+
+		//clean up labels and toggle
+		foreach (GameObject label in enemy.myLabels){
+			Destroy(label);
+		}
+		enemy.myLabels = new List<GameObject>();
+		Destroy(enemy.myToggle);
+
+		//if enemy was defeated, reset it and return it to discard pile
+		//else return it to board
+		if(enemy.defeated){
+			enemy.defeated = false;
+			enemy.SetFacing(false);
+			enemy.homeHex.enemiesOnHex.Remove(enemy);
+			if (enemy.homeHex.enemiesOnHex.Count == 0){
+				enemy.homeHex.isSafe = true;
+			}
+			enemy.homeHex = null;
+			enemy.siteFortification = false;
+			DiscardEnemy(enemy);
+		} else {
+			enemy.transform.position = enemy.homeHex.transform.position;
+		}
+	}
+
+	private static void DiscardEnemy(EnemyScript enemy){
+		GameObject enemyStack;
+		GameObject discardPile;
+		switch (enemy.colour){
+		case Toolbox.EnemyColour.Green:
+			enemyStack = GameObject.Find("Green Enemies");
+			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
+			enemy.transform.SetParent(discardPile.transform, false);
+			break;
+		case Toolbox.EnemyColour.Grey:
+			enemyStack = GameObject.Find("Grey Enemies");
+			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
+			enemy.transform.SetParent(discardPile.transform, false);
+			break;
+		case Toolbox.EnemyColour.Brown:
+			enemyStack = GameObject.Find("Brown Enemies");
+			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
+			enemy.transform.SetParent(discardPile.transform, false);
+			break;
+		case Toolbox.EnemyColour.Purple:
+			enemyStack = GameObject.Find("Purple Enemies");
+			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
+			enemy.transform.SetParent(discardPile.transform, false);
+			break;
+		case Toolbox.EnemyColour.White:
+			enemyStack = GameObject.Find("White Enemies");
+			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
+			enemy.transform.SetParent(discardPile.transform, false);
+			break;
+		case Toolbox.EnemyColour.Red:
+			enemyStack = GameObject.Find("Red Enemies");
+			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
+			enemy.transform.SetParent(discardPile.transform, false);
+			break;
+		}
 	}
 }
 
@@ -590,6 +708,7 @@ public class Toolbox : Singleton<Toolbox> {
 	};
 
 	public bool isBattling = false;
+	public bool isRetreating = false;
 	public bool isDay = true;
 	
 	public Language language = new Language();

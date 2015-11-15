@@ -16,8 +16,6 @@ public class HexScript : Photon.MonoBehaviour {
 	private Renderer myRenderer;
 	private float playerProximity;
 
-	GameObject testing;
-	GameObject current;
 
 	// Use this for initialization
 	void Start () {
@@ -27,8 +25,7 @@ public class HexScript : Photon.MonoBehaviour {
 		radius = (myRenderer.bounds.size.y / 4) * Mathf.Sqrt(3);
 		LoadTerrainSprite();
 		LoadHexFeatureSprite();
-		current = gameObject;
-		testing = new GameObject();
+
 	}
 
 	void FixedUpdate() {
@@ -146,16 +143,14 @@ public class HexScript : Photon.MonoBehaviour {
 	}
 
 	private void LoadHexFeatureSprite() {
-		
-		testing.transform.SetParent(current.transform,false);
-		SpriteRenderer rend = testing.AddComponent(typeof(SpriteRenderer)) as SpriteRenderer;
-
+		GameObject featureSprite = (GameObject) Instantiate(Resources.Load("Prefabs/HexFeature"));
 		switch (hexFeature){
 		case Toolbox.HexFeature.Empty:
-			Sprite image = Resources.Load ("Sprites/terror lair", typeof(Sprite)) as Sprite;
-			rend.sprite = image;
-			//spriteRenderer.sprite = Resources.Load<Sprite> ("Sprites/terror lair");
-			//photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/terror lair");
+			featureSprite.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Sprites/terrorlair");
+			featureSprite.transform.SetParent(transform, false);
+
+			break;
+		default:
 			break;
 		}
 	}
