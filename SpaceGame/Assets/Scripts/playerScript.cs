@@ -136,7 +136,7 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	private List<HexScript> GetAdjacentRampagers(){
-		Collider2D[] AdjacentHexes = Physics2D.OverlapCircleAll(player.position, player.GetComponent<Renderer>().bounds.size.y);
+		Collider2D[] AdjacentHexes = Physics2D.OverlapCircleAll(player.position, player.GetComponent<Renderer>().bounds.size.y + 1);
 		List<HexScript> myReturn = new List<HexScript>();
 		foreach(Collider2D hexCollider in AdjacentHexes){
 			HexScript hex = hexCollider.gameObject.GetComponent<HexScript>();
