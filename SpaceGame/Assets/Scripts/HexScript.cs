@@ -16,6 +16,9 @@ public class HexScript : Photon.MonoBehaviour {
 	private Renderer myRenderer;
 	private float playerProximity;
 
+	GameObject testing;
+	GameObject current;
+
 	// Use this for initialization
 	void Start () {
 		enemiesOnHex = new List<EnemyScript>();
@@ -23,6 +26,9 @@ public class HexScript : Photon.MonoBehaviour {
 		myRenderer = GetComponent<Renderer>();
 		radius = (myRenderer.bounds.size.y / 4) * Mathf.Sqrt(3);
 		LoadTerrainSprite();
+		LoadHexFeatureSprite();
+		current = gameObject;
+		testing = new GameObject();
 	}
 
 	void FixedUpdate() {
@@ -136,6 +142,21 @@ public class HexScript : Photon.MonoBehaviour {
 			break;
 		default:
 			throw new UnityException("Terrain type does not exist in Hex class");
+		}
+	}
+
+	private void LoadHexFeatureSprite() {
+		
+		testing.transform.SetParent(current.transform,false);
+		SpriteRenderer rend = testing.AddComponent(typeof(SpriteRenderer)) as SpriteRenderer;
+
+		switch (hexFeature){
+		case Toolbox.HexFeature.Empty:
+			Sprite image = Resources.Load ("Sprites/terror lair", typeof(Sprite)) as Sprite;
+			rend.sprite = image;
+			//spriteRenderer.sprite = Resources.Load<Sprite> ("Sprites/terror lair");
+			//photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/terror lair");
+			break;
 		}
 	}
 
