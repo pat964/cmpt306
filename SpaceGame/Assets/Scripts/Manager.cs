@@ -431,7 +431,7 @@ public class Manager : Photon.MonoBehaviour {
 		}
 		foreach(EnemyScript enemy in selectedEnemies){
 			if (isRanged && 
-			    (enemy.specials.Contains(Toolbox.EnemySpecial.Fortified) || enemy.specials.Contains(Toolbox.EnemySpecial.DoubleFortified)) ) {
+			    (enemy.specials.Contains(Toolbox.EnemySpecial.Fortified) || enemy.siteFortification) ) {
 				return;
 			}
 			armorSum += enemy.armor;
