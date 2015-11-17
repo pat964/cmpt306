@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:SpaceGame/Assets/Resources/Prefabs/CardSprite.prefab.meta
 guid: 00b10bec215323140838ec96814bc5e2
 timeCreated: 1447790388
+=======
+guid: b5a7b8c3b7dda40f0a84417e4749732d
+timeCreated: 1447796614
+>>>>>>> e3a92a95e023c83da2296e193fe94d47a5bb512c:SpaceGame/Assets/Resources/Prefabs/PlayerContainer.prefab.meta
 licenseType: Free
 NativeFormatImporter:
   userData: 

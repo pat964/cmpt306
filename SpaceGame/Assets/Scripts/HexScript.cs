@@ -21,7 +21,6 @@ public class HexScript : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		enemiesOnHex = new List<EnemyScript>();
-		player = (playerScript) FindObjectOfType(typeof(playerScript));
 		myRenderer = GetComponent<Renderer>();
 		radius = (myRenderer.bounds.size.y / 4) * Mathf.Sqrt(3);
 		LoadTerrainSprite();
@@ -35,10 +34,19 @@ public class HexScript : Photon.MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetMouseButtonDown(0)){
-			HexClicked();
+		if (null == player) {
+			playerScript[] players = (playerScript[]) FindObjectsOfType (typeof(playerScript));
+			for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
+				if (players [i].gameObject.GetPhotonView ().isMine) {
+					player = players [i];
+				}
+			}
+		} else {
+			if (Input.GetMouseButtonDown (0)) {
+				HexClicked ();
+			}
+			CheckProximity ();
 		}
-		CheckProximity();
 	}
 
 	void CheckProximity() {
@@ -161,76 +169,76 @@ public class HexScript : Photon.MonoBehaviour {
 			//photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/" );
 			break;
 		case Toolbox.HexFeature.MineGreen:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/greenbattery" );
 			break;
 		case Toolbox.HexFeature.MineRed:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/Hexfeature/redbattery" );
 			break;
 		case Toolbox.HexFeature.MineWhite:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/emptybattery" );
 			break;
 		case Toolbox.HexFeature.MineBlue:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/bluebattery" );
 			break;
 		case Toolbox.HexFeature.Glade:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/glade" );
 			break;
 		case Toolbox.HexFeature.Town:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/town" );
 			break;
 		case Toolbox.HexFeature.Monastary:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/monastary" );
 			break;
 		case Toolbox.HexFeature.Den:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/den" );
 			break;
 		case Toolbox.HexFeature.Dungeon:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/dungeon" );
 			break;
 		case Toolbox.HexFeature.Base:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/Base" );
 			break;
 		case Toolbox.HexFeature.DarkMatterResearch:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/darkmatterresearch" );
 			break;
 		case Toolbox.HexFeature.Ruins:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/ruins" );
 			break;
 		case Toolbox.HexFeature.SpawningGrounds:
 			//No sprite yet
-			//featureSprite.transform.SetParent(transform, false); 
+			//photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			//photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/" );
 			break;
 		case Toolbox.HexFeature.TerrorLair:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/terrorlair" );
 			break;
 		case Toolbox.HexFeature.CityBlue:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/bluebattery" );
 			break;
 		case Toolbox.HexFeature.CityGreen:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/greencity" );
 			break;
 		case Toolbox.HexFeature.CityRed:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/redcity" );
 			break;
 		case Toolbox.HexFeature.CityWhite:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/whitecity" );
 			break;
 
@@ -247,6 +255,14 @@ public class HexScript : Photon.MonoBehaviour {
 	[PunRPC] // changes the hex feature image
 	void HexFeatureHelper(string hexfeature){
 		featureSprite.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> (hexfeature);
+	}
+
+	[PunRPC] // adds the child to the parent across the whole network
+	void Parenting(int child, int parent, bool worldPositionStays){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		
+		x.transform.SetParent(y.transform, worldPositionStays);
 	}
 
 }

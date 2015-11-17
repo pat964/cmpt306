@@ -11,15 +11,23 @@ public class TileFrameScript : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		gameBoard = GameObject.Find("Game Board");
-		player = (playerScript) FindObjectOfType(typeof(playerScript));
 		myRenderer = GetComponent<Renderer>();
 	}
 	
 	void Update () {
-		if (Input.GetMouseButtonDown(0)){
-			TileClicked();
+		if (null == player) {
+			playerScript[] players = (playerScript[]) FindObjectsOfType (typeof(playerScript));
+			for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
+				if (players [i].gameObject.GetPhotonView ().isMine) {
+					player = players [i];
+				}
+			}
+		} else {
+			if (Input.GetMouseButtonDown (0)) {
+				TileClicked ();
+			}
+			CheckProximity ();
 		}
-		CheckProximity();
 	}
 	
 	void CheckProximity() {
