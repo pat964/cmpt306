@@ -16,6 +16,7 @@ public class HexScript : Photon.MonoBehaviour {
 	private Renderer myRenderer;
 	private float playerProximity;
 
+	GameObject featureSprite;
 
 	// Use this for initialization
 	void Start () {
@@ -24,6 +25,7 @@ public class HexScript : Photon.MonoBehaviour {
 		myRenderer = GetComponent<Renderer>();
 		radius = (myRenderer.bounds.size.y / 4) * Mathf.Sqrt(3);
 		LoadTerrainSprite();
+		featureSprite = (GameObject) Instantiate(Resources.Load("Prefabs/HexFeature"));
 		LoadHexFeatureSprite();
 
 	}
@@ -111,7 +113,7 @@ public class HexScript : Photon.MonoBehaviour {
 	}
 
 	private void LoadTerrainSprite() {
-		SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+		//SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
 		switch (terrainType){
 		case Toolbox.TerrainType.Plains:
 			photonView.RPC("ChangeColor", PhotonTargets.AllBuffered, "Sprites/HexGreen");
@@ -143,13 +145,95 @@ public class HexScript : Photon.MonoBehaviour {
 	}
 
 	private void LoadHexFeatureSprite() {
-		GameObject featureSprite = (GameObject) Instantiate(Resources.Load("Prefabs/HexFeature"));
+		// now global for PunRPC use --- GameObject featureSprite = (GameObject) Instantiate(Resources.Load("Prefabs/HexFeature"));
+		//SpriteRenderer spriteRenderer = featureSprite.GetComponent<SpriteRenderer>();
 		switch (hexFeature){
 		case Toolbox.HexFeature.Empty:
-			featureSprite.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Sprites/terrorlair");
-			featureSprite.transform.SetParent(transform, false);
-
+			//featureSprite.transform.SetParent(transform, false); 
+			//photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/terrorlair" );
+			// Old sprite renderer code to do things -- keeping for backup temporarily
+			//featureSprite.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Sprites/terrorlair");
+			//featureSprite.transform.SetParent(transform, false); 
 			break;
+		case Toolbox.HexFeature.Portal:
+			//No sprite yet
+			//featureSprite.transform.SetParent(transform, false); 
+			//photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/" );
+			break;
+		case Toolbox.HexFeature.MineGreen:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/greenbattery" );
+			break;
+		case Toolbox.HexFeature.MineRed:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/Hexfeature/redbattery" );
+			break;
+		case Toolbox.HexFeature.MineWhite:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/emptybattery" );
+			break;
+		case Toolbox.HexFeature.MineBlue:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/bluebattery" );
+			break;
+		case Toolbox.HexFeature.Glade:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/glade" );
+			break;
+		case Toolbox.HexFeature.Town:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/town" );
+			break;
+		case Toolbox.HexFeature.Monastary:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/monastary" );
+			break;
+		case Toolbox.HexFeature.Den:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/den" );
+			break;
+		case Toolbox.HexFeature.Dungeon:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/dungeon" );
+			break;
+		case Toolbox.HexFeature.Base:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/Base" );
+			break;
+		case Toolbox.HexFeature.DarkMatterResearch:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/darkmatterresearch" );
+			break;
+		case Toolbox.HexFeature.Ruins:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/ruins" );
+			break;
+		case Toolbox.HexFeature.SpawningGrounds:
+			//No sprite yet
+			//featureSprite.transform.SetParent(transform, false); 
+			//photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/" );
+			break;
+		case Toolbox.HexFeature.TerrorLair:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/terrorlair" );
+			break;
+		case Toolbox.HexFeature.CityBlue:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/bluebattery" );
+			break;
+		case Toolbox.HexFeature.CityGreen:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/greencity" );
+			break;
+		case Toolbox.HexFeature.CityRed:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/redcity" );
+			break;
+		case Toolbox.HexFeature.CityWhite:
+			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/whitecity" );
+			break;
+
 		default:
 			break;
 		}
@@ -158,6 +242,12 @@ public class HexScript : Photon.MonoBehaviour {
 	[PunRPC] // changes color
 	void ChangeColor(string color){
 		GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(color);
-		
 	}
+
+	[PunRPC] // changes the hex feature image
+	void HexFeatureHelper(string hexfeature){
+		featureSprite.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> (hexfeature);
+	}
+
 }
+	
