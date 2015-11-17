@@ -28,8 +28,8 @@ public class playerScript : Photon.MonoBehaviour {
 		portalHex = GameObject.Find("Green Tile 0").transform.GetChild(6).gameObject;
 		onHex = portalHex.GetComponent<HexScript>();
 		player.position = portalHex.transform.position;
-		attackLabel = transform.GetChild (9).transform.GetChild (3).gameObject;
-		blockLabel = transform.GetChild (9).transform.GetChild (4).gameObject;
+		attackLabel = GetComponentInChildren<Canvas>().transform.GetChild (3).gameObject;
+		blockLabel = GetComponentInChildren<Canvas>().transform.GetChild (4).gameObject;
 		attackLabel.SetActive(false);
 		blockLabel.SetActive(false);
 
@@ -46,7 +46,7 @@ public class playerScript : Photon.MonoBehaviour {
 
 	public void IncreaseFame(int amount){
 		fame += amount;
-		Text fameTrack = transform.GetChild (9).transform.GetChild (1).GetComponent<Text>();
+		Text fameTrack = transform.GetComponentInChildren<Canvas>().transform.GetChild (1).GetComponent<Text>();
 		fameTrack.text = "Fame: " + fame.ToString();
 	}
 	
@@ -57,12 +57,12 @@ public class playerScript : Photon.MonoBehaviour {
 		} else if(reputation > MAX_REP){
 			reputation = MAX_REP;
 		}
-		Text repTrack = transform.GetChild (9).transform.GetChild (0).GetComponent<Text>();
+		Text repTrack = transform.GetComponentInChildren<Canvas>().transform.GetChild (0).GetComponent<Text>();
 		repTrack.text = "Reputation: " + reputation.ToString();
 	}
 
 	public void UpdateLabels() {
-		transform.GetChild (9).transform.GetChild (2).GetComponent<Text>().text = "Moves: " + moves.ToString();
+		transform.GetComponentInChildren<Canvas>().transform.GetChild (2).GetComponent<Text>().text = "Moves: " + moves.ToString();
 		if (attackLabel.activeSelf && blockLabel.activeSelf){
 			attackLabel.transform.GetChild(0).GetComponent<Text>().text = "P: " + attacks[0].ToString();
 			attackLabel.transform.GetChild(1).GetComponent<Text>().text = "I: " + attacks[1].ToString();
