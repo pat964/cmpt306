@@ -21,7 +21,6 @@ public class HexScript : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		enemiesOnHex = new List<EnemyScript>();
-		player = (playerScript) FindObjectOfType(typeof(playerScript));
 		myRenderer = GetComponent<Renderer>();
 		radius = (myRenderer.bounds.size.y / 4) * Mathf.Sqrt(3);
 		LoadTerrainSprite();
@@ -35,10 +34,19 @@ public class HexScript : Photon.MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetMouseButtonDown(0)){
-			HexClicked();
+		if (null == player) {
+			playerScript[] players = (playerScript[]) FindObjectsOfType (typeof(playerScript));
+			for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
+				if (players [i].gameObject.GetPhotonView ().isMine) {
+					player = players [i];
+				}
+			}
+		} else {
+			if (Input.GetMouseButtonDown (0)) {
+				HexClicked ();
+			}
+			CheckProximity ();
 		}
-		CheckProximity();
 	}
 
 	void CheckProximity() {
