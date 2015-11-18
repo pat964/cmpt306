@@ -25,6 +25,7 @@ public class DeedCardScript : MonoBehaviour {
 	void Start () {
 		cardSprite = (GameObject) Instantiate(Resources.Load("Prefabs/CardSprite"));
 		cardSprite.transform.SetParent(transform, false);
+		cardSprite.transform.localPosition = new Vector2(0,0);
 		LoadSprite();
 	
 	}

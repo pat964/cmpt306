@@ -11,7 +11,11 @@ public class CameraDrag : MonoBehaviour
 	public float minX = -50f;
 	public float minY = -25f;
 	
-	
+	private Camera myCamera;
+	void Start (){
+		myCamera = GetComponent<Camera>();
+	}
+
 	void Update()
 	{
 		if (Input.GetMouseButtonDown(1))
@@ -22,40 +26,42 @@ public class CameraDrag : MonoBehaviour
 		
 		if (!Input.GetMouseButton(1) ) return;
 		
-		Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
+		Vector3 pos = myCamera.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
 		Vector2 move = new Vector2(pos.x * dragSpeed, pos.y * dragSpeed);
 
 		bool outOfBoundsX = true;
 		bool outOfBoundsY = true;
-		if (move.x > 0f)
-		{
-			if(this.transform.position.x < maxX)
+		if (myCamera.isActiveAndEnabled){
+			if (move.x > 0f)
 			{
-				outOfBoundsX = false;
+				if(this.transform.position.x < maxX)
+				{
+					outOfBoundsX = false;
+				}
 			}
-		}
-		else{
-			if(this.transform.position.x > minY)
+			else{
+				if(this.transform.position.x > minY)
+				{
+					outOfBoundsX = false;	
+				}
+			}
+			if (move.y > 0f)
 			{
-				outOfBoundsX = false;	
+				if(this.transform.position.y < maxY)
+				{
+					outOfBoundsY = false;
+				}
 			}
-		}
-		if (move.y > 0f)
-		{
-			if(this.transform.position.y < maxY)
-			{
-				outOfBoundsY = false;
+			else{
+				if(this.transform.position.y > minY)
+				{
+					outOfBoundsY = false;
+				}
 			}
-		}
-		else{
-			if(this.transform.position.y > minY)
-			{
-				outOfBoundsY = false;
-			}
-		}
 
-		if (!outOfBoundsX && !outOfBoundsY){
-			transform.Translate(move, Space.World);
+			if (!outOfBoundsX && !outOfBoundsY){
+				this.transform.Translate(move, Space.World);
+			}
 		}
 	}
 	

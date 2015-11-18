@@ -36,7 +36,7 @@ public class HexScript : Photon.MonoBehaviour {
 	void Update () {
 		if (null == player) {
 			playerScript[] players = (playerScript[]) FindObjectsOfType (typeof(playerScript));
-			for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
+			for (int i = 0; i < players.Length; i++) {
 				if (players [i].gameObject.GetPhotonView ().isMine) {
 					player = players [i];
 				}
