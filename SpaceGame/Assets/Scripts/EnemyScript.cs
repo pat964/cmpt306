@@ -42,26 +42,32 @@ public class EnemyScript : Photon.MonoBehaviour {
 		switch (colour) {
 		case Toolbox.EnemyColour.Brown:
 			enemySprite.transform.SetParent(transform, false); 
+//			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/dungeon");
 			break;
 		case Toolbox.EnemyColour.Green:
 			enemySprite.transform.SetParent(transform, false); 
+//			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/sword");
 			break;
 		case Toolbox.EnemyColour.Grey:
 			enemySprite.transform.SetParent(transform, false); 
+//			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/base");
 			break;
 		case Toolbox.EnemyColour.Purple:
-			enemySprite.transform.SetParent(transform, false); 
+			enemySprite.transform.SetParent(transform, false);
+//			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/darkmatterresearch");
 			break;
 		case Toolbox.EnemyColour.Red:
 			enemySprite.transform.SetParent(transform, false); 
+//			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/terrorlair");
 			break;
 		case Toolbox.EnemyColour.White:
 			enemySprite.transform.SetParent(transform, false); 
+//			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/whitecity");
 			break;
 
@@ -70,8 +76,17 @@ public class EnemyScript : Photon.MonoBehaviour {
 			break;
 		}
 	}
-		[PunRPC] // changes the enemy sprite
-		void EnemySpriteHelper(string hexfeature){
-				enemySprite.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> (hexfeature);
-			}
+
+	[PunRPC] // changes the enemy sprite
+	void EnemySpriteHelper(string hexfeature){
+		enemySprite.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> (hexfeature);
+	}
+
+	[PunRPC] // adds the child to the parent across the whole network
+	void Parenting(int child, int parent, bool worldPositionStays){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		
+		x.transform.SetParent(y.transform, worldPositionStays);
+	}
 }

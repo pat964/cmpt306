@@ -158,7 +158,7 @@ public class HexScript : Photon.MonoBehaviour {
 
 			break;
 		case Toolbox.HexFeature.Portal:
-			featureSprite.transform.SetParent(transform, false); 
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/portal" );
 			break;
 		case Toolbox.HexFeature.MineGreen:
@@ -198,13 +198,8 @@ public class HexScript : Photon.MonoBehaviour {
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/dungeon" );
 			break;
 		case Toolbox.HexFeature.Base:
-<<<<<<< HEAD
-			featureSprite.transform.SetParent(transform, false); 
-			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/base" );
-=======
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/Base" );
->>>>>>> origin/master
 			break;
 		case Toolbox.HexFeature.DarkMatterResearch:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
@@ -216,13 +211,8 @@ public class HexScript : Photon.MonoBehaviour {
 			break;
 		case Toolbox.HexFeature.SpawningGrounds:
 			//No sprite yet
-<<<<<<< HEAD
-			//featureSprite.transform.SetParent(transform, false); 
-			//photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/spawninggrounds" );
-=======
 			//photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			//photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/" );
->>>>>>> origin/master
 			break;
 		case Toolbox.HexFeature.TerrorLair:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
