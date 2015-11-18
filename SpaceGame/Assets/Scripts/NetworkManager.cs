@@ -159,7 +159,12 @@ public class NetworkManager : MonoBehaviour {
 	public void OnCreatedRoom()
 	{
 		Debug.Log("OnCreatedRoom");
-		PhotonNetwork.LoadLevel(1);
+		if (offline) {
+			PhotonNetwork.LoadLevel (2);
+		}
+		else {
+			PhotonNetwork.LoadLevel(1);
+		}
 	}
 
 	// error stuff
