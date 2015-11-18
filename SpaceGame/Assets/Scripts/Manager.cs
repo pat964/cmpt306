@@ -23,18 +23,19 @@ public class Manager : Photon.MonoBehaviour {
 	public Transform tileFrame;
 	// Use this for initialization
 	void Start () {
-		scenePhotonView = this.GetComponent<PhotonView>();
 
 		player = PhotonNetwork.Instantiate ("Prefabs/PlayerContainer", Vector2.zero, new Quaternion (), 0).GetComponent<playerScript>();
+
+		scenePhotonView = this.GetComponent<PhotonView>();
+		gameBoard = GameObject.Find ("Game Board");
+		mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
+		battleCamera = GameObject.Find ("Battle Camera").GetComponent<Camera> ();
+		handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera> ();
+		battleArea = GameObject.Find ("Battle Area").GetComponent<Canvas> ();
+		handCanvas = player.transform.GetComponentsInChildren<Canvas>().First (x => x.gameObject.name == "Hand Canvas");
+		battleArea.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Hand Button").onClick.AddListener(() => { Manager.ChangeCameras("Hand"); });
+		handCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Return To Game Button").onClick.AddListener(() => { Manager.ChangeCameras("Main"); });
 		if (PhotonNetwork.isMasterClient) {
-			gameBoard = GameObject.Find ("Game Board");
-			mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
-			battleCamera = GameObject.Find ("Battle Camera").GetComponent<Camera> ();
-			handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera> ();
-			battleArea = GameObject.Find ("Battle Area").GetComponent<Canvas> ();
-			handCanvas = player.transform.GetComponentsInChildren<Canvas>().First (x => x.gameObject.name == "Hand Canvas");
-			battleArea.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Hand Button").onClick.AddListener(() => { Manager.ChangeCameras("Hand"); });
-			handCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Return To Game Button").onClick.AddListener(() => { Manager.ChangeCameras("Main"); });
 			ShuffleAllEnemies ();
 			BuildTileDeck ();
 			BuildMapFrame ();

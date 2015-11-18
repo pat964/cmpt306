@@ -39,6 +39,7 @@ public class EnemyScript : Photon.MonoBehaviour {
 
 	//Attach a prefab as a child to this object
 	private void LoadEnemySprite() {
+
 		switch (colour) {
 		case Toolbox.EnemyColour.Brown:
 			enemySprite.transform.SetParent(transform, false); 

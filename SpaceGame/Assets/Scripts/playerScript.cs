@@ -171,7 +171,8 @@ public class playerScript : Photon.MonoBehaviour {
 		ShuffleDeck();
 		for (int i = 0; i < handSize; i++){
 			GameObject card = deck.transform.GetChild(0).gameObject;
-			card.transform.SetParent(hand.transform, false);
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, hand.gameObject.GetPhotonView().viewID, false);
+//			card.transform.SetParent(hand.transform, false);
 		}
 	}
 
@@ -183,7 +184,8 @@ public class playerScript : Photon.MonoBehaviour {
 		Toolbox.Shuffle(cards);
 		deck.transform.DetachChildren();
 		foreach(GameObject card in cards){
-			card.transform.SetParent(deck.transform);
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.GetPhotonView().viewID, deck.GetPhotonView().viewID);
+//			card.transform.SetParent(deck.transform);
 		}
 	}
 
@@ -200,5 +202,13 @@ public class playerScript : Photon.MonoBehaviour {
 		PhotonView y = PhotonView.Find (parent);
 		
 		x.transform.SetParent(y.transform);
+	}
+
+	[PunRPC] // adds the child to the parent across the whole network
+	void Parenting(int child, int parent, bool worldPositionStays){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		
+		x.transform.SetParent(y.transform, worldPositionStays);
 	}
 }
