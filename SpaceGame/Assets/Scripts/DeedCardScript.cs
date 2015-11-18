@@ -80,11 +80,13 @@ public class DeedCardScript : MonoBehaviour {
 			break;
 		}
 		Text[] cardTexts = cardSprite.transform.GetComponentsInChildren<Text>();
-		cardTexts.First(x => x.gameObject.name == "Title").text = cardName;
 		if (cardColour != Toolbox.CardColour.Wound){
-			cardTexts.First(x => x.gameObject.name == "Top Text").text = topText;
-			cardTexts.First(x => x.gameObject.name == "Bottom Text").text = bottomText;
+			cardTexts.First(x => x.gameObject.name == "Title").text = cardName;
+		} else {
+			cardTexts.First(x => x.gameObject.name == "Title").text = "Wound";
 		}
+		cardTexts.First(x => x.gameObject.name == "Top Text").text = topText;
+		cardTexts.First(x => x.gameObject.name == "Bottom Text").text = bottomText;
 	}
 }
 

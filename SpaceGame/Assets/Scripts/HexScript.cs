@@ -156,7 +156,7 @@ public class HexScript : Photon.MonoBehaviour {
 	private void LoadHexFeatureSprite() {
 		switch (hexFeature){
 		case Toolbox.HexFeature.Empty:
-
+			Destroy(featureSprite);
 			break;
 		case Toolbox.HexFeature.Portal:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);

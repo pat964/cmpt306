@@ -8,10 +8,12 @@ public class playerScript : Photon.MonoBehaviour {
 	private static int MAX_REP = 5;
 	private static int MIN_REP = -5;
 	public int armor = 2;
-	public int handSize = 5;
+	public int maxHandSize = 5;
+	public int cardsInHand = 5;
 	public int reputation = 0;
 	public int fame = 0;
 	public int moves = 0;
+	public int handIndex = 0;
 	// Physical, Ice, Fire, Cold Fire
 	public int[] attacks = Enumerable.Repeat(0, 4).ToArray();
 	public int[] blocks = Enumerable.Repeat(0, 4).ToArray();
@@ -31,8 +33,11 @@ public class playerScript : Photon.MonoBehaviour {
 		mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera>();
 		handCanvas.worldCamera = handCamera;
 		mainCanvas.worldCamera = mainCamera;
+		mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Hand Button").onClick.AddListener(() => { ArrangeHand(0); });
 		mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Hand Button").onClick.AddListener(() => { Manager.ChangeCameras("Hand"); });
 		handCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Return To Game Button").onClick.AddListener(() => { Manager.ChangeCameras("Main"); });
+		handCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Next").onClick.AddListener(() => { ArrangeHand(1); });
+		handCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Prev").onClick.AddListener(() => { ArrangeHand(-1); });
 		player = transform.GetChild (0);
 		//portal hex is the seventh child of green tile zero.
 		portalHex = GameObject.Find("Green Tile 0").transform.GetChild(6).gameObject;
@@ -45,7 +50,7 @@ public class playerScript : Photon.MonoBehaviour {
 		hand = handCanvas.transform.GetComponentsInChildren<Transform>().First(x => x.gameObject.name == "Hand").gameObject;
 		deck = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Deed Deck").gameObject;
 		InitDeckAndHand();
-		ArrangeHand();
+		ArrangeHand(0);
 
 		if(photonView.isMine)
 		{
@@ -152,7 +157,9 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public void AddCardToHand(DeedCardScript card){
-		photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, hand.gameObject.GetPhotonView().viewID);
+		photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, hand.gameObject.GetPhotonView().viewID, false);
+		cardsInHand++;
+		ArrangeHand (0);
 	}
 
 	private List<HexScript> GetAdjacentRampagers(){
@@ -169,10 +176,9 @@ public class playerScript : Photon.MonoBehaviour {
 
 	private void InitDeckAndHand() {
 		ShuffleDeck();
-		for (int i = 0; i < handSize; i++){
+		for (int i = 0; i < maxHandSize; i++){
 			GameObject card = deck.transform.GetChild(0).gameObject;
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, hand.gameObject.GetPhotonView().viewID, false);
-//			card.transform.SetParent(hand.transform, false);
 		}
 	}
 
@@ -185,14 +191,28 @@ public class playerScript : Photon.MonoBehaviour {
 		deck.transform.DetachChildren();
 		foreach(GameObject card in cards){
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.GetPhotonView().viewID, deck.GetPhotonView().viewID);
-//			card.transform.SetParent(deck.transform);
 		}
 	}
 
-	public void ArrangeHand(){
-		for (int i = 0; i < hand.transform.childCount; i++){
+	public void ArrangeHand(int index){
+		if(index > 0){
+			if ((handIndex + 1) * 3 < cardsInHand){
+				handIndex++;
+			}
+		} else if (index < 0) {
+			if (handIndex > 0){
+				handIndex--;
+			}
+		} else {
+			handIndex = 0;
+		}
+		foreach(DeedCardScript card in hand.transform.GetComponentsInChildren<DeedCardScript>()){
+			card.gameObject.SetActive(false);
+		}
+		for (int i = handIndex * 3, j = 0; i < hand.transform.childCount && j < 3; i++, j++){
 			Transform card = hand.transform.GetChild(i);
-			card.localPosition = new Vector2(card.localPosition.x + i * card.GetComponentInChildren<SpriteRenderer>().bounds.size.x * 1.5f, 0);
+			card.gameObject.SetActive(true);
+			card.localPosition = new Vector2(j * card.GetComponentInChildren<SpriteRenderer>().bounds.size.x * card.GetComponentInChildren<RectTransform>().localScale.x, 0);
 		}
 	}
 

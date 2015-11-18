@@ -33,6 +33,7 @@ public class Manager : Photon.MonoBehaviour {
 		handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera> ();
 		battleArea = GameObject.Find ("Battle Area").GetComponent<Canvas> ();
 		handCanvas = player.transform.GetComponentsInChildren<Canvas>().First (x => x.gameObject.name == "Hand Canvas");
+		battleArea.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Hand Button").onClick.AddListener(() => { player.ArrangeHand(0); });
 		battleArea.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Hand Button").onClick.AddListener(() => { Manager.ChangeCameras("Hand"); });
 		handCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Return To Game Button").onClick.AddListener(() => { Manager.ChangeCameras("Main"); });
 		if (PhotonNetwork.isMasterClient) {
@@ -260,7 +261,7 @@ public class Manager : Photon.MonoBehaviour {
 			Text enemyArmorLabel = ((GameObject)Instantiate(Resources.Load("Prefabs/Label"))).GetComponent<Text>();
 			enemyArmorLabel.transform.SetParent(battleArea.transform, false);
 			enemyArmorLabel.transform.position = (battleEnemies[i].transform.position);
-			enemyArmorLabel.transform.position = new Vector3(enemyArmorLabel.transform.position.x, enemyArmorLabel.transform.position.y + 2.5f, enemyArmorLabel.transform.position.z);
+			enemyArmorLabel.transform.position = new Vector3(enemyArmorLabel.transform.position.x, enemyArmorLabel.transform.position.y + 2.8f, enemyArmorLabel.transform.position.z);
 			battleEnemies[i].myLabels.Add(enemyArmorLabel.gameObject);
 			enemyArmorLabel.text = string.Format("Armour: {0} ", battleEnemies[i].armor.ToString());
 			if (battleEnemies[i].resistances.Count > 0) {
@@ -303,7 +304,7 @@ public class Manager : Photon.MonoBehaviour {
 				Toggle attackToggle = ((GameObject)Instantiate(Resources.Load("Prefabs/Toggle"))).GetComponent<Toggle>();
 				attackToggle.transform.SetParent(battleArea.transform, false);
 				attackToggle.transform.position = (battleEnemies[i].attacks[j].label.transform.position);
-				attackToggle.transform.position = new Vector3(attackToggle.transform.position.x - 2.3f, attackToggle.transform.position.y + 1f, attackToggle.transform.position.z);
+				attackToggle.transform.position = new Vector3(attackToggle.transform.position.x - 2.3f, attackToggle.transform.position.y, attackToggle.transform.position.z);
 				battleEnemies[i].attacks[j].myToggle = attackToggle;
 				attackToggle.transform.GetComponentInChildren<Text>().text = "";
 				attackToggle.gameObject.SetActive(false);
@@ -335,7 +336,7 @@ public class Manager : Photon.MonoBehaviour {
 		Button attackButton = ((GameObject)Instantiate(Resources.Load("Prefabs/Button"))).GetComponent<Button>();
 		attackButton.name = "Attack Button";
 		attackButton.transform.SetParent(battleArea.transform, false);
-		attackButton.transform.position = new Vector3(attackButton.transform.position.x + 8, attackButton.transform.position.y - 12f, attackButton.transform.position.z);
+		attackButton.transform.position = new Vector3(attackButton.transform.position.x + 5, attackButton.transform.position.y - 12f, attackButton.transform.position.z);
 		attackButton.transform.GetComponentInChildren<Text>().text = "Attack";
 		attackButton.onClick.AddListener(() => { DoAttack(true); });
 
@@ -635,6 +636,9 @@ public class Manager : Photon.MonoBehaviour {
 			enemy.homeHex.enemiesOnHex.Remove(enemy);
 			if (enemy.homeHex.enemiesOnHex.Count == 0){
 				enemy.homeHex.isSafe = true;
+				if (enemy.homeHex.hexType == Toolbox.HexType.Garrison){
+					enemy.homeHex.hexType = Toolbox.HexType.Interaction;
+				}
 			}
 			enemy.homeHex = null;
 			enemy.siteFortification = false;
