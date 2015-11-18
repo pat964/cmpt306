@@ -34,6 +34,15 @@ public class playerScript : Photon.MonoBehaviour {
 		blockLabel.SetActive(false);
 
 		hand = transform.GetChild(1).gameObject;
+
+		if(photonView.isMine)
+		{
+			transform.GetChild (9).transform.GetChild (0).GetComponent<Text>().enabled = true;
+			transform.GetChild (9).transform.GetChild (1).GetComponent<Text>().enabled = true;
+			transform.GetChild (9).transform.GetChild (2).GetComponent<Text>().enabled = true;
+
+		}
+			
 	}
 
 	public Transform getPlayer() {
