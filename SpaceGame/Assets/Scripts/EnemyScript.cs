@@ -43,32 +43,32 @@ public class EnemyScript : Photon.MonoBehaviour {
 
 		switch (colour) {
 		case Toolbox.EnemyColour.Brown:
-			enemySprite.transform.SetParent(transform, false); 
+//			enemySprite.transform.SetParent(transform, false); 
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/dungeon");
 			break;
 		case Toolbox.EnemyColour.Green:
-			enemySprite.transform.SetParent(transform, false); 
+//			enemySprite.transform.SetParent(transform, false); 
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/sword");
 			break;
 		case Toolbox.EnemyColour.Grey:
-			enemySprite.transform.SetParent(transform, false); 
+//			enemySprite.transform.SetParent(transform, false); 
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/base");
 			break;
 		case Toolbox.EnemyColour.Purple:
-			enemySprite.transform.SetParent(transform, false);
+//			enemySprite.transform.SetParent(transform, false);
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/darkmatterresearch");
 			break;
 		case Toolbox.EnemyColour.Red:
-			enemySprite.transform.SetParent(transform, false); 
+//			enemySprite.transform.SetParent(transform, false); 
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/terrorlair");
 			break;
 		case Toolbox.EnemyColour.White:
-			enemySprite.transform.SetParent(transform, false); 
+//			enemySprite.transform.SetParent(transform, false); 
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, enemySprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC ("EnemySpriteHelper", PhotonTargets.AllBuffered, "Sprites/Enemies/whitecity");
 			break;
