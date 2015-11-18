@@ -93,6 +93,14 @@ public class Manager : Photon.MonoBehaviour {
 		x.transform.SetParent(y.transform);
 	}
 
+	[PunRPC] // adds the child to the parent across the whole network
+	void Parenting(int child, int parent, bool worldSpaceStays){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		
+		x.transform.SetParent(y.transform, worldSpaceStays);
+	}
+
 	private void BuildTileDeck() {
 		GameObject tileDeck = GameObject.Find("Tile Deck");
 		GameObject greenTiles = GameObject.Find("Green Tiles");
@@ -655,32 +663,32 @@ public class Manager : Photon.MonoBehaviour {
 		case Toolbox.EnemyColour.Green:
 			enemyStack = GameObject.Find("Green Enemies");
 			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
-			enemy.transform.SetParent(discardPile.transform, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, discardPile.GetPhotonView().viewID, false);
 			break;
 		case Toolbox.EnemyColour.Grey:
 			enemyStack = GameObject.Find("Grey Enemies");
 			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
-			enemy.transform.SetParent(discardPile.transform, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, discardPile.GetPhotonView().viewID, false);
 			break;
 		case Toolbox.EnemyColour.Brown:
 			enemyStack = GameObject.Find("Brown Enemies");
 			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
-			enemy.transform.SetParent(discardPile.transform, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, discardPile.GetPhotonView().viewID, false);
 			break;
 		case Toolbox.EnemyColour.Purple:
 			enemyStack = GameObject.Find("Purple Enemies");
 			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
-			enemy.transform.SetParent(discardPile.transform, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, discardPile.GetPhotonView().viewID, false);
 			break;
 		case Toolbox.EnemyColour.White:
 			enemyStack = GameObject.Find("White Enemies");
 			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
-			enemy.transform.SetParent(discardPile.transform, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, discardPile.GetPhotonView().viewID, false);
 			break;
 		case Toolbox.EnemyColour.Red:
 			enemyStack = GameObject.Find("Red Enemies");
 			discardPile = enemyStack.transform.GetChild(enemyStack.transform.childCount - 1).gameObject;
-			enemy.transform.SetParent(discardPile.transform, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, discardPile.GetPhotonView().viewID, false);
 			break;
 		}
 	}

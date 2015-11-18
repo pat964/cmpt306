@@ -24,7 +24,7 @@ public class HexScript : Photon.MonoBehaviour {
 		myRenderer = GetComponent<Renderer>();
 		radius = (myRenderer.bounds.size.y / 4) * Mathf.Sqrt(3);
 		LoadTerrainSprite();
-		featureSprite = (GameObject) Instantiate(Resources.Load("Prefabs/HexFeature"));
+		featureSprite = PhotonNetwork.Instantiate("Prefabs/HexFeature", Vector2.zero, Quaternion.Euler(0,0,-90), 0);
 		LoadHexFeatureSprite();
 
 	}
