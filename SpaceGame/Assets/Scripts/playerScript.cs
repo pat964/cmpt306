@@ -49,6 +49,7 @@ public class playerScript : Photon.MonoBehaviour {
 		blockLabel.SetActive(false);
 		hand = handCanvas.transform.GetComponentsInChildren<Transform>().First(x => x.gameObject.name == "Hand").gameObject;
 		deck = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Deed Deck").gameObject;
+		Debug.Log (deck.transform.childCount);
 		InitDeckAndHand();
 		ArrangeHand(0);
 
@@ -157,6 +158,8 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public void AddCardToHand(DeedCardScript card){
+		Debug.Log (card);
+
 		photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, hand.gameObject.GetPhotonView().viewID, false);
 		cardsInHand++;
 		ArrangeHand (0);
@@ -207,6 +210,8 @@ public class playerScript : Photon.MonoBehaviour {
 			handIndex = 0;
 		}
 		foreach(DeedCardScript card in hand.transform.GetComponentsInChildren<DeedCardScript>()){
+			Debug.Log (card);
+
 			card.gameObject.SetActive(false);
 		}
 		for (int i = handIndex * 3, j = 0; i < hand.transform.childCount && j < 3; i++, j++){

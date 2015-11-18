@@ -61,9 +61,13 @@ public class TileFrameScript : Photon.MonoBehaviour {
 			tileDeck.GetChild(0).rotation = transform.rotation;
 			tileDeck.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
-
-			Destroy(gameObject);
+			photonView.RPC("Destroy", PhotonTargets.MasterClient, gameObject.GetPhotonView().viewID);
 		}
+	}
+
+	[PunRPC] // adds the child to the parent across the whole network
+	void Destroy(int target){
+		PhotonNetwork.Destroy(PhotonView.Find (target));
 	}
 
 	[PunRPC] // adds the child to the parent across the whole network

@@ -131,7 +131,9 @@ public class Manager : Photon.MonoBehaviour {
 		BuildVerticalRow(MAP_HEIGHT, rootFrame.position);
 		GameObject.Find("Green Tile 0").transform.position = rootFrame.position;
 		GameObject.Find("Green Tile 0").transform.rotation = rootFrame.rotation;
-		Destroy(rootFrame.gameObject);
+
+		PhotonNetwork.Destroy(rootFrame.gameObject);
+//		Destroy(rootFrame.gameObject);
 
 	}
 
@@ -149,7 +151,8 @@ public class Manager : Photon.MonoBehaviour {
 				tileDeck.GetChild(0).rotation = newFrame.rotation;
 				tileDeck.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
 				photonView.RPC("Parenting", PhotonTargets.AllBuffered, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
-				Destroy(newFrame.gameObject);
+//				Destroy(newFrame.gameObject);
+				PhotonNetwork.Destroy(newFrame.gameObject);
 			}
 		}
 	}
@@ -167,7 +170,8 @@ public class Manager : Photon.MonoBehaviour {
 				tileDeck.GetChild(0).rotation = newFrame.rotation;
 				tileDeck.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
 				photonView.RPC("Parenting", PhotonTargets.AllBuffered, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
-				Destroy(newFrame.gameObject);
+				PhotonNetwork.Destroy(newFrame.gameObject);
+
 			}
 		}
 	}
