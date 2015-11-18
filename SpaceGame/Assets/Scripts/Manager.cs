@@ -132,7 +132,9 @@ public class Manager : Photon.MonoBehaviour {
 		BuildVerticalRow(MAP_HEIGHT, rootFrame.position);
 		GameObject.Find("Green Tile 0").transform.position = rootFrame.position;
 		GameObject.Find("Green Tile 0").transform.rotation = rootFrame.rotation;
-		Destroy(rootFrame.gameObject);
+
+		PhotonNetwork.Destroy(rootFrame.gameObject);
+//		Destroy(rootFrame.gameObject);
 
 	}
 
@@ -150,7 +152,8 @@ public class Manager : Photon.MonoBehaviour {
 				tileDeck.GetChild(0).rotation = newFrame.rotation;
 				tileDeck.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
 				photonView.RPC("Parenting", PhotonTargets.AllBuffered, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
-				Destroy(newFrame.gameObject);
+//				Destroy(newFrame.gameObject);
+				PhotonNetwork.Destroy(newFrame.gameObject);
 			}
 		}
 	}
@@ -168,7 +171,8 @@ public class Manager : Photon.MonoBehaviour {
 				tileDeck.GetChild(0).rotation = newFrame.rotation;
 				tileDeck.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
 				photonView.RPC("Parenting", PhotonTargets.AllBuffered, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
-				Destroy(newFrame.gameObject);
+				PhotonNetwork.Destroy(newFrame.gameObject);
+
 			}
 		}
 	}
@@ -261,7 +265,7 @@ public class Manager : Photon.MonoBehaviour {
 		float partitionWidth = battleCamera.pixelWidth / battleEnemies.Count;
 		for (int i = 0; i < battleEnemies.Count; i++){
 			battleEnemies[i].SetFacing(true);
-			battleEnemies[i].transform.SetParent(battleCamera.gameObject.transform, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, battleEnemies[i].gameObject.GetPhotonView().viewID, battleCamera.gameObject.GetPhotonView().viewID, false);
 			battleEnemies[i].transform.localScale = new Vector3(20, 20, 0);
 			battleEnemies[i].transform.position =
 				battleCamera.ScreenToWorldPoint(new Vector3(partitionWidth * i + partitionWidth / 2,

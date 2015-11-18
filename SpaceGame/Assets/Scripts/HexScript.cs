@@ -208,12 +208,11 @@ public class HexScript : Photon.MonoBehaviour {
 			break;
 		case Toolbox.HexFeature.Ruins:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
-			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/ruins" );
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/ruins" );
 			break;
 		case Toolbox.HexFeature.SpawningGrounds:
-			//No sprite yet
-			//photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
-			//photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/" );
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/spawninggrounds" );
 			break;
 		case Toolbox.HexFeature.TerrorLair:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);

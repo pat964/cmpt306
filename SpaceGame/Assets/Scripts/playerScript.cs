@@ -212,7 +212,7 @@ public class playerScript : Photon.MonoBehaviour {
 		for (int i = handIndex * 3, j = 0; i < hand.transform.childCount && j < 3; i++, j++){
 			Transform card = hand.transform.GetChild(i);
 			card.gameObject.SetActive(true);
-			card.localPosition = new Vector2(j * card.GetComponentInChildren<SpriteRenderer>().bounds.size.x * card.GetComponentInChildren<RectTransform>().localScale.x, 0);
+			card.localPosition = new Vector2(j * card.GetComponentInChildren<Image>().sprite.bounds.size.x * card.GetComponentInChildren<RectTransform>().localScale.x * 2, 0);
 		}
 	}
 
