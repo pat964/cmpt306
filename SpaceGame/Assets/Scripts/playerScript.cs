@@ -17,14 +17,24 @@ public class playerScript : Photon.MonoBehaviour {
 	public int[] blocks = Enumerable.Repeat(0, 4).ToArray();
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
-	private GameObject hand;
+	private GameObject hand, deck;
 	public GameObject attackLabel,blockLabel;
 	private GameObject portalHex;
 	private Transform player;
+	private Canvas handCanvas, mainCanvas;
+	private Camera handCamera, mainCamera;
 	// Use this for initialization
 	void Start () {
+		handCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Hand Canvas");
+		mainCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Main Canvas");
+		handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera>();
+		mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera>();
+		handCanvas.worldCamera = handCamera;
+		mainCanvas.worldCamera = mainCamera;
+		mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Hand Button").onClick.AddListener(() => { Manager.ChangeCameras("Hand"); });
+		handCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Return To Game Button").onClick.AddListener(() => { Manager.ChangeCameras("Main"); });
 		player = transform.GetChild (0);
-		//portal hex is the seventh child of green tile one.
+		//portal hex is the seventh child of green tile zero.
 		portalHex = GameObject.Find("Green Tile 0").transform.GetChild(6).gameObject;
 		onHex = portalHex.GetComponent<HexScript>();
 		player.position = portalHex.transform.position;
@@ -32,8 +42,9 @@ public class playerScript : Photon.MonoBehaviour {
 		blockLabel = GetComponentInChildren<Canvas>().transform.GetChild (4).gameObject;
 		attackLabel.SetActive(false);
 		blockLabel.SetActive(false);
-
-		hand = transform.GetChild(1).gameObject;
+		hand = handCanvas.transform.GetComponentsInChildren<Transform>().First(x => x.gameObject.name == "Hand").gameObject;
+		deck = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Deed Deck").gameObject;
+		InitDeckAndHand();
 	}
 
 	public Transform getPlayer() {
@@ -145,6 +156,26 @@ public class playerScript : Photon.MonoBehaviour {
 			}
 		}
 		return myReturn;
+	}
+
+	private void InitDeckAndHand() {
+		ShuffleDeck();
+		for (int i = 0; i < handSize; i++){
+			GameObject card = deck.transform.GetChild(0).gameObject;
+			card.transform.SetParent(hand.transform, false);
+		}
+	}
+
+	private void ShuffleDeck() {
+		List<GameObject> cards = new List<GameObject>();
+		for(int i = 0; i < deck.transform.childCount; i++){
+			cards.Add(deck.transform.GetChild(i).gameObject);
+		}
+		Toolbox.Shuffle(cards);
+		deck.transform.DetachChildren();
+		foreach(GameObject card in cards){
+			card.transform.SetParent(deck.transform);
+		}
 	}
 
 	[PunRPC] // adds the child to the parent across the whole network

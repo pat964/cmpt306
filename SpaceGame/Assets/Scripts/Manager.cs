@@ -14,7 +14,7 @@ public class Manager : Photon.MonoBehaviour {
 	private static int NUM_BROWN_TILES = 3; 
 	private static int NUM_CITY_TILES = 1; 
 	private GameObject gameBoard;
-	private static Camera mainCamera, battleCamera;
+	private static Camera mainCamera, battleCamera, handCamera;
 	private static Canvas battleArea;
 	private static playerScript player;
 	private static List<EnemyScript> battleEnemies = new List<EnemyScript>();
@@ -27,6 +27,7 @@ public class Manager : Photon.MonoBehaviour {
 			gameBoard = GameObject.Find ("Game Board");
 			mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
 			battleCamera = GameObject.Find ("Battle Camera").GetComponent<Camera> ();
+			handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera> ();
 			battleArea = GameObject.Find ("Battle Area").GetComponent<Canvas> ();
 			ShuffleAllEnemies ();
 			BuildTileDeck ();
@@ -72,9 +73,6 @@ public class Manager : Photon.MonoBehaviour {
 			if (Input.GetKeyDown(KeyCode.Alpha8)){
 				player.blocks[3] += 1;
 				player.UpdateLabels();
-			}
-			if (Input.GetKeyDown(KeyCode.C)){
-				ChangeCameras ();
 			}
 		}
 	}
@@ -197,15 +195,20 @@ public class Manager : Photon.MonoBehaviour {
 		discard.transform.SetParent(enemyStack.transform);
 	}
 
-	private static void ChangeCameras ()
+	public static void ChangeCameras (string camera)
 	{
-		if (mainCamera.isActiveAndEnabled) {
-			mainCamera.enabled = false;
-			battleCamera.enabled = true;
-		}
-		else {
+		if (camera.Equals("Main")) {
 			mainCamera.enabled = true;
 			battleCamera.enabled = false;
+			handCamera.enabled = false;
+		} else if (camera.Equals("Battle")) {
+			mainCamera.enabled = false;
+			battleCamera.enabled = true;
+			handCamera.enabled = false;
+		} else if (camera.Equals("Hand")) {
+			mainCamera.enabled = false;
+			battleCamera.enabled = false;
+			handCamera.enabled = true;
 		}
 	}
 
@@ -213,7 +216,7 @@ public class Manager : Photon.MonoBehaviour {
 	{
 		// TODO: Go through battle, and add info popups
 		battleEnemies.InsertRange(0, enemies);
-		Manager.ChangeCameras();
+		Manager.ChangeCameras("Battle");
 		player.SetBattleUI(true);
 		Toolbox.Instance.isBattling = true;
 		player.attacks = Enumerable.Repeat(0, 4).ToArray();
@@ -592,7 +595,7 @@ public class Manager : Photon.MonoBehaviour {
 		}
 
 		//return camera to board
-		ChangeCameras ();
+		ChangeCameras ("Main");
 	}
 
 	private static void CleanUpEnemy(EnemyScript enemy){
