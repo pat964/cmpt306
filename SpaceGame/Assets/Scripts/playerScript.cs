@@ -21,20 +21,18 @@ public class playerScript : Photon.MonoBehaviour {
 	public GameObject attackLabel,blockLabel;
 	private GameObject portalHex;
 	private Transform player;
-	private Canvas handCanvas, handCameraCanvas, mainCanvas;
+	private Canvas handCanvas, mainCanvas;
 	private Camera handCamera, mainCamera;
 	// Use this for initialization
 	void Start () {
 		handCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Hand Canvas");
-		handCameraCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Hand Camera Canvas");
 		mainCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Main Canvas");
 		handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera>();
 		mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera>();
 		handCanvas.worldCamera = handCamera;
-		handCameraCanvas.worldCamera = handCamera;
 		mainCanvas.worldCamera = mainCamera;
 		mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Hand Button").onClick.AddListener(() => { Manager.ChangeCameras("Hand"); });
-		handCameraCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Return To Game Button").onClick.AddListener(() => { Manager.ChangeCameras("Main"); });
+		handCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Return To Game Button").onClick.AddListener(() => { Manager.ChangeCameras("Main"); });
 		player = transform.GetChild (0);
 		//portal hex is the seventh child of green tile zero.
 		portalHex = GameObject.Find("Green Tile 0").transform.GetChild(6).gameObject;
