@@ -27,7 +27,7 @@ public class DeedCardScript : MonoBehaviour {
 		cardSprite.transform.SetParent(transform, false);
 		cardSprite.transform.localPosition = new Vector2(0,0);
 		LoadSprite();
-	
+		cardSprite.GetComponent<Button>().onClick.AddListener(() => {cardOnClick();});
 	}
 	
 	// Update is called once per frame
@@ -44,7 +44,7 @@ public class DeedCardScript : MonoBehaviour {
 			} else {
 				spritePath = "Sprites/white+black";
 			}
-			cardSprite.transform.GetComponentInChildren<SpriteRenderer> ().sprite = Resources.Load<Sprite> (spritePath);
+			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> (spritePath);
 			break;
 		case Toolbox.CardColour.Green:
 			if(cardType == Toolbox.CardType.Action){
@@ -52,7 +52,7 @@ public class DeedCardScript : MonoBehaviour {
 			} else {
 				spritePath = "Sprites/green+black";
 			}
-			cardSprite.transform.GetComponentInChildren<SpriteRenderer> ().sprite = Resources.Load<Sprite> (spritePath);
+			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> (spritePath);
 			break;
 		case Toolbox.CardColour.Red:
 			if(cardType == Toolbox.CardType.Action){
@@ -60,7 +60,7 @@ public class DeedCardScript : MonoBehaviour {
 			} else {
 				spritePath = "Sprites/red+black";
 			}
-			cardSprite.transform.GetComponentInChildren<SpriteRenderer> ().sprite = Resources.Load<Sprite> (spritePath);
+			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> (spritePath);
 			break;
 		case Toolbox.CardColour.Blue:
 			if(cardType == Toolbox.CardType.Action){
@@ -68,13 +68,13 @@ public class DeedCardScript : MonoBehaviour {
 			} else {
 				spritePath = "Sprites/blue+black";
 			}
-			cardSprite.transform.GetComponentInChildren<SpriteRenderer> ().sprite = Resources.Load<Sprite> (spritePath);
+			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> (spritePath);
 			break;
 		case Toolbox.CardColour.Artifact:
-			cardSprite.transform.GetComponentInChildren<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Sprites/arifacts");
+			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> ("Sprites/arifacts");
 			break;
 		case Toolbox.CardColour.Wound:
-			cardSprite.transform.GetComponentInChildren<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Sprites/Wound");
+			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Wound");
 			break;
 		default:
 			break;
@@ -87,6 +87,10 @@ public class DeedCardScript : MonoBehaviour {
 		}
 		cardTexts.First(x => x.gameObject.name == "Top Text").text = topText;
 		cardTexts.First(x => x.gameObject.name == "Bottom Text").text = bottomText;
+	}
+
+	public void cardOnClick(){
+		print("HEY");
 	}
 }
 

@@ -15,7 +15,7 @@ public class Manager : Photon.MonoBehaviour {
 	private static int NUM_CITY_TILES = 1; 
 	private GameObject gameBoard;
 	private static Camera mainCamera, battleCamera, handCamera;
-	private static Canvas battleArea, handCanvas;
+	private static Canvas battleArea, handCanvas, mainCanvas;
 	private static playerScript player;
 	private static List<EnemyScript> battleEnemies = new List<EnemyScript>();
 	private static PhotonView scenePhotonView;
@@ -33,6 +33,7 @@ public class Manager : Photon.MonoBehaviour {
 		handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera> ();
 		battleArea = GameObject.Find ("Battle Area").GetComponent<Canvas> ();
 		handCanvas = player.transform.GetComponentsInChildren<Canvas>().First (x => x.gameObject.name == "Hand Canvas");
+		mainCanvas = player.transform.GetComponentsInChildren<Canvas>().First (x => x.gameObject.name == "Main Canvas");
 		battleArea.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Hand Button").onClick.AddListener(() => { player.ArrangeHand(0); });
 		battleArea.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "View Hand Button").onClick.AddListener(() => { Manager.ChangeCameras("Hand"); });
 		handCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Return To Game Button").onClick.AddListener(() => { Manager.ChangeCameras("Main"); });
@@ -218,15 +219,24 @@ public class Manager : Photon.MonoBehaviour {
 			mainCamera.enabled = true;
 			battleCamera.enabled = false;
 			handCamera.enabled = false;
+			battleArea.enabled = false;
+			handCanvas.enabled = false;
+			mainCanvas.enabled = true;
 			returnToGame.onClick.RemoveAllListeners();
 			returnToGame.onClick.AddListener(() => { Manager.ChangeCameras("Main"); });
 		} else if (camera.Equals("Battle")) {
 			mainCamera.enabled = false;
 			battleCamera.enabled = true;
 			handCamera.enabled = false;
+			battleArea.enabled = true;
+			handCanvas.enabled = false;
+			mainCanvas.enabled = false;
 			returnToGame.onClick.RemoveAllListeners();
 			returnToGame.onClick.AddListener(() => { Manager.ChangeCameras("Battle"); });
 		} else if (camera.Equals("Hand")) {
+			battleArea.enabled = false;
+			handCanvas.enabled = true;
+			mainCanvas.enabled = false;
 			mainCamera.enabled = false;
 			battleCamera.enabled = false;
 			handCamera.enabled = true;
