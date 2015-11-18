@@ -45,6 +45,14 @@ public class playerScript : Photon.MonoBehaviour {
 		hand = handCanvas.transform.GetComponentsInChildren<Transform>().First(x => x.gameObject.name == "Hand").gameObject;
 		deck = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Deed Deck").gameObject;
 		InitDeckAndHand();
+
+		if(photonView.isMine)
+		{
+			transform.GetComponentInChildren<Canvas>().transform.GetChild (0).GetComponent<Text>().enabled = true;
+			transform.GetComponentInChildren<Canvas>().transform.GetChild (1).GetComponent<Text>().enabled = true;
+			transform.GetComponentInChildren<Canvas>().transform.GetChild (2).GetComponent<Text>().enabled = true;
+
+		}
 	}
 
 	public Transform getPlayer() {

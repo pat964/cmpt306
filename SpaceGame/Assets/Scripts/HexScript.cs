@@ -153,20 +153,13 @@ public class HexScript : Photon.MonoBehaviour {
 	}
 
 	private void LoadHexFeatureSprite() {
-		// now global for PunRPC use --- GameObject featureSprite = (GameObject) Instantiate(Resources.Load("Prefabs/HexFeature"));
-		//SpriteRenderer spriteRenderer = featureSprite.GetComponent<SpriteRenderer>();
 		switch (hexFeature){
 		case Toolbox.HexFeature.Empty:
-			//featureSprite.transform.SetParent(transform, false); 
-			//photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/terrorlair" );
-			// Old sprite renderer code to do things -- keeping for backup temporarily
-			//featureSprite.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Sprites/terrorlair");
-			//featureSprite.transform.SetParent(transform, false); 
+
 			break;
 		case Toolbox.HexFeature.Portal:
-			//No sprite yet
-			//featureSprite.transform.SetParent(transform, false); 
-			//photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/" );
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/portal" );
 			break;
 		case Toolbox.HexFeature.MineGreen:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
