@@ -64,6 +64,7 @@ public class HexScript : Photon.MonoBehaviour {
 		}
 	}
 
+
 	void MovePlayerHere(){
 		player.MoveToHex(this);
 	}
