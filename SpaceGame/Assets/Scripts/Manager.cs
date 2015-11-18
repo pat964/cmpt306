@@ -18,10 +18,13 @@ public class Manager : Photon.MonoBehaviour {
 	private static Canvas battleArea, handCanvas;
 	private static playerScript player;
 	private static List<EnemyScript> battleEnemies = new List<EnemyScript>();
+	private static PhotonView scenePhotonView;
 
 	public Transform tileFrame;
 	// Use this for initialization
 	void Start () {
+		scenePhotonView = this.GetComponent<PhotonView>();
+
 		player = PhotonNetwork.Instantiate ("Prefabs/PlayerContainer", Vector2.zero, new Quaternion (), 0).GetComponent<playerScript>();
 		if (PhotonNetwork.isMasterClient) {
 			gameBoard = GameObject.Find ("Game Board");
@@ -180,9 +183,8 @@ public class Manager : Photon.MonoBehaviour {
 		List<GameObject> enemies = new List<GameObject>();
 		GameObject enemyStack = GameObject.Find(colourString + " Enemies");
 		GameObject discard = enemyStack.transform.FindChild("Discard Pile").gameObject;
-//		photonView.RPC("Parenting", PhotonTargets.AllBuffered, discard.GetPhotonView().viewID, null);
+		scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, discard.GetPhotonView().viewID, null);
 
-		discard.transform.SetParent(null);
 		for(int i = 0; i < discard.transform.childCount; i++){
 			enemies.Add(discard.transform.GetChild(i).gameObject);
 		}
@@ -193,9 +195,10 @@ public class Manager : Photon.MonoBehaviour {
 		enemyStack.transform.DetachChildren();
 		Toolbox.Shuffle(enemies);
 		foreach(GameObject enemy in enemies){
-			enemy.transform.SetParent(enemyStack.transform);
+			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.GetPhotonView().viewID, enemyStack.GetPhotonView().viewID);
+
 		}
-		discard.transform.SetParent(enemyStack.transform);
+		scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, discard.GetPhotonView().viewID, enemyStack.GetPhotonView().viewID);
 	}
 
 	public static void ChangeCameras (string camera)
