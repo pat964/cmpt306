@@ -221,7 +221,7 @@ public class HexScript : Photon.MonoBehaviour {
 			break;
 		case Toolbox.HexFeature.CityBlue:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
-			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/bluebattery" );
+			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/bluecity" );
 			break;
 		case Toolbox.HexFeature.CityGreen:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
@@ -237,6 +237,7 @@ public class HexScript : Photon.MonoBehaviour {
 			break;
 
 		default:
+			Destroy(featureSprite);
 			break;
 		}
 	}
