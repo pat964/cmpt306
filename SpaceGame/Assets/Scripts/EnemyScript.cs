@@ -23,6 +23,7 @@ public class EnemyScript : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myLabels = new List<GameObject>();
+//		enemySprite = PhotonNetwork.Instantiate("Prefabs/EnemyColour", Vector2.zero, new Quaternion(), 0);
 		enemySprite = (GameObject) Instantiate(Resources.Load("Prefabs/EnemyColour"));
 		LoadEnemySprite();
 
