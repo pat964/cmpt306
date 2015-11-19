@@ -3,7 +3,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 
 
-// Made following photon demo
+// Made following photon demo so some similarities may exist
 public class NetworkManager : MonoBehaviour {
 	
 	private const string VERSION = "v0.0.1";

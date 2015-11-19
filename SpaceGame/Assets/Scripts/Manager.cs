@@ -677,8 +677,10 @@ public class Manager : Photon.MonoBehaviour {
 		} else {
 			Debug.Log(enemy.transform.position);
 			Debug.Log(enemy.homeHex.transform.position);
+			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, enemy.homeHex.gameObject.GetPhotonView().viewID, false);
 
 			enemy.transform.position = enemy.homeHex.transform.position;
+
 		}
 	}
 
