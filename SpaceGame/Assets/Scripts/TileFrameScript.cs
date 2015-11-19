@@ -57,12 +57,17 @@ public class TileFrameScript : Photon.MonoBehaviour {
 		if (tileDeck.childCount > 0) {
 			player.moves -= 2;
 			player.UpdateLabels();
-			tileDeck.GetChild(0).position = transform.position;
-			tileDeck.GetChild(0).rotation = transform.rotation;
+			photonView.RPC("Reposition", PhotonTargets.All, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, transform.position, transform.rotation);
 			tileDeck.GetChild(0).gameObject.GetComponent<TileScript>().SetEnemies();
-			photonView.RPC("Parenting", PhotonTargets.AllBuffered, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
+			photonView.RPC("Parenting", PhotonTargets.All, tileDeck.GetChild(0).gameObject.GetPhotonView().viewID, gameBoard.GetPhotonView().viewID);
 			photonView.RPC("Destroy", PhotonTargets.MasterClient, gameObject.GetPhotonView().viewID);
 		}
+	}
+
+	[PunRPC] // adds the child to the parent across the whole network
+	void Reposition(int target, Vector3 pos, Quaternion rot){
+		PhotonView.Find (target).transform.position = pos;
+		PhotonView.Find (target).transform.rotation = rot;
 	}
 
 	[PunRPC] // adds the child to the parent across the whole network
@@ -78,4 +83,10 @@ public class TileFrameScript : Photon.MonoBehaviour {
 		x.transform.SetParent(y.transform);
 	}
 
+	[PunRPC] // adds the child to the parent across the whole network
+	void Parenting(int child, int parent, bool worldPositionStays){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		x.transform.SetParent (y.transform, worldPositionStays);
+	}
 }
