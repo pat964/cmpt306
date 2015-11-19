@@ -24,6 +24,20 @@ public class TileScript : Photon.MonoBehaviour {
 		
 		x.transform.SetParent(y.transform, worldPositionStays);
 	}
+
+	[PunRPC] // adds the enemy to the hex across the whole network
+	void AddEnemy(int hex, int newEnemy){
+		HexScript h = PhotonView.Find (hex).transform.GetComponent<HexScript>();
+		EnemyScript e = PhotonView.Find (newEnemy).transform.GetComponent<EnemyScript>();
+		h.enemiesOnHex.Add(e);
+	}
+
+	[PunRPC] // adds the home to the hex across the whole network
+	void AddHome(int hex, int newEnemy){
+		HexScript h = PhotonView.Find (hex).transform.GetComponent<HexScript>();
+		EnemyScript e = PhotonView.Find (newEnemy).transform.GetComponent<EnemyScript>();
+		e.homeHex = h;
+	}
 	
 	public void SetEnemies(){
 		GameObject greenPile = GameObject.Find("Green Enemies");
@@ -43,8 +57,8 @@ public class TileScript : Photon.MonoBehaviour {
 					}
 					newEnemy = greenPile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
 					newEnemy.SetFacing(true);
-					newEnemy.homeHex = hex;
-					hex.enemiesOnHex.Add(newEnemy);
+					photonView.RPC("AddHome", PhotonTargets.AllBuffered, hex.gameObject.GetPhotonView().viewID, newEnemy.gameObject.GetPhotonView().viewID);
+					photonView.RPC("AddEnemy", PhotonTargets.AllBuffered, hex.gameObject.GetPhotonView().viewID, newEnemy.gameObject.GetPhotonView().viewID);
 					photonView.RPC("Parenting", PhotonTargets.AllBuffered, greenPile.transform.GetChild(0).gameObject.GetPhotonView().viewID, hex.gameObject.GetPhotonView().viewID, false);
 					break;
 				case Toolbox.HexFeature.RampageRed:
@@ -53,8 +67,8 @@ public class TileScript : Photon.MonoBehaviour {
 					}
 					newEnemy = redPile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
 					newEnemy.SetFacing(true);
-					newEnemy.homeHex = hex;
-					hex.enemiesOnHex.Add(newEnemy);
+					photonView.RPC("AddHome", PhotonTargets.AllBuffered, hex.gameObject.GetPhotonView().viewID, newEnemy.gameObject.GetPhotonView().viewID);
+					photonView.RPC("AddEnemy", PhotonTargets.AllBuffered, hex.gameObject.GetPhotonView().viewID, newEnemy.gameObject.GetPhotonView().viewID);
 					photonView.RPC("Parenting", PhotonTargets.AllBuffered, redPile.transform.GetChild(0).gameObject.GetPhotonView().viewID, hex.gameObject.GetPhotonView().viewID, false);
 					break;
 				case Toolbox.HexFeature.Base:
@@ -62,12 +76,12 @@ public class TileScript : Photon.MonoBehaviour {
 						Manager.ShuffleEnemyStack(Toolbox.EnemyColour.Grey);
 					}
 					newEnemy = greyPile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
-					hex.enemiesOnHex.Add(newEnemy);
+					photonView.RPC("AddEnemy", PhotonTargets.AllBuffered, hex.gameObject.GetPhotonView().viewID, newEnemy.gameObject.GetPhotonView().viewID);
 					photonView.RPC("Parenting", PhotonTargets.AllBuffered, greyPile.transform.GetChild(0).gameObject.GetPhotonView().viewID, hex.gameObject.GetPhotonView().viewID, false);
 					if (Toolbox.Instance.isDay){
 						newEnemy.SetFacing(true);
 					}
-					newEnemy.homeHex = hex;
+					photonView.RPC("AddHome", PhotonTargets.AllBuffered, hex.gameObject.GetPhotonView().viewID, newEnemy.gameObject.GetPhotonView().viewID);
 					newEnemy.siteFortification = true;
 					break;
 				case Toolbox.HexFeature.DarkMatterResearch:
@@ -75,12 +89,12 @@ public class TileScript : Photon.MonoBehaviour {
 						Manager.ShuffleEnemyStack(Toolbox.EnemyColour.Purple);
 					}
 					newEnemy = purplePile.transform.GetChild(0).gameObject.GetComponent<EnemyScript>();
-					hex.enemiesOnHex.Add(newEnemy);
+					photonView.RPC("AddEnemy", PhotonTargets.AllBuffered, hex.gameObject.GetPhotonView().viewID, newEnemy.gameObject.GetPhotonView().viewID);
 					photonView.RPC("Parenting", PhotonTargets.AllBuffered, purplePile.transform.GetChild(0).gameObject.GetPhotonView().viewID, hex.gameObject.GetPhotonView().viewID, false);
 					if (Toolbox.Instance.isDay){
 						newEnemy.SetFacing(true);
 					}
-					newEnemy.homeHex = hex;
+					photonView.RPC("AddHome", PhotonTargets.AllBuffered, hex.gameObject.GetPhotonView().viewID, newEnemy.gameObject.GetPhotonView().viewID);
 					newEnemy.siteFortification = true;
 					break;
 				default:

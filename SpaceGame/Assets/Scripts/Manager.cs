@@ -94,12 +94,19 @@ public class Manager : Photon.MonoBehaviour {
 		x.transform.SetParent(y.transform);
 	}
 
-	[PunRPC] // adds the child to the parent across the whole network
+	[PunRPC] // adds the child to the parent across the whole network with worldSpaceStays
 	void Parenting(int child, int parent, bool worldSpaceStays){
 		PhotonView x = PhotonView.Find (child);
 		PhotonView y = PhotonView.Find (parent);
 		
 		x.transform.SetParent(y.transform, worldSpaceStays);
+	}
+
+	[PunRPC] // adds the enemy to the hex across the whole network
+	void RemoveEnemy(int hex, int newEnemy){
+		HexScript h = PhotonView.Find (hex).transform.GetComponent<HexScript>();
+		EnemyScript e = PhotonView.Find (newEnemy).transform.GetComponent<EnemyScript>();
+		h.enemiesOnHex.Remove(e);
 	}
 
 	private void BuildTileDeck() {
@@ -262,6 +269,7 @@ public class Manager : Photon.MonoBehaviour {
 
 	private static void SetupEnemies ()
 	{
+		Debug.Log (battleEnemies.Count);
 		float partitionWidth = battleCamera.pixelWidth / battleEnemies.Count;
 		for (int i = 0; i < battleEnemies.Count; i++){
 			battleEnemies[i].SetFacing(true);
@@ -655,7 +663,8 @@ public class Manager : Photon.MonoBehaviour {
 		if(enemy.defeated){
 			enemy.defeated = false;
 			enemy.SetFacing(false);
-			enemy.homeHex.enemiesOnHex.Remove(enemy);
+			scenePhotonView.RPC("RemoveEnemy", PhotonTargets.AllBuffered, enemy.homeHex.gameObject.GetPhotonView().viewID, enemy.gameObject.GetPhotonView().viewID);
+
 			if (enemy.homeHex.enemiesOnHex.Count == 0){
 				enemy.homeHex.isSafe = true;
 				if (enemy.homeHex.hexType == Toolbox.HexType.Garrison){
@@ -666,6 +675,9 @@ public class Manager : Photon.MonoBehaviour {
 			enemy.siteFortification = false;
 			DiscardEnemy(enemy);
 		} else {
+			Debug.Log(enemy.transform.position);
+			Debug.Log(enemy.homeHex.transform.position);
+
 			enemy.transform.position = enemy.homeHex.transform.position;
 		}
 	}
