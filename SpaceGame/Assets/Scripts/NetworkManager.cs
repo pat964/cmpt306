@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Text.RegularExpressions;
+using UnityEngine.UI;
 
 
 // Made following photon demo so some similarities may exist
