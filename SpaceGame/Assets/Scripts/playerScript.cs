@@ -7,6 +7,10 @@ using UnityEngine.UI;
 public class playerScript : Photon.MonoBehaviour {
 	private static int MAX_REP = 5;
 	private static int MIN_REP = -5;
+	public Toolbox.TurnPhase turnPhase;
+	public bool isBattling = false;
+	public Toolbox.BattlePhase battlePhase = Toolbox.BattlePhase.None;
+	public bool isRetreating = false;
 	public int armor = 2;
 	public int maxHandSize = 5;
 	public int cardsInHand = 5;
@@ -23,10 +27,11 @@ public class playerScript : Photon.MonoBehaviour {
 	public GameObject attackLabel,blockLabel;
 	private GameObject portalHex;
 	private Transform player;
-	private Canvas handCanvas, mainCanvas;
+	public Canvas handCanvas, mainCanvas;
 	private Camera handCamera, mainCamera;
 	// Use this for initialization
 	void Start () {
+		turnPhase = Toolbox.TurnPhase.Move;
 		handCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Hand Canvas");
 		mainCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Main Canvas");
 		handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera>();

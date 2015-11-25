@@ -186,11 +186,11 @@ public class Manager : Photon.MonoBehaviour {
 
 	public static void SwitchToTurnPhase(Toolbox.TurnPhase phase){
 		if (phase == Toolbox.TurnPhase.Move){
-			//stuff
+			player.turnPhase = Toolbox.TurnPhase.Move;
 		} else if (phase == Toolbox.TurnPhase.Action){
-			//stuff
+			player.turnPhase = Toolbox.TurnPhase.Action;
 		} else if (phase == Toolbox.TurnPhase.End){
-			//stuff
+			player.turnPhase = Toolbox.TurnPhase.End;
 		}
 	}
 
@@ -257,10 +257,11 @@ public class Manager : Photon.MonoBehaviour {
 	public static void InitiateBattle (List<EnemyScript> enemies)
 	{
 		// TODO: Go through battle, and add info popups
+		SwitchToTurnPhase(Toolbox.TurnPhase.Action);
 		battleEnemies.InsertRange(0, enemies);
 		Manager.ChangeCameras("Battle");
 		player.SetBattleUI(true);
-		Toolbox.Instance.isBattling = true;
+		player.isBattling = true;
 		player.attacks = Enumerable.Repeat(0, 4).ToArray();
 		player.blocks = Enumerable.Repeat(0, 4).ToArray();
 		SetupEnemies();
@@ -360,6 +361,7 @@ public class Manager : Photon.MonoBehaviour {
 	}
 
 	private static void SetUpRangedPhase () {
+		player.battlePhase = Toolbox.BattlePhase.Ranged;
 		GameObject.Find("Battle Phase Label").GetComponent<Text>().text = "Phase: Ranged Attack";
 
 		//Init Attack Button
@@ -381,6 +383,7 @@ public class Manager : Photon.MonoBehaviour {
 	}
 	
 	private static void SetUpBlockPhase() {
+		player.battlePhase = Toolbox.BattlePhase.Block;
 		GameObject.Find("Battle Phase Label").GetComponent<Text>().text = "Phase: Block";
 
 		//innactive enemy toggle, and active attack toggles
@@ -408,6 +411,7 @@ public class Manager : Photon.MonoBehaviour {
 	}
 
 	private static void SetUpAttackPhase() {
+		player.battlePhase = Toolbox.BattlePhase.Attack;
 		GameObject.Find("Battle Phase Label").GetComponent<Text>().text = "Phase: Attack";
 		
 		//active all undefeated enemy toggles
@@ -433,6 +437,7 @@ public class Manager : Photon.MonoBehaviour {
 
 	private static void SetUpEndPhase ()
 	{
+		player.battlePhase = Toolbox.BattlePhase.None;
 		//Change label and add summary
 		GameObject.Find("Battle Phase Label").GetComponent<Text>().text = "Phase: Battle Finished";
 		Text summaryLabel = ((GameObject)Instantiate(Resources.Load("Prefabs/Label"))).GetComponent<Text>();
@@ -442,7 +447,7 @@ public class Manager : Photon.MonoBehaviour {
 		if (battleEnemies.All(x => x.defeated)){
 			summaryLabel.text = "Victory! All Enemies Defeated!";
 		} else {
-			Toolbox.Instance.isRetreating = true;
+			player.isRetreating = true;
 			int defeatedCount = 0;
 			foreach (EnemyScript enemy in battleEnemies){
 				if (enemy.defeated){
@@ -630,13 +635,14 @@ public class Manager : Photon.MonoBehaviour {
 		battleEnemies = new List<EnemyScript>();
 
 		//if player is retreating and on a safe space, end phase, else must retreat first
-		if (Toolbox.Instance.isRetreating){
+		if (player.isRetreating){
 			if(player.onHex.isSafe){
-				Toolbox.Instance.isRetreating = false;
-				Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End);
+				player.isRetreating = false;
 			}
 		}
-
+		Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End);
+		player.SetBattleUI(false);
+		player.isBattling = false;
 		//return camera to board
 		ChangeCameras ("Main");
 	}
@@ -734,8 +740,8 @@ public class Toolbox : Singleton<Toolbox> {
 	public enum TurnPhase{Move, Action, End};
 	public enum CardType{Action, DMD, Artifact, Wound};
 	public enum ActionType{Move, Influence, Combat, Heal, Special, Action};
-	public enum BasicAction{Influence, Move, FireAttack, IceAttack, ColdFireAttack, FireBlock,
-						    IceBlock, ColdFireBlock, Heal, ReduceAttack};
+	public enum BasicAction{Influence, Move, RangedAttack, Attack, Block, Heal, ReduceAttack};
+	public enum BattlePhase{Ranged, Block, Attack, None};
 	public enum CardColour{Red, Blue, Green, White, Artifact, Wound};
 	public enum TileType{Green, Brown, City};
 	public enum TerrainType{Plains, Hills, Forest, Desert, Mountains, Lake, Swamp, Wasteland}; // CHANGED
@@ -761,9 +767,6 @@ public class Toolbox : Singleton<Toolbox> {
 		public Text label;
 		public Toggle myToggle;
 	};
-
-	public bool isBattling = false;
-	public bool isRetreating = false;
 	public bool isDay = true;
 	
 	public Language language = new Language();
