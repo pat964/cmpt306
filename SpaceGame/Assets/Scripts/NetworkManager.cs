@@ -8,10 +8,12 @@ using UnityEngine.UI;
 public class NetworkManager : MonoBehaviour {
 	
 	private const string VERSION = "v0.0.1";
-	public string roomName = "Roomname"; // Default room name
+	public string roomName = "Room name"; // Default room name
+	public string playerName = "Player name"; // Default room name
 	public string roomSize = "1"; // Default room size
 	private bool offline; // true if playing offline, false otherwise
-	
+
+	public Text statusLabel;
 	public Vector2 widthAndHeight = new Vector2(600, 400); // menu size
 	private Vector2 scrollPos = Vector2.zero; 
 	private RoomInfo[] roomsList; // list of rooms
@@ -60,13 +62,8 @@ public class NetworkManager : MonoBehaviour {
 		GUILayout.BeginHorizontal();
 		GUILayout.Space(20);
 		GUILayout.Label("Player name:", GUILayout.Width(100)); 
-		PhotonNetwork.playerName = GUILayout.TextField(PhotonNetwork.playerName, 25, GUILayout.Width(292)); 
+		playerName = GUILayout.TextField( playerName, 25, GUILayout.Width(292)); 
 		GUILayout.Space(45);
-		if (GUI.changed)
-		{
-			// Save name
-			PlayerPrefs.SetString("playerName", PhotonNetwork.playerName); // TODO - Do something with this
-		}
 
 		// play offline
 		offline = GUILayout.Toggle (offline, "    Play offline");
@@ -88,12 +85,21 @@ public class NetworkManager : MonoBehaviour {
 		{
 			if (offline) {
 				PhotonNetwork.Disconnect ();
-
 				PhotonNetwork.offlineMode = true;
 				PhotonNetwork.CreateRoom("Offline");
 			}
 			else {
-				PhotonNetwork.CreateRoom(this.roomName, new RoomOptions() {maxPlayers = byte.Parse(roomSize)}, null);
+				if (playerName.Equals("")) {
+					statusLabel.text = "Please enter a player name";
+				} 
+				else if (this.roomName.Equals("")) {
+					statusLabel.text = "Please enter a room name";
+				}
+				else {
+					PhotonNetwork.playerName = playerName; 
+					PlayerPrefs.SetString("playerName", playerName); 
+					PhotonNetwork.CreateRoom(this.roomName, new RoomOptions() {maxPlayers = byte.Parse(roomSize)}, null);
+				}
 			}
 		}
 		GUILayout.Space(15);
@@ -108,7 +114,14 @@ public class NetworkManager : MonoBehaviour {
 		GUILayout.FlexibleSpace();
 		if (PhotonNetwork.GetRoomList ().Length > 0) {	
 			if (GUILayout.Button ("Join Random", GUILayout.Width (125))) {
-				PhotonNetwork.JoinRandomRoom ();
+				if (playerName.Equals("")) {
+					statusLabel.text = "Please enter a player name";
+				} 
+				else {
+					PhotonNetwork.playerName = playerName; 
+					PlayerPrefs.SetString("playerName", playerName); 
+					PhotonNetwork.JoinRandomRoom ();
+				}
 			}
 		}
 		GUILayout.Space(15);
@@ -138,7 +151,14 @@ public class NetworkManager : MonoBehaviour {
 				GUILayout.Label(roomInfo.name + " " + roomInfo.playerCount + "/" + roomInfo.maxPlayers);
 				if (GUILayout.Button("Join", GUILayout.Width(125)))
 				{
-					PhotonNetwork.JoinRoom(roomInfo.name);
+					if (playerName.Equals("")) {
+						statusLabel.text = "Please enter a player name";
+					} 
+					else {
+						PhotonNetwork.playerName = playerName; 
+						PlayerPrefs.SetString("playerName", playerName); 
+						PhotonNetwork.JoinRoom(roomInfo.name);
+					}
 				}
 				GUILayout.Space(15);
 				GUILayout.EndHorizontal();
@@ -168,23 +188,23 @@ public class NetworkManager : MonoBehaviour {
 		}
 	}
 
-	// error stuff
-	// TODO - labels not appearing
+	// Error stuff
 	public void OnPhotonCreateRoomFailed()
 	{
+		statusLabel.text = "Error: Can't create room. Try another room name.";
 		GUILayout.Label("Error: Can't create room. Try another room name.");
 		Debug.Log("OnPhotonCreateRoomFailed got called.");
 	}
 	
 	public void OnPhotonJoinRoomFailed(object[] cause)
 	{
-		GUILayout.Label("Error: Can't join room (room closed or full). " + cause[1]);
+		statusLabel.text = "Error: Can't join room (room closed or full). " + cause[1] + ".";
 		Debug.Log("OnPhotonJoinRoomFailed got called.");
 	}
 	
 	public void OnPhotonRandomJoinFailed()
 	{
-		GUILayout.Label("Error: Can't join random room (none found).");
+		statusLabel.text = "Error: Can't join random room (none found).";
 		Debug.Log("OnPhotonRandomJoinFailed got called.");
 	}
 	
