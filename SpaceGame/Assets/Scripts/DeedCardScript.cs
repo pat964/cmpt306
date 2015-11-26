@@ -113,8 +113,7 @@ public class DeedCardScript : MonoBehaviour {
 		sidewaysActions.Add(Toolbox.BasicAction.Block);
 		sidewaysActions.Add(Toolbox.BasicAction.Influence);
 		sidewaysActions.Add(Toolbox.BasicAction.Move);
-		firstButton.onClick.AddListener(() => createActionMenu(
-			new CardAction(sidewaysActions, myAttackVal:1, myBlockVal:1, myInfluenceVal:1, myMoveVal:1)));
+		firstButton.onClick.AddListener(() => createActionMenu(new CardAction(sidewaysActions, myAttackVal:1, myBlockVal:1, myInfluenceVal:1, myMoveVal:1, myAttackColour:Toolbox.AttackType.Physical, myBlockColour:Toolbox.AttackType.Physical)));
 		secondButton.onClick.AddListener(() => createActionMenu(topAction));
 		thirdButton.onClick.AddListener(() => createActionMenu(bottomAction));
 		foreach(Button button in buttons){
@@ -165,15 +164,93 @@ public class DeedCardScript : MonoBehaviour {
 			break;
 		}
 		GameObject actionsMenu;
+
 		if(pairs.Count == 0){
 			actionsMenu = (GameObject) Instantiate(Resources.Load("Prefabs/OneButtonModal"));
-			actionsMenu.transform.GetComponentInChildren<Text>().text = "No actions are available at this time";
 			actionsMenu.transform.GetComponentInChildren<Button>().onClick.AddListener(() => {Destroy (actionsMenu);});
 			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
+			actionsMenu.transform.GetComponentInChildren<Text>().text = "No actions available at this time";
 			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
 			firstButton.GetComponentInChildren<Text>().text = "Exit";
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
+		} else if (pairs.Count == 1) {
+			actionsMenu = (GameObject) Instantiate(Resources.Load("Prefabs/OneButtonModal"));
+			actionsMenu.transform.GetComponentInChildren<Button>().onClick.AddListener(() => {Destroy (actionsMenu);});
+			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
+			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action";
+			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
+			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
+			ApplyActionToButton(firstButton, pairs[0]);
+			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
+		} else if (pairs.Count == 2) {
+			actionsMenu = (GameObject) Instantiate(Resources.Load("Prefabs/TwoButtonModal"));
+			actionsMenu.transform.GetComponentInChildren<Button>().onClick.AddListener(() => {Destroy (actionsMenu);});
+			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
+			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action";
+			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
+			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
+			ApplyActionToButton(firstButton, pairs[0]);
+			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
+			Button secondButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
+			secondButton.GetComponentInChildren<Text>().text = pairs[1].action.ToString() + " " + pairs[1].val.ToString();
+			ApplyActionToButton(secondButton, pairs[1]);
+			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
+		} else if (pairs.Count == 3) {
+			actionsMenu = (GameObject) Instantiate(Resources.Load("Prefabs/ThreeButtonModal"));
+			actionsMenu.transform.GetComponentInChildren<Button>().onClick.AddListener(() => {Destroy (actionsMenu);});
+			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
+			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action";
+			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
+			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
+			ApplyActionToButton(firstButton, pairs[0]);
+			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
+			Button secondButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
+			secondButton.GetComponentInChildren<Text>().text = pairs[1].action.ToString() + " " + pairs[1].val.ToString();
+			ApplyActionToButton(secondButton, pairs[1]);
+			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
+			Button thirdButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Third Button");
+			thirdButton.GetComponentInChildren<Text>().text = pairs[2].action.ToString() + " " + pairs[2].val.ToString();
+			ApplyActionToButton(thirdButton, pairs[2]);
+			thirdButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 		}
+	}
+
+	private void ApplyActionToButton(Button button, ActionValPair pair){
+		//apply appropriate action
+		switch (pair.action) {
+		case Toolbox.BasicAction.Move:
+			button.onClick.AddListener(() => {
+				player.moves += pair.val;
+				player.UpdateLabels();
+			});
+			break;
+		case Toolbox.BasicAction.Influence:
+			button.onClick.AddListener(() => {
+				player.influence += pair.val;
+				player.UpdateLabels();
+			});
+			break;
+		case Toolbox.BasicAction.Heal:
+			button.onClick.AddListener(() => {
+				player.DoHeal(pair.val);
+			});
+			break;
+		case Toolbox.BasicAction.Block:
+			button.onClick.AddListener(() => {
+				player.AddBlock(pair.val, pair.colour);
+			});
+			break;
+		case Toolbox.BasicAction.RangedAttack:
+		case Toolbox.BasicAction.Attack:
+			button.onClick.AddListener(() => {
+				player.AddAttack(pair.val, pair.colour);
+			});
+			break;
+		default:
+			break;
+		}
+		//put card in discard pile
+		button.onClick.AddListener(() => player.DiscardCard(this));
 	}
 }
 

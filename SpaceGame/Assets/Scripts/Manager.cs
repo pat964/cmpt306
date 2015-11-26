@@ -188,6 +188,8 @@ public class Manager : Photon.MonoBehaviour {
 		if (phase == Toolbox.TurnPhase.Move){
 			player.turnPhase = Toolbox.TurnPhase.Move;
 		} else if (phase == Toolbox.TurnPhase.Action){
+			player.moves = 0;
+			player.UpdateLabels();
 			player.turnPhase = Toolbox.TurnPhase.Action;
 		} else if (phase == Toolbox.TurnPhase.End){
 			player.turnPhase = Toolbox.TurnPhase.End;
@@ -481,10 +483,11 @@ public class Manager : Photon.MonoBehaviour {
 			return;
 		}
 		foreach(EnemyScript enemy in selectedEnemies){
+			/*remove fortification for now
 			if (isRanged && 
 			    (enemy.specials.Contains(Toolbox.EnemySpecial.Fortified) || enemy.siteFortification) ) {
 				return;
-			}
+			}*/
 			armorSum += enemy.armor;
 		}
 
@@ -582,6 +585,7 @@ public class Manager : Photon.MonoBehaviour {
 		}
 		if (blocked){
 			player.blocks = Enumerable.Repeat(0, 4).ToArray();
+			player.UpdateLabels();
 			selectedAttack.blocked = true;
 			selectedAttack.label.text = "Blocked";
 			selectedAttack.myToggle.isOn = false;

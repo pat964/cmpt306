@@ -17,13 +17,14 @@ public class playerScript : Photon.MonoBehaviour {
 	public int reputation = 0;
 	public int fame = 0;
 	public int moves = 0;
+	public int influence = 0;
 	public int handIndex = 0;
 	// Physical, Ice, Fire, Cold Fire
 	public int[] attacks = Enumerable.Repeat(0, 4).ToArray();
 	public int[] blocks = Enumerable.Repeat(0, 4).ToArray();
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
-	private GameObject hand, deck;
+	private GameObject hand, deck, discardPile;
 	public GameObject attackLabel,blockLabel;
 	private GameObject portalHex;
 	private Transform player;
@@ -54,6 +55,7 @@ public class playerScript : Photon.MonoBehaviour {
 		blockLabel.SetActive(false);
 		hand = handCanvas.transform.GetComponentsInChildren<Transform>().First(x => x.gameObject.name == "Hand").gameObject;
 		deck = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Deed Deck").gameObject;
+		discardPile = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Discard Pile").gameObject;
 		InitDeckAndHand();
 		ArrangeHand(0);
 
@@ -219,6 +221,56 @@ public class playerScript : Photon.MonoBehaviour {
 			card.gameObject.SetActive(true);
 			card.localPosition = new Vector2(j * card.GetComponentInChildren<Image>().sprite.bounds.size.x * card.GetComponentInChildren<RectTransform>().localScale.x * 2, 0);
 		}
+	}
+
+	public void DiscardCard(DeedCardScript card){
+		card.transform.SetParent(discardPile.transform, false);
+		cardsInHand--;
+		ArrangeHand(0);
+	}
+
+	public void AddAttack(int val, Toolbox.AttackType type){
+		switch (type) {
+		case Toolbox.AttackType.Physical:
+			attacks[0] += val;
+			break;
+		case Toolbox.AttackType.Ice:
+			attacks[1] += val;
+			break;
+		case Toolbox.AttackType.Fire:
+			attacks[2] += val;
+			break;
+		case Toolbox.AttackType.ColdFire:
+			attacks[3] += val;
+			break;
+		default:
+			break;
+		}
+		UpdateLabels();
+	}
+	
+	public void AddBlock(int val, Toolbox.AttackType type){
+		switch (type) {
+		case Toolbox.AttackType.Physical:
+			blocks[0] += val;
+			break;
+		case Toolbox.AttackType.Ice:
+			blocks[1] += val;
+			break;
+		case Toolbox.AttackType.Fire:
+			blocks[2] += val;
+			break;
+		case Toolbox.AttackType.ColdFire:
+			blocks[3] += val;
+			break;
+		default:
+			break;
+		}
+		UpdateLabels();
+	}
+
+	public void DoHeal(int val){
+
 	}
 
 	[PunRPC] // adds the child to the parent across the whole network
