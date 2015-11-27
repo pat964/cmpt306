@@ -186,13 +186,23 @@ public class Manager : Photon.MonoBehaviour {
 
 	public static void SwitchToTurnPhase(Toolbox.TurnPhase phase){
 		if (phase == Toolbox.TurnPhase.Move){
+			player.ShowMoveButton(true);
+			player.ShowActionButton(false);
 			player.turnPhase = Toolbox.TurnPhase.Move;
 		} else if (phase == Toolbox.TurnPhase.Action){
+			player.ShowMoveButton(false);
+			player.ShowActionButton(true);
 			player.moves = 0;
 			player.UpdateLabels();
 			player.turnPhase = Toolbox.TurnPhase.Action;
 		} else if (phase == Toolbox.TurnPhase.End){
+			player.ShowActionButton(false);
 			player.turnPhase = Toolbox.TurnPhase.End;
+			if(player.canDrawCards){
+				player.DrawCards();
+				player.timer = playerScript.TURN_TIMER;
+			}
+			SwitchToTurnPhase(Toolbox.TurnPhase.Move);
 		}
 	}
 
@@ -260,6 +270,7 @@ public class Manager : Photon.MonoBehaviour {
 	{
 		// TODO: Go through battle, and add info popups
 		SwitchToTurnPhase(Toolbox.TurnPhase.Action);
+		player.ShowActionButton(false);
 		battleEnemies.InsertRange(0, enemies);
 		Manager.ChangeCameras("Battle");
 		player.SetBattleUI(true);
@@ -642,9 +653,11 @@ public class Manager : Photon.MonoBehaviour {
 		if (player.isRetreating){
 			if(player.onHex.isSafe){
 				player.isRetreating = false;
+				Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End);
 			}
+		} else {
+			Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End);
 		}
-		Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End);
 		player.SetBattleUI(false);
 		player.isBattling = false;
 		//return camera to board

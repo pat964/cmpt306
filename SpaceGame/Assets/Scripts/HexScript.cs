@@ -70,17 +70,29 @@ public class HexScript : Photon.MonoBehaviour {
 	}
 
 	void HexClicked() {
-		if (playerAdjacent && player.moves >= HexScript.TerrainTypeToVal(terrainType) &&
-		    (hexType != Toolbox.HexType.Rampage || enemiesOnHex.Count == 0)) {
-			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		if (!player.isRetreating){
+			if (playerAdjacent && player.moves >= HexScript.TerrainTypeToVal(terrainType) &&
+			    (hexType != Toolbox.HexType.Rampage || enemiesOnHex.Count == 0)) {
+				Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-			if(GetComponent<Collider2D>().OverlapPoint(mousePosition))
-			{
-				player.moves -= HexScript.TerrainTypeToVal(terrainType);
-				player.UpdateLabels();
-				MovePlayerHere();
+				if(GetComponent<Collider2D>().OverlapPoint(mousePosition))
+				{
+					player.moves -= HexScript.TerrainTypeToVal(terrainType);
+					player.UpdateLabels();
+					MovePlayerHere();
+				}
+
 			}
-
+		} else {
+			if (playerAdjacent && isSafe) {
+				Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				
+				if(GetComponent<Collider2D>().OverlapPoint(mousePosition))
+				{
+					MovePlayerHere();
+				}
+				
+			}
 		}
 	}
 

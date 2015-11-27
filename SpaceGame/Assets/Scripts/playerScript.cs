@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class playerScript : Photon.MonoBehaviour {
 	private static int MAX_REP = 5;
 	private static int MIN_REP = -5;
+	public static float TURN_TIMER = 30.0f;
+	public float timer = TURN_TIMER;
 	public Toolbox.TurnPhase turnPhase;
 	public bool isBattling = false;
 	public Toolbox.BattlePhase battlePhase = Toolbox.BattlePhase.None;
@@ -25,11 +27,13 @@ public class playerScript : Photon.MonoBehaviour {
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
 	private GameObject hand, deck, discardPile;
-	public GameObject attackLabel,blockLabel;
+	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel;
 	private GameObject portalHex;
 	private Transform player;
 	public Canvas handCanvas, mainCanvas;
 	private Camera handCamera, mainCamera;
+	public Button endMovesButton, endActionButton;
+	public bool canDrawCards = false;
 	// Use this for initialization
 	void Start () {
 		turnPhase = Toolbox.TurnPhase.Move;
@@ -49,8 +53,10 @@ public class playerScript : Photon.MonoBehaviour {
 		portalHex = GameObject.Find("Green Tile 0").transform.GetChild(6).gameObject;
 		onHex = portalHex.GetComponent<HexScript>();
 		player.position = portalHex.transform.position;
-		attackLabel = GetComponentInChildren<Canvas>().transform.GetChild (3).gameObject;
-		blockLabel = GetComponentInChildren<Canvas>().transform.GetChild (4).gameObject;
+		attackLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Attack Label").gameObject;
+		blockLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Block Label").gameObject;
+		timerLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Timer").gameObject;
+		retreatLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Retreat Label").gameObject;
 		attackLabel.SetActive(false);
 		blockLabel.SetActive(false);
 		hand = handCanvas.transform.GetComponentsInChildren<Transform>().First(x => x.gameObject.name == "Hand").gameObject;
@@ -58,7 +64,11 @@ public class playerScript : Photon.MonoBehaviour {
 		discardPile = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Discard Pile").gameObject;
 		InitDeckAndHand();
 		ArrangeHand(0);
-
+		endMovesButton = mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "End Move Button");
+		endMovesButton.onClick.AddListener(() => Manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action));
+		endActionButton = mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "End Action Button");
+		endActionButton.onClick.AddListener(() => Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End));
+		ShowActionButton(false);
 		if(photonView.isMine)
 		{
 			transform.GetComponentInChildren<Canvas>().transform.GetChild (0).GetComponent<Text>().enabled = true;
@@ -74,6 +84,19 @@ public class playerScript : Photon.MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (timer >= 0){
+			canDrawCards = false;
+			timer -= Time.deltaTime;
+			timerLabel.transform.GetComponentInChildren<Text>().text = "Time Until Next Draw: " + timer.ToString("n0") + "s";
+		} else {
+			canDrawCards = true;
+			timerLabel.transform.GetComponentInChildren<Text>().text = "You Will Draw After Your Turn!";
+		}
+		if(isRetreating){
+			retreatLabel.gameObject.SetActive(true);
+		} else {
+			retreatLabel.gameObject.SetActive(false);
+		}
 	}
 
 	public void IncreaseFame(int amount){
@@ -110,6 +133,7 @@ public class playerScript : Photon.MonoBehaviour {
 	public void MoveToHex(HexScript hex){
 		List<HexScript> oldAdjacentRampagers = GetAdjacentRampagers();
 		player.position = hex.transform.position;
+		onHex = hex;
 		List<HexScript> newAdjacentRampagers = GetAdjacentRampagers();
 		if(oldAdjacentRampagers.Count > 0 && newAdjacentRampagers.Count > 0){
 			foreach (HexScript rampager in oldAdjacentRampagers.Intersect(newAdjacentRampagers)){
@@ -118,28 +142,18 @@ public class playerScript : Photon.MonoBehaviour {
 				}
 			}
 		}
-		if (hex.hexType == Toolbox.HexType.Garrison){
-			//do garrison battle
-			Manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action);
-			DoGarrisonBattle(hex);
-		} else if (hex.hexType == Toolbox.HexType.Adventure){
-			Manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action);
-			if (rampagingEnemies.Count > 0){
-				DoBattle(rampagingEnemies);
+		if(!isRetreating){
+			if (hex.hexType == Toolbox.HexType.Garrison){
+				//do garrison battle
+				DoGarrisonBattle(hex);
 			} else {
-				//prompt adventure
+				if (rampagingEnemies.Count > 0){
+					DoBattle(rampagingEnemies);
+				}
 			}
-		} else if (hex.hexType == Toolbox.HexType.Interaction){
-			Manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action);
-			if (rampagingEnemies.Count > 0){
-				DoBattle(rampagingEnemies);
-			} else {
-				//prompt interaction
-			}
-		} else if (hex.hexType == Toolbox.HexType.Empty){
-			if (rampagingEnemies.Count > 0){
-				DoBattle(rampagingEnemies);
-			}
+		} else {
+			isRetreating = false;
+			Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End);
 		}
 		rampagingEnemies.Clear();
 	}
@@ -270,14 +284,50 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public void DoHeal(int val){
+		if (val > 0){
+			if (hand.GetComponentsInChildren<DeedCardScript>().Any (x => x.cardType == Toolbox.CardType.Wound)){
+				GameObject wound = hand.GetComponentsInChildren<DeedCardScript>().First(x => x.cardType == Toolbox.CardType.Wound).gameObject;
+				wound.transform.SetParent(GameObject.Find("Wound Deck").transform, false);
+				DoHeal(val - 1);
+			} else {
+				ArrangeHand(0);
+			}
+		} else {
+			ArrangeHand(0);
+		}
+	}
 
+	public void DrawCards(){
+		while (cardsInHand < maxHandSize){
+			if(deck.transform.childCount > 0){
+				//draw card
+				AddCardToHand(deck.transform.GetChild(0).GetComponent<DeedCardScript>());
+			} else if (discardPile.transform.childCount > 0) {
+				//shuffle up discard pile to form new deck
+				List<GameObject> cards = new List<GameObject>();
+				while (discardPile.transform.childCount > 0){
+					discardPile.transform.GetChild(0).SetParent(deck.transform, false);
+				}
+				ShuffleDeck();
+			} else {
+				//no more cards, probably will never happen... just do nothing
+				break;
+			}
+		}
+	}
+
+	public void ShowMoveButton(bool show) {
+		endMovesButton.gameObject.SetActive(show);
+	}
+	
+	public void ShowActionButton(bool show) {
+		endActionButton.gameObject.SetActive(show);
 	}
 
 	[PunRPC] // adds the child to the parent across the whole network
 	void Parenting(int child, int parent){
 		PhotonView x = PhotonView.Find (child);
 		PhotonView y = PhotonView.Find (parent);
-		
 		x.transform.SetParent(y.transform);
 	}
 
