@@ -39,7 +39,7 @@ public class LoadingManager : Photon.MonoBehaviour {
 
 		// Wait until all players have joined to start, or until player presses start button
 		if ( start || (PhotonNetwork.room.playerCount == PhotonNetwork.room.maxPlayers) ) {
-			PhotonNetwork.LoadLevel (2);
+			PhotonNetwork.LoadLevel (3);
 		} 
 
 		rBody.MovePosition (new Vector2 (rBody.position.x - moveLength, rBody.position.y));

@@ -30,13 +30,14 @@ public class playerScript : Photon.MonoBehaviour {
 	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel;
 	private GameObject portalHex;
 	private Transform player;
-	public Canvas handCanvas, mainCanvas;
+	public Canvas handCanvas, mainCanvas, overlayCanvas;
 	private Camera handCamera, mainCamera;
 	public Button endMovesButton, endActionButton, interactButton;
 	public bool canDrawCards = false;
 	// Use this for initialization
 	void Start () {
 		turnPhase = Toolbox.TurnPhase.Move;
+		overlayCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Common Area Overlay");
 		handCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Hand Canvas");
 		mainCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Main Canvas");
 		handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera>();
@@ -74,10 +75,8 @@ public class playerScript : Photon.MonoBehaviour {
 		ShowActionButton(false);
 		if(photonView.isMine)
 		{
-			transform.GetComponentInChildren<Canvas>().transform.GetChild (0).GetComponent<Text>().enabled = true;
-			transform.GetComponentInChildren<Canvas>().transform.GetChild (1).GetComponent<Text>().enabled = true;
-			transform.GetComponentInChildren<Canvas>().transform.GetChild (2).GetComponent<Text>().enabled = true;
-
+			overlayCanvas.enabled = true;
+			photonView.RPC("DisableOverlay", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
 		}
 	}
 
@@ -243,7 +242,7 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public void DiscardCard(DeedCardScript card){
-		card.transform.SetParent(discardPile.transform, false);
+		photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, discardPile.GetPhotonView().viewID, false);
 		cardsInHand--;
 		ArrangeHand(0);
 	}
@@ -463,6 +462,7 @@ public class playerScript : Photon.MonoBehaviour {
 		
 		x.transform.SetParent(y.transform, worldPositionStays);
 	}
+<<<<<<< HEAD
 	
 	public class Interaction {
 		public int val;
@@ -472,5 +472,12 @@ public class playerScript : Photon.MonoBehaviour {
 			val = myVal;
 			type = myType;
 		}
+=======
+
+	[PunRPC]
+	void DisableOverlay(int overlay) {
+		PhotonView x = PhotonView.Find (overlay);
+		x.enabled = false;
+>>>>>>> a02afb3c7c41add06111cde6c799c6cdeecc7af2
 	}
 }
