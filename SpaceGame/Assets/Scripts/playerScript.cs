@@ -462,7 +462,12 @@ public class playerScript : Photon.MonoBehaviour {
 		
 		x.transform.SetParent(y.transform, worldPositionStays);
 	}
-<<<<<<< HEAD
+	
+	[PunRPC]
+	void DisableOverlay(int overlay) {
+		PhotonView x = PhotonView.Find (overlay);
+		x.enabled = false;
+	}
 	
 	public class Interaction {
 		public int val;
@@ -472,12 +477,5 @@ public class playerScript : Photon.MonoBehaviour {
 			val = myVal;
 			type = myType;
 		}
-=======
-
-	[PunRPC]
-	void DisableOverlay(int overlay) {
-		PhotonView x = PhotonView.Find (overlay);
-		x.enabled = false;
->>>>>>> a02afb3c7c41add06111cde6c799c6cdeecc7af2
 	}
 }

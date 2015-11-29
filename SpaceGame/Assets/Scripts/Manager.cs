@@ -197,6 +197,8 @@ public class Manager : Photon.MonoBehaviour {
 			player.UpdateLabels();
 			player.turnPhase = Toolbox.TurnPhase.Action;
 		} else if (phase == Toolbox.TurnPhase.End){
+			player.influence = 0;
+			player.UpdateLabels();
 			player.ShowActionButton(false);
 			player.turnPhase = Toolbox.TurnPhase.End;
 			player.ShowInteractionButton(false);
