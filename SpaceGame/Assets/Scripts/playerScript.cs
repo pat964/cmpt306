@@ -32,7 +32,7 @@ public class playerScript : Photon.MonoBehaviour {
 	private Transform player;
 	public Canvas handCanvas, mainCanvas;
 	private Camera handCamera, mainCamera;
-	public Button endMovesButton, endActionButton;
+	public Button endMovesButton, endActionButton, interactButton;
 	public bool canDrawCards = false;
 	// Use this for initialization
 	void Start () {
@@ -68,6 +68,9 @@ public class playerScript : Photon.MonoBehaviour {
 		endMovesButton.onClick.AddListener(() => Manager.SwitchToTurnPhase(Toolbox.TurnPhase.Action));
 		endActionButton = mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "End Action Button");
 		endActionButton.onClick.AddListener(() => Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End));
+		interactButton = mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Interaction Button");
+		interactButton.onClick.AddListener(() => PrepInteractionMenu());
+		ShowInteractionButton(false);
 		ShowActionButton(false);
 		if(photonView.isMine)
 		{
@@ -118,6 +121,8 @@ public class playerScript : Photon.MonoBehaviour {
 
 	public void UpdateLabels() {
 		transform.GetComponentInChildren<Canvas>().transform.GetChild (2).GetComponent<Text>().text = "Moves: " + moves.ToString();
+		transform.GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Influence Label").text = "Influence: " + influence.ToString();
+
 		if (attackLabel.activeSelf && blockLabel.activeSelf){
 			attackLabel.transform.GetChild(0).GetComponent<Text>().text = "P: " + attacks[0].ToString();
 			attackLabel.transform.GetChild(1).GetComponent<Text>().text = "I: " + attacks[1].ToString();
@@ -285,7 +290,7 @@ public class playerScript : Photon.MonoBehaviour {
 
 	public void DoHeal(int val){
 		if (val > 0){
-			if (hand.GetComponentsInChildren<DeedCardScript>().Any (x => x.cardType == Toolbox.CardType.Wound)){
+			if (hand.GetComponentsInChildren<DeedCardScript>(true).Any (x => x.cardType == Toolbox.CardType.Wound)){
 				GameObject wound = hand.GetComponentsInChildren<DeedCardScript>().First(x => x.cardType == Toolbox.CardType.Wound).gameObject;
 				wound.transform.SetParent(GameObject.Find("Wound Deck").transform, false);
 				DoHeal(val - 1);
@@ -323,6 +328,126 @@ public class playerScript : Photon.MonoBehaviour {
 	public void ShowActionButton(bool show) {
 		endActionButton.gameObject.SetActive(show);
 	}
+	
+	public void ShowInteractionButton(bool show) {
+		interactButton.gameObject.SetActive(show);
+	}
+
+	public void CheckForInteraction() {
+		if(onHex.hexType == Toolbox.HexType.Interaction){
+			ShowInteractionButton(true);
+		}
+	}
+
+	public void PrepInteractionMenu() {
+		List<Interaction> interactions = new List<Interaction>();
+		switch (onHex.hexFeature){
+		case (Toolbox.HexFeature.Base):
+			interactions.Add(new Interaction(7, Toolbox.InteractionType.Adv_Action));
+			break;
+		case (Toolbox.HexFeature.DarkMatterResearch):
+			interactions.Add(new Interaction(7, Toolbox.InteractionType.DMD));
+			break;
+		case (Toolbox.HexFeature.Monastary):
+			interactions.Add(new Interaction(10, Toolbox.InteractionType.Artifact));
+			interactions.Add(new Interaction(2, Toolbox.InteractionType.Heal));
+			break;
+		case (Toolbox.HexFeature.Town):
+			interactions.Add(new Interaction(10, Toolbox.InteractionType.Adv_Action));
+			interactions.Add(new Interaction(3, Toolbox.InteractionType.Heal));
+			break;
+		default:
+			break;
+		}
+		CreateInteractionMenu(interactions);
+	}
+
+
+	public void CreateInteractionMenu(List<Interaction> interactions){
+		GameObject interactionMenu;
+		if (interactions.Count == 0){
+			return;
+		} else if (interactions.Count == 1){
+			interactionMenu = (GameObject) Instantiate(Resources.Load("Prefabs/TwoButtonModal"));
+			interactionMenu.transform.GetComponentInChildren<Text>().text = "Choose Interaction";
+			interactionMenu.transform.SetParent(mainCanvas.transform, false);
+			Button firstButton = interactionMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
+			firstButton.GetComponent<RectTransform>().sizeDelta = new Vector2(190f, 30f);
+			firstButton.GetComponentInChildren<Text>().text = interactions[0].type.ToString() + " for " + interactions[0].val.ToString() + " influence";
+			ApplyInteractionToButton(firstButton, interactions[0]);
+			Button secondButton = interactionMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
+			secondButton.GetComponentInChildren<Text>().text = "Take no action";
+			secondButton.onClick.AddListener(() => {Destroy (interactionMenu);});
+		} else if (interactions.Count == 2){
+			interactionMenu = (GameObject) Instantiate(Resources.Load("Prefabs/ThreeButtonModal"));
+			interactionMenu.transform.GetComponentInChildren<Text>().text = "Choose Interaction";
+			interactionMenu.transform.SetParent(mainCanvas.transform, false);
+			Button firstButton = interactionMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
+			firstButton.GetComponent<RectTransform>().sizeDelta = new Vector2(190f, 30f);
+			firstButton.GetComponentInChildren<Text>().text = interactions[0].type.ToString() + " for " + interactions[0].val.ToString() + " influence";
+			ApplyInteractionToButton(firstButton, interactions[0]);
+			Button secondButton = interactionMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
+			secondButton.GetComponent<RectTransform>().sizeDelta = new Vector2(190f, 30f);
+			secondButton.GetComponentInChildren<Text>().text = interactions[1].type.ToString() + " for " + interactions[1].val.ToString() + " influence";
+			ApplyInteractionToButton(secondButton, interactions[1]);
+			Button thirdButton = interactionMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Third Button");
+			thirdButton.GetComponentInChildren<Text>().text = "Take no action";
+			thirdButton.onClick.AddListener(() => {Destroy (interactionMenu);});
+		}
+	}
+
+	public void ApplyInteractionToButton(Button button, Interaction interaction){
+		Transform newCard;
+			switch (interaction.type) {
+			case Toolbox.InteractionType.Adv_Action:
+				button.onClick.AddListener(() => {
+				if (interaction.val <= influence) {
+					GameObject advActionDeck = GameObject.Find ("Advanced Action Deck");
+					newCard = advActionDeck.transform.GetChild(0);
+					newCard.SetParent(hand.transform, false);
+					newCard.SetAsFirstSibling();
+					influence -= interaction.val;
+					UpdateLabels();
+				}
+				});
+				break;
+			case Toolbox.InteractionType.DMD:
+			button.onClick.AddListener(() => {
+				if (interaction.val <= influence) {
+					GameObject dmdDeck = GameObject.Find ("Dark Matter Device Deck");
+					newCard = dmdDeck.transform.GetChild(0);
+					newCard.SetParent(hand.transform, false);
+					newCard.SetAsFirstSibling();
+					influence -= interaction.val;
+					UpdateLabels();
+				}
+				});
+				break;
+			case Toolbox.InteractionType.Artifact:
+			button.onClick.AddListener(() => {
+				if (interaction.val <= influence) {
+					GameObject artifactDeck = GameObject.Find ("Artifact Deck");
+					newCard = artifactDeck.transform.GetChild(0);
+					newCard.SetParent(hand.transform, false);
+					newCard.SetAsFirstSibling();
+					influence -= interaction.val;
+					UpdateLabels();
+				}
+				});
+				break;
+			case Toolbox.InteractionType.Heal:
+				button.onClick.AddListener(() => {
+					if (interaction.val <= influence) {
+						DoHeal(1);
+						influence -= interaction.val;
+						UpdateLabels();
+					}
+				});
+				break;
+			default:
+				break;
+			}
+	}
 
 	[PunRPC] // adds the child to the parent across the whole network
 	void Parenting(int child, int parent){
@@ -337,5 +462,15 @@ public class playerScript : Photon.MonoBehaviour {
 		PhotonView y = PhotonView.Find (parent);
 		
 		x.transform.SetParent(y.transform, worldPositionStays);
+	}
+	
+	public class Interaction {
+		public int val;
+		public Toolbox.InteractionType type;
+
+		public Interaction (int myVal, Toolbox.InteractionType myType){
+			val = myVal;
+			type = myType;
+		}
 	}
 }

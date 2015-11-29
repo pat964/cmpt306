@@ -192,12 +192,14 @@ public class Manager : Photon.MonoBehaviour {
 		} else if (phase == Toolbox.TurnPhase.Action){
 			player.ShowMoveButton(false);
 			player.ShowActionButton(true);
+			player.CheckForInteraction();
 			player.moves = 0;
 			player.UpdateLabels();
 			player.turnPhase = Toolbox.TurnPhase.Action;
 		} else if (phase == Toolbox.TurnPhase.End){
 			player.ShowActionButton(false);
 			player.turnPhase = Toolbox.TurnPhase.End;
+			player.ShowInteractionButton(false);
 			if(player.canDrawCards){
 				player.DrawCards();
 				player.timer = playerScript.TURN_TIMER;
@@ -775,6 +777,7 @@ public class Toolbox : Singleton<Toolbox> {
 	public enum RuinType{Battle, Energy};
 	public enum EnergyColour{Red, Green, White, Blue, Gold, Dark};
 	public enum Reward{sevenFame, tenFame, Unit, DMD, AdvancedAction, Artifact};
+	public enum InteractionType{Heal, Adv_Action, DMD, Artifact};
 
 	[System.Serializable] 
 	public class EnemyAttack {
