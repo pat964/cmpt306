@@ -41,6 +41,7 @@ public class Manager : Photon.MonoBehaviour {
 			ShuffleAllEnemies ();
 			BuildTileDeck ();
 			BuildMapFrame ();
+			ShuffleDecks();
 		}
 	}
 	
@@ -197,6 +198,24 @@ public class Manager : Photon.MonoBehaviour {
 				player.timer = playerScript.TURN_TIMER;
 			}
 			SwitchToTurnPhase(Toolbox.TurnPhase.Move);
+		}
+	}
+
+	public static void ShuffleDecks(){
+		List<GameObject> decks = new List<GameObject>();
+		decks.Add(GameObject.Find ("Advanced Actions Deck"));
+		decks.Add (GameObject.Find ("Dark Matter Device Deck"));
+		decks.Add (GameObject.Find ("Artifact Deck"));
+		foreach(GameObject deck in decks){
+			List<GameObject> cards = new List<GameObject> ();
+			for (int i = 0; i < deck.transform.childCount; i++) {
+				cards.Add (deck.transform.GetChild (i).gameObject);
+			}
+			Toolbox.Shuffle (cards);
+			deck.transform.DetachChildren ();
+			foreach (GameObject card in cards) {
+				scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, card.GetPhotonView().viewID, deck.GetPhotonView().viewID);
+			}
 		}
 	}
 
