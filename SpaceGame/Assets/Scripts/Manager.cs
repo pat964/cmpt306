@@ -193,6 +193,7 @@ public class Manager : Photon.MonoBehaviour {
 			player.ShowMoveButton(true);
 			player.ShowActionButton(false);
 			player.turnPhase = Toolbox.TurnPhase.Move;
+			player.CheckStartingEffect();
 		} else if (phase == Toolbox.TurnPhase.Action){
 			player.ShowMoveButton(false);
 			player.ShowActionButton(true);
@@ -201,6 +202,7 @@ public class Manager : Photon.MonoBehaviour {
 			player.UpdateLabels();
 			player.turnPhase = Toolbox.TurnPhase.Action;
 		} else if (phase == Toolbox.TurnPhase.End){
+			player.CheckEndingEffect();
 			player.influence = 0;
 			player.greenEnergy = 0;
 			player.blueEnergy = 0;
@@ -214,6 +216,7 @@ public class Manager : Photon.MonoBehaviour {
 			player.ShowInteractionButton(false);
 			if(player.canDrawCards){
 				player.DrawCards();
+				player.usedGlade = false;
 				player.timer = playerScript.TURN_TIMER;
 			}
 			SwitchToTurnPhase(Toolbox.TurnPhase.Move);
@@ -756,6 +759,11 @@ public class Manager : Photon.MonoBehaviour {
 			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, discardPile.GetPhotonView().viewID, false);
 			break;
 		}
+	}
+
+	public static void GameOver(){
+		print ("Game Over!");
+		//do stuff
 	}
 }
 
