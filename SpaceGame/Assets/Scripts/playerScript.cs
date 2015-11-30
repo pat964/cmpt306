@@ -235,51 +235,59 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	private void InitDeckAndHand() {
-		ShuffleDeck();
-		for (int i = 0; i < maxHandSize; i++){
-			GameObject card = deck.transform.GetChild(0).gameObject;
-			photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, hand.gameObject.GetPhotonView().viewID, false);
+		if (photonView.isMine) {
+			ShuffleDeck ();
+			for (int i = 0; i < maxHandSize; i++) {
+				GameObject card = deck.transform.GetChild (0).gameObject;
+				photonView.RPC ("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView ().viewID, hand.gameObject.GetPhotonView ().viewID, false);
+			}
 		}
 	}
 
 	private void ShuffleDeck() {
-		List<GameObject> cards = new List<GameObject>();
-		for(int i = 0; i < deck.transform.childCount; i++){
-			cards.Add(deck.transform.GetChild(i).gameObject);
-		}
-		Toolbox.Shuffle(cards);
-		deck.transform.DetachChildren();
-		foreach(GameObject card in cards){
-			photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.GetPhotonView().viewID, deck.GetPhotonView().viewID);
+		if (photonView.isMine) {
+			List<GameObject> cards = new List<GameObject> ();
+			for (int i = 0; i < deck.transform.childCount; i++) {
+				cards.Add (deck.transform.GetChild (i).gameObject);
+			}
+			Toolbox.Shuffle (cards);
+			deck.transform.DetachChildren ();
+			foreach (GameObject card in cards) {
+				photonView.RPC ("Parenting", PhotonTargets.AllBuffered, card.GetPhotonView ().viewID, deck.GetPhotonView ().viewID);
+			}
 		}
 	}
 
 	public void ArrangeHand(int index){
-		if(index > 0){
-			if ((handIndex + 1) * 3 < cardsInHand){
-				handIndex++;
+		if (photonView.isMine) {
+			if (index > 0) {
+				if ((handIndex + 1) * 3 < cardsInHand) {
+					handIndex++;
+				}
+			} else if (index < 0) {
+				if (handIndex > 0) {
+					handIndex--;
+				}
+			} else {
+				handIndex = 0;
 			}
-		} else if (index < 0) {
-			if (handIndex > 0){
-				handIndex--;
+			foreach (DeedCardScript card in hand.transform.GetComponentsInChildren<DeedCardScript>()) {
+				card.gameObject.SetActive (false);
 			}
-		} else {
-			handIndex = 0;
-		}
-		foreach(DeedCardScript card in hand.transform.GetComponentsInChildren<DeedCardScript>()){
-			card.gameObject.SetActive(false);
-		}
-		for (int i = handIndex * 3, j = 0; i < hand.transform.childCount && j < 3; i++, j++){
-			Transform card = hand.transform.GetChild(i);
-			card.gameObject.SetActive(true);
-			card.localPosition = new Vector2(j * card.GetComponentInChildren<Image>().sprite.bounds.size.x * card.GetComponentInChildren<RectTransform>().localScale.x * 2, 0);
+			for (int i = handIndex * 3, j = 0; i < hand.transform.childCount && j < 3; i++, j++) {
+				Transform card = hand.transform.GetChild (i);
+				card.gameObject.SetActive (true);
+				card.localPosition = new Vector2 (j * card.GetComponentInChildren<Image> ().sprite.bounds.size.x * card.GetComponentInChildren<RectTransform> ().localScale.x * 2, 0);
+			}
 		}
 	}
 
 	public void DiscardCard(DeedCardScript card){
-		photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, discardPile.GetPhotonView().viewID, false);
-		cardsInHand--;
-		ArrangeHand(0);
+		if (photonView.isMine) {
+			photonView.RPC ("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView ().viewID, discardPile.GetPhotonView ().viewID, false);
+			cardsInHand--;
+			ArrangeHand (0);
+		}
 	}
 
 	public void AddAttack(int val, Toolbox.AttackType type){
@@ -323,34 +331,38 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public void DoHeal(int val){
-		if (val > 0){
-			if (hand.GetComponentsInChildren<DeedCardScript>(true).Any (x => x.cardType == Toolbox.CardType.Wound)){
-				GameObject wound = hand.GetComponentsInChildren<DeedCardScript>(true).First(x => x.cardType == Toolbox.CardType.Wound).gameObject;
-				wound.transform.SetParent(GameObject.Find("Wound Deck").transform, false);
-				DoHeal(val - 1);
+		if (photonView.isMine) {
+			if (val > 0) {
+				if (hand.GetComponentsInChildren<DeedCardScript> (true).Any (x => x.cardType == Toolbox.CardType.Wound)) {
+					GameObject wound = hand.GetComponentsInChildren<DeedCardScript> (true).First (x => x.cardType == Toolbox.CardType.Wound).gameObject;
+					wound.transform.SetParent (GameObject.Find ("Wound Deck").transform, false);
+					DoHeal (val - 1);
+				} else {
+					ArrangeHand (0);
+				}
 			} else {
-				ArrangeHand(0);
+				ArrangeHand (0);
 			}
-		} else {
-			ArrangeHand(0);
 		}
 	}
 
 	public void DrawCards(){
-		while (cardsInHand < maxHandSize){
-			if(deck.transform.childCount > 0){
-				//draw card
-				AddCardToHand(deck.transform.GetChild(0).GetComponent<DeedCardScript>());
-			} else if (discardPile.transform.childCount > 0) {
-				//shuffle up discard pile to form new deck
-				List<GameObject> cards = new List<GameObject>();
-				while (discardPile.transform.childCount > 0){
-					discardPile.transform.GetChild(0).SetParent(deck.transform, false);
+		if (photonView.isMine) {
+			while (cardsInHand < maxHandSize) {
+				if (deck.transform.childCount > 0) {
+					//draw card
+					AddCardToHand (deck.transform.GetChild (0).GetComponent<DeedCardScript> ());
+				} else if (discardPile.transform.childCount > 0) {
+					//shuffle up discard pile to form new deck
+					List<GameObject> cards = new List<GameObject> ();
+					while (discardPile.transform.childCount > 0) {
+						discardPile.transform.GetChild (0).SetParent (deck.transform, false);
+					}
+					ShuffleDeck ();
+				} else {
+					//no more cards, probably will never happen... just do nothing
+					break;
 				}
-				ShuffleDeck();
-			} else {
-				//no more cards, probably will never happen... just do nothing
-				break;
 			}
 		}
 	}
