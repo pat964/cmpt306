@@ -453,6 +453,7 @@ public class playerScript : Photon.MonoBehaviour {
 						newCard = advActionDeck.transform.GetChild(0);
 						newCard.SetParent(hand.transform, false);
 						newCard.SetAsFirstSibling();
+						newCard.GetComponent<DeedCardScript>().player = this;
 						influence -= interaction.val;
 						UpdateLabels();
 					}
@@ -467,6 +468,7 @@ public class playerScript : Photon.MonoBehaviour {
 						newCard = dmdDeck.transform.GetChild(0);
 						newCard.SetParent(hand.transform, false);
 						newCard.SetAsFirstSibling();
+						newCard.GetComponent<DeedCardScript>().player = this;
 						influence -= interaction.val;
 						UpdateLabels();
 					}
@@ -481,6 +483,7 @@ public class playerScript : Photon.MonoBehaviour {
 						newCard = artifactDeck.transform.GetChild(0);
 						newCard.SetParent(hand.transform, false);
 						newCard.SetAsFirstSibling();
+						newCard.GetComponent<DeedCardScript>().player = this;
 						influence -= interaction.val;
 						UpdateLabels();
 					}

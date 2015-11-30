@@ -92,7 +92,7 @@ public class DeedCardScript : MonoBehaviour {
 			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> (spritePath);
 			break;
 		case Toolbox.CardColour.Artifact:
-			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> ("Sprites/arifacts");
+			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> ("Sprites/artifacts");
 			break;
 		case Toolbox.CardColour.Wound:
 			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Wound");
