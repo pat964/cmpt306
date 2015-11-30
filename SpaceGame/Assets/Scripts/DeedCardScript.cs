@@ -376,7 +376,7 @@ public class DeedCardScript : MonoBehaviour {
 				if (i == 0 ){
 					returnString += costs[i].val.ToString() + " " + costs[i].colour.ToString();
 				} else if (i == costs.Count - 1){
-					returnString += "and " + costs[i].val.ToString() + " " + costs[i].colour.ToString();
+					returnString += " and " + costs[i].val.ToString() + " " + costs[i].colour.ToString();
 				} else {
 					returnString += ", " + costs[i].val.ToString() + " " + costs[i].colour.ToString();
 				}
