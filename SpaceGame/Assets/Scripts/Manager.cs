@@ -282,6 +282,7 @@ public class Manager : Photon.MonoBehaviour {
 		for (int i = 0; i < battleEnemies.Count; i++){
 			battleEnemies[i].SetFacing(true);
 			battleEnemies[i].transform.SetParent(battleCamera.transform);
+			scenePhotonView.RPC("Enable", PhotonTargets.Others, battleEnemies[i].gameObject.GetPhotonView().viewID, false);
 //			scenePhotonView.RPC("Parenting", PhotonTargets.All, battleEnemies[i].gameObject.GetPhotonView().viewID, battleCamera.gameObject.GetPhotonView().viewID, false);
 			battleEnemies[i].transform.localScale = new Vector3(20, 20, 0);
 			battleEnemies[i].transform.position =
@@ -696,7 +697,7 @@ public class Manager : Photon.MonoBehaviour {
 			Debug.Log(enemy.transform.position);
 			Debug.Log(enemy.homeHex.transform.position);
 			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, enemy.homeHex.gameObject.GetPhotonView().viewID, false);
-
+			scenePhotonView.RPC("Enable", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
 			enemy.transform.position = enemy.homeHex.transform.position;
 
 		}
@@ -771,7 +772,7 @@ public class Manager : Photon.MonoBehaviour {
 	[PunRPC] // hides this object from view
 	void Enable(int obj, bool enable) {
 		PhotonView o = PhotonView.Find (obj);
-		o.gameObject.GetComponent<Renderer> ().enabled = enable;
+		o.gameObject.GetComponent<EnemyScript> ().enabled = enable;
 	}
 }
 
