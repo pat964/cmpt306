@@ -76,10 +76,12 @@ public class playerScript : Photon.MonoBehaviour {
 		interactButton.onClick.AddListener(() => PrepInteractionMenu());
 		ShowInteractionButton(false);
 		ShowActionButton(false);
+
+		// disables our overlay for other people, so they do not see our score, move, and other values
 		if(photonView.isMine)
 		{
 			overlayCanvas.enabled = true;
-			//photonView.RPC("DisableOverlay", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
+			photonView.RPC("DisableOverlay", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
 		}
 	}
 
