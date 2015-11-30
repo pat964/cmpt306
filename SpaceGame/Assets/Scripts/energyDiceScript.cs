@@ -21,12 +21,8 @@ public class energyDiceScript : Photon.MonoBehaviour {
 	}
 
 	public void Roll(){
-
-		if (PhotonNetwork.isMasterClient) {
-			System.Array values = System.Enum.GetValues (typeof(Toolbox.EnergyColour));
-			photonView.RPC("UpdateColor", PhotonTargets.AllBuffered, Toolbox.random.Next(values.Length));
-
-		}
+		System.Array values = System.Enum.GetValues (typeof(Toolbox.EnergyColour));
+		SetColour((Toolbox.EnergyColour)values.GetValue(Toolbox.random.Next(values.Length)));
 	}
 
 	public void SetColour(Toolbox.EnergyColour newColour) {
@@ -52,9 +48,4 @@ public class energyDiceScript : Photon.MonoBehaviour {
 		}
 	}
 
-	[PunRPC] // changes the color of the die
-	void UpdateColor(int colour){
-		System.Array values = System.Enum.GetValues (typeof(Toolbox.EnergyColour));
-		SetColour((Toolbox.EnergyColour)values.GetValue(colour));
-	}
 }
