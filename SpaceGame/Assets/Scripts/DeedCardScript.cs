@@ -92,7 +92,7 @@ public class DeedCardScript : MonoBehaviour {
 			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> (spritePath);
 			break;
 		case Toolbox.CardColour.Artifact:
-			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> ("Sprites/arifacts");
+			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> ("Sprites/artifacts");
 			break;
 		case Toolbox.CardColour.Wound:
 			cardSprite.transform.GetComponentInChildren<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Wound");
@@ -376,7 +376,7 @@ public class DeedCardScript : MonoBehaviour {
 				if (i == 0 ){
 					returnString += costs[i].val.ToString() + " " + costs[i].colour.ToString();
 				} else if (i == costs.Count - 1){
-					returnString += "and " + costs[i].val.ToString() + " " + costs[i].colour.ToString();
+					returnString += " and " + costs[i].val.ToString() + " " + costs[i].colour.ToString();
 				} else {
 					returnString += ", " + costs[i].val.ToString() + " " + costs[i].colour.ToString();
 				}

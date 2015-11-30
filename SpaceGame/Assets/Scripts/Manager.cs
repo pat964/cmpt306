@@ -90,29 +90,6 @@ public class Manager : Photon.MonoBehaviour {
 		}
 	}
 
-	[PunRPC] // adds the child to the parent across the whole network
-	void Parenting(int child, int parent){
-		PhotonView x = PhotonView.Find (child);
-		PhotonView y = PhotonView.Find (parent);
-		
-		x.transform.SetParent(y.transform);
-	}
-
-	[PunRPC] // adds the child to the parent across the whole network with worldSpaceStays
-	void Parenting(int child, int parent, bool worldSpaceStays){
-		PhotonView x = PhotonView.Find (child);
-		PhotonView y = PhotonView.Find (parent);
-		
-		x.transform.SetParent(y.transform, worldSpaceStays);
-	}
-
-	[PunRPC] // adds the enemy to the hex across the whole network
-	void RemoveEnemy(int hex, int newEnemy){
-		HexScript h = PhotonView.Find (hex).transform.GetComponent<HexScript>();
-		EnemyScript e = PhotonView.Find (newEnemy).transform.GetComponent<EnemyScript>();
-		h.enemiesOnHex.Remove(e);
-	}
-
 	private void BuildTileDeck() {
 		GameObject tileDeck = GameObject.Find("Tile Deck");
 		GameObject greenTiles = GameObject.Find("Green Tiles");
@@ -304,7 +281,8 @@ public class Manager : Photon.MonoBehaviour {
 		float partitionWidth = battleCamera.pixelWidth / battleEnemies.Count;
 		for (int i = 0; i < battleEnemies.Count; i++){
 			battleEnemies[i].SetFacing(true);
-			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, battleEnemies[i].gameObject.GetPhotonView().viewID, battleCamera.gameObject.GetPhotonView().viewID, false);
+			scenePhotonView.RPC("Enable", PhotonTargets.Others, battleEnemies[i].gameObject.GetPhotonView().viewID, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.All, battleEnemies[i].gameObject.GetPhotonView().viewID, battleCamera.gameObject.GetPhotonView().viewID, false);
 			battleEnemies[i].transform.localScale = new Vector3(20, 20, 0);
 			battleEnemies[i].transform.position =
 				battleCamera.ScreenToWorldPoint(new Vector3(partitionWidth * i + partitionWidth / 2,
@@ -718,7 +696,7 @@ public class Manager : Photon.MonoBehaviour {
 			Debug.Log(enemy.transform.position);
 			Debug.Log(enemy.homeHex.transform.position);
 			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, enemy.homeHex.gameObject.GetPhotonView().viewID, false);
-
+			scenePhotonView.RPC("Enable", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
 			enemy.transform.position = enemy.homeHex.transform.position;
 
 		}
@@ -764,6 +742,37 @@ public class Manager : Photon.MonoBehaviour {
 	public static void GameOver(){
 		print ("Game Over!");
 		//do stuff
+	}
+
+	
+	[PunRPC] // adds the child to the parent across the whole network
+	void Parenting(int child, int parent){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		
+		x.transform.SetParent(y.transform);
+	}
+	
+	[PunRPC] // adds the child to the parent across the whole network with worldSpaceStays
+	void Parenting(int child, int parent, bool worldSpaceStays){
+		PhotonView x = PhotonView.Find (child);
+		PhotonView y = PhotonView.Find (parent);
+		
+		x.transform.SetParent(y.transform, worldSpaceStays);
+	}
+	
+	[PunRPC] // adds the enemy to the hex across the whole network
+	void RemoveEnemy(int hex, int newEnemy){
+		HexScript h = PhotonView.Find (hex).transform.GetComponent<HexScript>();
+		EnemyScript e = PhotonView.Find (newEnemy).transform.GetComponent<EnemyScript>();
+		h.enemiesOnHex.Remove(e);
+	}
+	
+	[PunRPC] // hides this object from view
+	void Enable(int obj, bool enable) {
+		PhotonView o = PhotonView.Find (obj);
+		o.gameObject.GetComponent<Renderer>().enabled = enable;
+		o.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer> ().enabled = enable;
 	}
 }
 

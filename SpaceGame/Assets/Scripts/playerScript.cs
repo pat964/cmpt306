@@ -49,7 +49,6 @@ public class playerScript : Photon.MonoBehaviour {
 		{
 			overlayCanvas.enabled = true;
 			mainCanvas.enabled = true;
-			handCanvas.enabled = true;
 			photonView.RPC("DisableCanvas", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
 			photonView.RPC("DisableCanvas", PhotonTargets.OthersBuffered, mainCanvas.gameObject.GetPhotonView().viewID);
 			photonView.RPC("DisableCanvas", PhotonTargets.OthersBuffered, handCanvas.gameObject.GetPhotonView().viewID);
@@ -217,9 +216,13 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public void AddCardToHand(DeedCardScript card){
-		photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, hand.gameObject.GetPhotonView().viewID, false);
-		cardsInHand++;
-		ArrangeHand (0);
+		if (photonView.isMine) {
+			card.transform.SetParent(hand.transform);
+//			photonView.RPC ("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView ().viewID, hand.gameObject.GetPhotonView ().viewID, false);
+			card.player = this;
+			cardsInHand++;
+			ArrangeHand (0);
+		}
 	}
 
 	private List<HexScript> GetAdjacentRampagers(){
@@ -451,8 +454,7 @@ public class playerScript : Photon.MonoBehaviour {
 					GameObject advActionDeck = GameObject.Find ("Advanced Actions Deck");
 					if(advActionDeck.transform.childCount > 0){
 						newCard = advActionDeck.transform.GetChild(0);
-						newCard.SetParent(hand.transform, false);
-						newCard.SetAsFirstSibling();
+						AddCardToHand(newCard.GetComponent<DeedCardScript>());
 						influence -= interaction.val;
 						UpdateLabels();
 					}
@@ -465,8 +467,7 @@ public class playerScript : Photon.MonoBehaviour {
 					GameObject dmdDeck = GameObject.Find ("Dark Matter Device Deck");
 					if (dmdDeck.transform.childCount > 0){
 						newCard = dmdDeck.transform.GetChild(0);
-						newCard.SetParent(hand.transform, false);
-						newCard.SetAsFirstSibling();
+						AddCardToHand(newCard.GetComponent<DeedCardScript>());
 						influence -= interaction.val;
 						UpdateLabels();
 					}
@@ -479,8 +480,7 @@ public class playerScript : Photon.MonoBehaviour {
 					GameObject artifactDeck = GameObject.Find ("Artifact Deck");
 					if (artifactDeck.transform.childCount > 0){
 						newCard = artifactDeck.transform.GetChild(0);
-						newCard.SetParent(hand.transform, false);
-						newCard.SetAsFirstSibling();
+						AddCardToHand(newCard.GetComponent<DeedCardScript>());
 						influence -= interaction.val;
 						UpdateLabels();
 					}
@@ -599,7 +599,7 @@ public class playerScript : Photon.MonoBehaviour {
 		x.transform.SetParent(y.transform, worldPositionStays);
 	}
 	
-	[PunRPC]
+	[PunRPC] // hides this object from view
 	void DisableCanvas(int canvas) {
 		PhotonView c = PhotonView.Find (canvas);
 		c.enabled = false;
