@@ -7,6 +7,7 @@ public class TutorialCamera : MonoBehaviour {
 	GameObject battleView;
 	GameObject handView;
 	GameObject gameView;
+	GameObject woundView;
 	int cameraSelect;
 
 	// Use this for initialization
@@ -16,6 +17,7 @@ public class TutorialCamera : MonoBehaviour {
 		battleView = GameObject.Find ("Background - Battle camera");
 		handView = GameObject.Find ("Background - hand");
 		gameView = GameObject.Find ("Background - General Game");
+		woundView = GameObject.Find ("Wound Background");
 		cameraPos = new Vector3 (0, 0, -10);
 
 	}
@@ -33,6 +35,10 @@ public class TutorialCamera : MonoBehaviour {
 			} 
 			else if (cameraSelect == 4) {
 				transform.position = handView.transform.position + cameraPos;
+				cameraSelect++;
+			}
+			else if (cameraSelect == 5){
+				transform.position = woundView.transform.position + cameraPos;
 				cameraSelect = 1;
 			}
 			else if (cameraSelect == 1){

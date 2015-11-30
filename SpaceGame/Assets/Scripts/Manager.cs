@@ -300,9 +300,8 @@ public class Manager : Photon.MonoBehaviour {
 		float partitionWidth = battleCamera.pixelWidth / battleEnemies.Count;
 		for (int i = 0; i < battleEnemies.Count; i++){
 			battleEnemies[i].SetFacing(true);
-			battleEnemies[i].transform.SetParent(battleCamera.transform);
 			scenePhotonView.RPC("Enable", PhotonTargets.Others, battleEnemies[i].gameObject.GetPhotonView().viewID, false);
-//			scenePhotonView.RPC("Parenting", PhotonTargets.All, battleEnemies[i].gameObject.GetPhotonView().viewID, battleCamera.gameObject.GetPhotonView().viewID, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.All, battleEnemies[i].gameObject.GetPhotonView().viewID, battleCamera.gameObject.GetPhotonView().viewID, false);
 			battleEnemies[i].transform.localScale = new Vector3(20, 20, 0);
 			battleEnemies[i].transform.position =
 				battleCamera.ScreenToWorldPoint(new Vector3(partitionWidth * i + partitionWidth / 2,
@@ -791,8 +790,8 @@ public class Manager : Photon.MonoBehaviour {
 	[PunRPC] // hides this object from view
 	void Enable(int obj, bool enable) {
 		PhotonView o = PhotonView.Find (obj);
-		o.gameObject.SetActive(enable);
-		o.gameObject.GetComponent<EnemyScript> ().enabled = enable;
+		o.gameObject.GetComponent<Renderer>().enabled = enable;
+		o.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer> ().enabled = enable;
 	}
 }
 
