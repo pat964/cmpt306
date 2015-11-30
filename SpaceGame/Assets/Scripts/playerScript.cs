@@ -27,7 +27,7 @@ public class playerScript : Photon.MonoBehaviour {
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
 	private GameObject hand, deck, discardPile;
-	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel, energyLabel;
+	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel, energyLabel, handSizeLabel, fameLabel;
 	private GameObject portalHex;
 	private Transform player;
 	public Canvas handCanvas, mainCanvas, overlayCanvas;
@@ -36,8 +36,10 @@ public class playerScript : Photon.MonoBehaviour {
 	public bool canDrawCards = false;
 	public bool usedSource = false;
 	public int redEnergy, greenEnergy, blueEnergy, whiteEnergy, darkEnergy = 0;
+	public int[] handSizeIncreaseLevels;
 	// Use this for initialization
 	void Start () {
+		handSizeIncreaseLevels = new int[3]{10, 25, 50};
 		turnPhase = Toolbox.TurnPhase.Move;
 		overlayCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Common Area Overlay");
 		handCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Hand Canvas");
@@ -65,6 +67,8 @@ public class playerScript : Photon.MonoBehaviour {
 		hand = handCanvas.transform.GetComponentsInChildren<Transform>().First(x => x.gameObject.name == "Hand").gameObject;
 		deck = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Deed Deck").gameObject;
 		energyLabel = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Energy Label").gameObject;
+		handSizeLabel = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Hand Size Label").gameObject;
+		fameLabel = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Fame Track").gameObject;
 		discardPile = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Discard Pile").gameObject;
 		InitDeckAndHand();
 		ArrangeHand(0);
@@ -107,9 +111,15 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public void IncreaseFame(int amount){
-		fame += amount;
+		int newFame = fame + amount;
+		foreach(int level in handSizeIncreaseLevels){
+			if(fame < level && newFame >= level){
+				maxHandSize++;
+			}
+		}
+		fame = newFame;
 		Text fameTrack = transform.GetComponentInChildren<Canvas>().transform.GetChild (1).GetComponent<Text>();
-		fameTrack.text = "Fame: " + fame.ToString();
+		UpdateLabels();
 	}
 	
 	public void IncreaseReputation(int amount){
@@ -142,6 +152,9 @@ public class playerScript : Photon.MonoBehaviour {
 		energyLabel.transform.GetChild(2).GetComponent<Text>().text = "Red: " + redEnergy.ToString();
 		energyLabel.transform.GetChild(3).GetComponent<Text>().text = "White: " + whiteEnergy.ToString();
 		energyLabel.transform.GetChild(4).GetComponent<Text>().text = "Dark: " + darkEnergy.ToString();
+
+		handSizeLabel.GetComponent<Text>().text = "Hand Size: " + maxHandSize.ToString();
+		fameLabel.GetComponent<Text>().text = "Fame: " + fame.ToString();
 	}
 
 	public void MoveToHex(HexScript hex){
@@ -411,12 +424,14 @@ public class playerScript : Photon.MonoBehaviour {
 			case Toolbox.InteractionType.Adv_Action:
 				button.onClick.AddListener(() => {
 				if (interaction.val <= influence) {
-					GameObject advActionDeck = GameObject.Find ("Advanced Action Deck");
-					newCard = advActionDeck.transform.GetChild(0);
-					newCard.SetParent(hand.transform, false);
-					newCard.SetAsFirstSibling();
-					influence -= interaction.val;
-					UpdateLabels();
+					GameObject advActionDeck = GameObject.Find ("Advanced Actions Deck");
+					if(advActionDeck.transform.childCount > 0){
+						newCard = advActionDeck.transform.GetChild(0);
+						newCard.SetParent(hand.transform, false);
+						newCard.SetAsFirstSibling();
+						influence -= interaction.val;
+						UpdateLabels();
+					}
 				}
 				});
 				break;
@@ -424,11 +439,13 @@ public class playerScript : Photon.MonoBehaviour {
 			button.onClick.AddListener(() => {
 				if (interaction.val <= influence) {
 					GameObject dmdDeck = GameObject.Find ("Dark Matter Device Deck");
-					newCard = dmdDeck.transform.GetChild(0);
-					newCard.SetParent(hand.transform, false);
-					newCard.SetAsFirstSibling();
-					influence -= interaction.val;
-					UpdateLabels();
+					if (dmdDeck.transform.childCount > 0){
+						newCard = dmdDeck.transform.GetChild(0);
+						newCard.SetParent(hand.transform, false);
+						newCard.SetAsFirstSibling();
+						influence -= interaction.val;
+						UpdateLabels();
+					}
 				}
 				});
 				break;
@@ -436,11 +453,13 @@ public class playerScript : Photon.MonoBehaviour {
 			button.onClick.AddListener(() => {
 				if (interaction.val <= influence) {
 					GameObject artifactDeck = GameObject.Find ("Artifact Deck");
-					newCard = artifactDeck.transform.GetChild(0);
-					newCard.SetParent(hand.transform, false);
-					newCard.SetAsFirstSibling();
-					influence -= interaction.val;
-					UpdateLabels();
+					if (artifactDeck.transform.childCount > 0){
+						newCard = artifactDeck.transform.GetChild(0);
+						newCard.SetParent(hand.transform, false);
+						newCard.SetAsFirstSibling();
+						influence -= interaction.val;
+						UpdateLabels();
+					}
 				}
 				});
 				break;
