@@ -11,7 +11,6 @@ public class NetworkManager : MonoBehaviour {
 	public string roomName = "Room name"; // Default room name
 	public string playerName = "Player name"; // Default room name
 	public string roomSize = "1"; // Default room size
-	private bool offline; // true if playing offline, false otherwise
 
 	public Text statusLabel;
 	public Vector2 widthAndHeight = new Vector2(600, 400); // menu size
@@ -22,8 +21,6 @@ public class NetworkManager : MonoBehaviour {
 	{
 		// sync levels automatically
 		PhotonNetwork.automaticallySyncScene = true;
-
-		offline = false;
 
 		// checks if this client was just created (and not yet online). if so, we connect
 		if (PhotonNetwork.connectionStateDetailed == PeerState.PeerCreated)
@@ -63,10 +60,12 @@ public class NetworkManager : MonoBehaviour {
 		GUILayout.Space(20);
 		GUILayout.Label("Player name:", GUILayout.Width(100)); 
 		playerName = GUILayout.TextField( playerName, 25, GUILayout.Width(292)); 
-		GUILayout.Space(45);
+		GUILayout.Space(36);
 
-		// play offline
-		offline = GUILayout.Toggle (offline, "    Play offline");
+		// back to main menu
+		if (GUILayout.Button ("Main Menu", GUILayout.Width (125))) {
+			PhotonNetwork.LoadLevel(0);
+		}
 		GUILayout.Space(15);
 		GUILayout.EndHorizontal();
 		GUILayout.Space(25);
@@ -83,23 +82,16 @@ public class NetworkManager : MonoBehaviour {
 		GUILayout.Space(37); // create room button
 		if (GUILayout.Button("Create Room", GUILayout.Width(125)))
 		{
-			if (offline) {
-				PhotonNetwork.Disconnect ();
-				PhotonNetwork.offlineMode = true;
-				PhotonNetwork.CreateRoom("Offline");
+			if (playerName.Equals("")) {
+				statusLabel.text = "Please enter a player name";
+			} 
+			else if (this.roomName.Equals("")) {
+				statusLabel.text = "Please enter a room name";
 			}
 			else {
-				if (playerName.Equals("")) {
-					statusLabel.text = "Please enter a player name";
-				} 
-				else if (this.roomName.Equals("")) {
-					statusLabel.text = "Please enter a room name";
-				}
-				else {
-					PhotonNetwork.playerName = playerName; 
-					PlayerPrefs.SetString("playerName", playerName); 
-					PhotonNetwork.CreateRoom(this.roomName, new RoomOptions() {maxPlayers = byte.Parse(roomSize)}, null);
-				}
+				PhotonNetwork.playerName = playerName; 
+				PlayerPrefs.SetString("playerName", playerName); 
+				PhotonNetwork.CreateRoom(this.roomName, new RoomOptions() {maxPlayers = byte.Parse(roomSize)}, null);
 			}
 		}
 		GUILayout.Space(15);
@@ -180,12 +172,7 @@ public class NetworkManager : MonoBehaviour {
 	public void OnCreatedRoom()
 	{
 		Debug.Log("OnCreatedRoom");
-		if (offline) {
-			PhotonNetwork.LoadLevel (3);
-		}
-		else {
-			PhotonNetwork.LoadLevel(2);
-		}
+		PhotonNetwork.LoadLevel(2);
 	}
 
 	// Error stuff
