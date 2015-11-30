@@ -51,6 +51,10 @@ public class Manager : Photon.MonoBehaviour {
 				player.moves += 20;
 				player.UpdateLabels();
 			}
+			if (Input.GetKeyDown(KeyCode.I)){
+				player.influence += 1;
+				player.UpdateLabels();
+			}
 			if (Input.GetKeyDown(KeyCode.Alpha1)){
 				player.attacks[0] += 1;
 				player.UpdateLabels();

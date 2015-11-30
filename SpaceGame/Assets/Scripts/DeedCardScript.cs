@@ -229,6 +229,27 @@ public class DeedCardScript : MonoBehaviour {
 			thirdButton.GetComponentInChildren<Text>().text = pairs[2].action.ToString() + " " + pairs[2].val.ToString();
 			ApplyActionToButton(thirdButton, pairs[2], costs, actionsMenu);
 			thirdButton.onClick.AddListener(() => {Destroy (actionsMenu);});
+		} else if (pairs.Count == 4) {
+			actionsMenu = (GameObject) Instantiate(Resources.Load("Prefabs/FourButtonModal"));
+			actionsMenu.transform.GetComponentInChildren<Button>().onClick.AddListener(() => {Destroy (actionsMenu);});
+			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
+			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action" + CostString(costs);
+			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
+			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
+			ApplyActionToButton(firstButton, pairs[0], costs, actionsMenu);
+			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
+			Button secondButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
+			secondButton.GetComponentInChildren<Text>().text = pairs[1].action.ToString() + " " + pairs[1].val.ToString();
+			ApplyActionToButton(secondButton, pairs[1], costs, actionsMenu);
+			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
+			Button thirdButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Third Button");
+			thirdButton.GetComponentInChildren<Text>().text = pairs[2].action.ToString() + " " + pairs[2].val.ToString();
+			ApplyActionToButton(thirdButton, pairs[2], costs, actionsMenu);
+			thirdButton.onClick.AddListener(() => {Destroy (actionsMenu);});
+			Button fourthButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Fourth Button");
+			fourthButton.GetComponentInChildren<Text>().text = pairs[3].action.ToString() + " " + pairs[3].val.ToString();
+			ApplyActionToButton(fourthButton, pairs[3], costs, actionsMenu);
+			fourthButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 		}
 	}
 
