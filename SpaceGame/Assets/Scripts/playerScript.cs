@@ -27,13 +27,14 @@ public class playerScript : Photon.MonoBehaviour {
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
 	private GameObject hand, deck, discardPile;
-	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel, energyLabel, handSizeLabel, fameLabel;
+	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel, energyLabel, handSizeLabel, fameLabel, armorLabel;
 	private GameObject portalHex;
 	private Transform player;
 	public Canvas handCanvas, mainCanvas, overlayCanvas;
 	private Camera handCamera, mainCamera;
 	public Button endMovesButton, endActionButton, interactButton;
 	public bool canDrawCards = false;
+	public bool usedGlade = false;
 	public bool usedSource = false;
 	public int redEnergy, greenEnergy, blueEnergy, whiteEnergy, darkEnergy = 0;
 	public int[] handSizeIncreaseLevels;
@@ -68,6 +69,7 @@ public class playerScript : Photon.MonoBehaviour {
 		deck = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Deed Deck").gameObject;
 		energyLabel = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Energy Label").gameObject;
 		handSizeLabel = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Hand Size Label").gameObject;
+		armorLabel = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Armor Label").gameObject;
 		fameLabel = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Fame Track").gameObject;
 		discardPile = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Discard Pile").gameObject;
 		InitDeckAndHand();
@@ -115,6 +117,7 @@ public class playerScript : Photon.MonoBehaviour {
 		foreach(int level in handSizeIncreaseLevels){
 			if(fame < level && newFame >= level){
 				maxHandSize++;
+				armor++;
 			}
 		}
 		fame = newFame;
@@ -155,6 +158,7 @@ public class playerScript : Photon.MonoBehaviour {
 
 		handSizeLabel.GetComponent<Text>().text = "Hand Size: " + maxHandSize.ToString();
 		fameLabel.GetComponent<Text>().text = "Fame: " + fame.ToString();
+		armorLabel.GetComponent<Text>().text = "Armor: " + armor.ToString();
 	}
 
 	public void MoveToHex(HexScript hex){
@@ -313,7 +317,7 @@ public class playerScript : Photon.MonoBehaviour {
 	public void DoHeal(int val){
 		if (val > 0){
 			if (hand.GetComponentsInChildren<DeedCardScript>(true).Any (x => x.cardType == Toolbox.CardType.Wound)){
-				GameObject wound = hand.GetComponentsInChildren<DeedCardScript>().First(x => x.cardType == Toolbox.CardType.Wound).gameObject;
+				GameObject wound = hand.GetComponentsInChildren<DeedCardScript>(true).First(x => x.cardType == Toolbox.CardType.Wound).gameObject;
 				wound.transform.SetParent(GameObject.Find("Wound Deck").transform, false);
 				DoHeal(val - 1);
 			} else {
@@ -525,6 +529,32 @@ public class playerScript : Photon.MonoBehaviour {
 			default:
 				break;
 			}
+		}
+	}
+
+	public void CheckEndingBonus(){
+		if (onHex.hexFeature == Toolbox.HexFeature.Glade && !usedGlade){
+			DoHeal(1);
+			usedGlade = true;
+		}
+	}
+	
+	public void CheckStartingBonus(){
+		if (onHex.hexFeature == Toolbox.HexFeature.Glade){
+			darkEnergy++;
+			UpdateLabels();
+		} else if (onHex.hexFeature == Toolbox.HexFeature.MineBlue){
+			blueEnergy++;
+			UpdateLabels();
+		} else if (onHex.hexFeature == Toolbox.HexFeature.MineGreen){
+			greenEnergy++;
+			UpdateLabels();
+		} else if (onHex.hexFeature == Toolbox.HexFeature.MineWhite){
+			whiteEnergy++;
+			UpdateLabels();
+		} else if (onHex.hexFeature == Toolbox.HexFeature.MineRed){
+			redEnergy++;
+			UpdateLabels();
 		}
 	}
 
