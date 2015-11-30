@@ -602,7 +602,7 @@ public class playerScript : Photon.MonoBehaviour {
 		x.transform.SetParent(y.transform, worldPositionStays);
 	}
 	
-	[PunRPC]
+	[PunRPC] // hides this object from view
 	void DisableCanvas(int canvas) {
 		PhotonView c = PhotonView.Find (canvas);
 		c.enabled = false;
