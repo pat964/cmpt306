@@ -103,18 +103,20 @@ public class playerScript : Photon.MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (timer >= 0){
-			canDrawCards = false;
-			timer -= Time.deltaTime;
-			timerLabel.transform.GetComponentInChildren<Text>().text = "Time Until Next Draw: " + timer.ToString("n0") + "s";
-		} else {
-			canDrawCards = true;
-			timerLabel.transform.GetComponentInChildren<Text>().text = "You Will Draw After Your Turn!";
-		}
-		if(isRetreating){
-			retreatLabel.gameObject.SetActive(true);
-		} else {
-			retreatLabel.gameObject.SetActive(false);
+		if (photonView.isMine) {
+			if (timer >= 0) {
+				canDrawCards = false;
+				timer -= Time.deltaTime;
+				timerLabel.transform.GetComponentInChildren<Text> ().text = "Time Until Next Draw: " + timer.ToString ("n0") + "s";
+			} else {
+				canDrawCards = true;
+				timerLabel.transform.GetComponentInChildren<Text> ().text = "You Will Draw After Your Turn!";
+			}
+			if (isRetreating) {
+				retreatLabel.gameObject.SetActive (true);
+			} else {
+				retreatLabel.gameObject.SetActive (false);
+			}
 		}
 	}
 
