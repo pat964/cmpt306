@@ -217,9 +217,12 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public void AddCardToHand(DeedCardScript card){
-		photonView.RPC("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView().viewID, hand.gameObject.GetPhotonView().viewID, false);
-		cardsInHand++;
-		ArrangeHand (0);
+		if (photonView.isMine) {
+			card.transform.SetParent(hand.transform);
+//			photonView.RPC ("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView ().viewID, hand.gameObject.GetPhotonView ().viewID, false);
+			cardsInHand++;
+			ArrangeHand (0);
+		}
 	}
 
 	private List<HexScript> GetAdjacentRampagers(){
