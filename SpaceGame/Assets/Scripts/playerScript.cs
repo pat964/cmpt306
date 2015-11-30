@@ -533,14 +533,20 @@ public class playerScript : Photon.MonoBehaviour {
 		}
 	}
 
-	public void CheckEndingBonus(){
+	public void CheckEndingEffect(){
 		if (onHex.hexFeature == Toolbox.HexFeature.Glade && !usedGlade){
 			DoHeal(1);
 			usedGlade = true;
+		} else if (onHex.hexFeature == Toolbox.HexFeature.CityRed ||
+		           onHex.hexFeature == Toolbox.HexFeature.CityGreen ||
+		           onHex.hexFeature == Toolbox.HexFeature.CityWhite ||
+		           onHex.hexFeature == Toolbox.HexFeature.CityBlue) {
+			IncreaseFame(5);
+			Manager.GameOver();
 		}
 	}
 	
-	public void CheckStartingBonus(){
+	public void CheckStartingEffect(){
 		if (onHex.hexFeature == Toolbox.HexFeature.Glade){
 			darkEnergy++;
 			UpdateLabels();
