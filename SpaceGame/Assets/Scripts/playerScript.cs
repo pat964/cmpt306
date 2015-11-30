@@ -39,9 +39,17 @@ public class playerScript : Photon.MonoBehaviour {
 	public int[] handSizeIncreaseLevels;
 	// Use this for initialization
 	void Start () {
+		overlayCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Common Area Overlay");
+
+		// disables our overlay for other people, so they do not see our score, move, and other values
+		if(photonView.isMine)
+		{
+			overlayCanvas.enabled = true;
+			photonView.RPC("DisableOverlay", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
+		}
+
 		handSizeIncreaseLevels = new int[3]{10, 25, 50};
 		turnPhase = Toolbox.TurnPhase.Move;
-		overlayCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Common Area Overlay");
 		handCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Hand Canvas");
 		mainCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Main Canvas");
 		handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera>();
@@ -80,13 +88,6 @@ public class playerScript : Photon.MonoBehaviour {
 		interactButton.onClick.AddListener(() => PrepInteractionMenu());
 		ShowInteractionButton(false);
 		ShowActionButton(false);
-
-		// disables our overlay for other people, so they do not see our score, move, and other values
-		if(photonView.isMine)
-		{
-			overlayCanvas.enabled = true;
-			photonView.RPC("DisableOverlay", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
-		}
 	}
 
 	public Transform getPlayer() {
