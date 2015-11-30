@@ -19,23 +19,36 @@ public class StartupManager : MonoBehaviour {
 		GUILayout.Space(20);
 		GUI.Box(content, "Welcome to [name of game]");
 		GUILayout.BeginArea(content);
-		GUILayout.Space(125);
+		GUILayout.Space(105);
 		
-		// start game
+		// start online match
 		GUILayout.BeginHorizontal();
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("Start game", GUILayout.Width(125)))
+		if (GUILayout.Button("Play Online", GUILayout.Width(125)))
 		{
 			PhotonNetwork.LoadLevel(1);
 		}		
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
-		GUILayout.Space(100);
+		GUILayout.Space(50);
+
+		// start offline match
+		GUILayout.BeginHorizontal();
+		GUILayout.FlexibleSpace();
+		if (GUILayout.Button("Play Offline", GUILayout.Width(125)))
+		{
+			PhotonNetwork.Disconnect ();
+			PhotonNetwork.offlineMode = true;
+			PhotonNetwork.CreateRoom("Offline");
+		}		
+		GUILayout.FlexibleSpace();
+		GUILayout.EndHorizontal();
+		GUILayout.Space(50);
 
 		// start tutorial
 		GUILayout.BeginHorizontal();
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("Start tutorial", GUILayout.Width(125)))
+		if (GUILayout.Button("Play Tutorial", GUILayout.Width(125)))
 		{
 			PhotonNetwork.LoadLevel(4);
 		}		
@@ -43,6 +56,13 @@ public class StartupManager : MonoBehaviour {
 		GUILayout.EndHorizontal();
 		
 		GUILayout.EndArea();
+	}
+
+	// loads game offline when offline is pressed
+	public void OnCreatedRoom()
+	{
+		Debug.Log("OnCreatedRoom");
+		PhotonNetwork.LoadLevel (3);
 	}
 
 }
