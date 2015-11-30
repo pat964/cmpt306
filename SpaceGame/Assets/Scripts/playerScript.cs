@@ -41,18 +41,23 @@ public class playerScript : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		overlayCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Common Area Overlay");
+		mainCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Main Canvas");
+		handCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Hand Canvas");
 
 		// disables our overlay for other people, so they do not see our score, move, and other values
 		if(photonView.isMine)
 		{
 			overlayCanvas.enabled = true;
-			photonView.RPC("DisableOverlay", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
+			mainCanvas.enabled = true;
+			handCanvas.enabled = true;
+			photonView.RPC("DisableCanvas", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
+			photonView.RPC("DisableCanvas", PhotonTargets.OthersBuffered, mainCanvas.gameObject.GetPhotonView().viewID);
+			photonView.RPC("DisableCanvas", PhotonTargets.OthersBuffered, handCanvas.gameObject.GetPhotonView().viewID);
+
 		}
 
 		handSizeIncreaseLevels = new int[3]{10, 25, 50};
 		turnPhase = Toolbox.TurnPhase.Move;
-		handCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Hand Canvas");
-		mainCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Main Canvas");
 		handCamera = GameObject.Find ("Hand Camera").GetComponent<Camera>();
 		mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera>();
 		handCanvas.worldCamera = handCamera;
@@ -575,9 +580,9 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 	
 	[PunRPC]
-	void DisableOverlay(int overlay) {
-		PhotonView x = PhotonView.Find (overlay);
-		x.enabled = false;
+	void DisableCanvas(int canvas) {
+		PhotonView c = PhotonView.Find (canvas);
+		c.enabled = false;
 	}
 	
 	public class Interaction {
