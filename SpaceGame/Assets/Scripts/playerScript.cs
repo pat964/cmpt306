@@ -49,7 +49,6 @@ public class playerScript : Photon.MonoBehaviour {
 		{
 			overlayCanvas.enabled = true;
 			mainCanvas.enabled = true;
-			handCanvas.enabled = true;
 			photonView.RPC("DisableCanvas", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
 			photonView.RPC("DisableCanvas", PhotonTargets.OthersBuffered, mainCanvas.gameObject.GetPhotonView().viewID);
 			photonView.RPC("DisableCanvas", PhotonTargets.OthersBuffered, handCanvas.gameObject.GetPhotonView().viewID);
