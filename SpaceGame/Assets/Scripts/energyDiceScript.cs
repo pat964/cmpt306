@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class energyDiceScript : MonoBehaviour {
+public class energyDiceScript : Photon.MonoBehaviour {
 
 	public energySourceScript source;
 	public Toolbox.EnergyColour colour;
@@ -21,8 +21,12 @@ public class energyDiceScript : MonoBehaviour {
 	}
 
 	public void Roll(){
-		System.Array values = System.Enum.GetValues(typeof(Toolbox.EnergyColour));
-		SetColour((Toolbox.EnergyColour)values.GetValue(Toolbox.random.Next(values.Length)));
+
+		if (PhotonNetwork.isMasterClient) {
+			System.Array values = System.Enum.GetValues (typeof(Toolbox.EnergyColour));
+			photonView.RPC("UpdateColor", PhotonTargets.AllBuffered, Toolbox.random.Next(values.Length));
+
+		}
 	}
 
 	public void SetColour(Toolbox.EnergyColour newColour) {
@@ -46,5 +50,11 @@ public class energyDiceScript : MonoBehaviour {
 		default:
 			break;
 		}
+	}
+
+	[PunRPC] // changes the color of the die
+	void UpdateColor(int colour){
+		System.Array values = System.Enum.GetValues (typeof(Toolbox.EnergyColour));
+		SetColour((Toolbox.EnergyColour)values.GetValue(colour));
 	}
 }
