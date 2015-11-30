@@ -202,14 +202,14 @@ public class HexScript : Photon.MonoBehaviour {
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/monastary" );
 			break;
-		case Toolbox.HexFeature.Den:
+		/*case Toolbox.HexFeature.Den:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/den" );
 			break;
 		case Toolbox.HexFeature.Dungeon:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/dungeon" );
-			break;
+			break;*/
 		case Toolbox.HexFeature.Base:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/Base" );
@@ -218,7 +218,7 @@ public class HexScript : Photon.MonoBehaviour {
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/darkmatterresearch" );
 			break;
-		case Toolbox.HexFeature.Ruins:
+		/*case Toolbox.HexFeature.Ruins:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/ruins" );
 			break;
@@ -229,7 +229,7 @@ public class HexScript : Photon.MonoBehaviour {
 		case Toolbox.HexFeature.TerrorLair:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/terrorlair" );
-			break;
+			break;*/
 		case Toolbox.HexFeature.CityBlue:
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, featureSprite.GetPhotonView().viewID, photonView.viewID, false);
 			photonView.RPC("HexFeatureHelper", PhotonTargets.AllBuffered, "Sprites/HexFeature/bluecity" );
