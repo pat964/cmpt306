@@ -21,6 +21,9 @@ public class DeedCardScript : MonoBehaviour {
 	public GameObject cardSprite;
 	public playerScript player;
 
+	public List<Cost> topCost;
+	public List<Cost> bottomCost;
+
 
 	// Use this for initialization
 	void Start () {
@@ -30,6 +33,20 @@ public class DeedCardScript : MonoBehaviour {
 		cardSprite.transform.localPosition = new Vector2(0,0);
 		LoadSprite();
 		cardSprite.GetComponent<Button>().onClick.AddListener(() => {cardOnClick();});
+		topCost = new List<Cost>();
+		bottomCost = new List<Cost>();
+		switch (cardType) {
+		case Toolbox.CardType.Action:
+			bottomCost.Add (new Cost(1, ColourToEnergy()));
+			break;
+		case Toolbox.CardType.DMD:
+			topCost.Add (new Cost(1, ColourToEnergy()));
+			bottomCost.Add (new Cost(1, ColourToEnergy()));
+			bottomCost.Add (new Cost(1, Toolbox.EnergyColour.Dark));
+			break;
+		default:
+			break;
+		}
 	}
 	
 	// Update is called once per frame
@@ -113,16 +130,16 @@ public class DeedCardScript : MonoBehaviour {
 		sidewaysActions.Add(Toolbox.BasicAction.Block);
 		sidewaysActions.Add(Toolbox.BasicAction.Influence);
 		sidewaysActions.Add(Toolbox.BasicAction.Move);
-		firstButton.onClick.AddListener(() => createActionMenu(new CardAction(sidewaysActions, myAttackVal:1, myBlockVal:1, myInfluenceVal:1, myMoveVal:1, myAttackColour:Toolbox.AttackType.Physical, myBlockColour:Toolbox.AttackType.Physical)));
-		secondButton.onClick.AddListener(() => createActionMenu(topAction));
-		thirdButton.onClick.AddListener(() => createActionMenu(bottomAction));
+		firstButton.onClick.AddListener(() => createActionMenu(new CardAction(sidewaysActions, myAttackVal:1, myBlockVal:1, myInfluenceVal:1, myMoveVal:1, myAttackColour:Toolbox.AttackType.Physical, myBlockColour:Toolbox.AttackType.Physical), new List<Cost>()));
+		secondButton.onClick.AddListener(() => createActionMenu(topAction, topCost));
+		thirdButton.onClick.AddListener(() => createActionMenu(bottomAction, bottomCost));
 		foreach(Button button in buttons){
 			button.onClick.AddListener(() => {Destroy(howToPlayCard);});
 		}
 
 	}
 
-	private void createActionMenu(CardAction action){
+	private void createActionMenu(CardAction action, List<Cost> costs){
 		List<ActionValPair> pairs = new List<ActionValPair>();
 		switch (player.turnPhase) {
 		case Toolbox.TurnPhase.Move:
@@ -177,80 +194,172 @@ public class DeedCardScript : MonoBehaviour {
 			actionsMenu = (GameObject) Instantiate(Resources.Load("Prefabs/OneButtonModal"));
 			actionsMenu.transform.GetComponentInChildren<Button>().onClick.AddListener(() => {Destroy (actionsMenu);});
 			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
-			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action";
+			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action " + CostString(costs);
 			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
 			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
-			ApplyActionToButton(firstButton, pairs[0]);
+			ApplyActionToButton(firstButton, pairs[0], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 		} else if (pairs.Count == 2) {
 			actionsMenu = (GameObject) Instantiate(Resources.Load("Prefabs/TwoButtonModal"));
 			actionsMenu.transform.GetComponentInChildren<Button>().onClick.AddListener(() => {Destroy (actionsMenu);});
 			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
-			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action";
+			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action" + CostString(costs);
 			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
 			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
-			ApplyActionToButton(firstButton, pairs[0]);
+			ApplyActionToButton(firstButton, pairs[0], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 			Button secondButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
 			secondButton.GetComponentInChildren<Text>().text = pairs[1].action.ToString() + " " + pairs[1].val.ToString();
-			ApplyActionToButton(secondButton, pairs[1]);
+			ApplyActionToButton(secondButton, pairs[1], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 		} else if (pairs.Count == 3) {
 			actionsMenu = (GameObject) Instantiate(Resources.Load("Prefabs/ThreeButtonModal"));
 			actionsMenu.transform.GetComponentInChildren<Button>().onClick.AddListener(() => {Destroy (actionsMenu);});
 			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
-			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action";
+			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action" + CostString(costs);
 			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
 			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
-			ApplyActionToButton(firstButton, pairs[0]);
+			ApplyActionToButton(firstButton, pairs[0], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 			Button secondButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
 			secondButton.GetComponentInChildren<Text>().text = pairs[1].action.ToString() + " " + pairs[1].val.ToString();
-			ApplyActionToButton(secondButton, pairs[1]);
+			ApplyActionToButton(secondButton, pairs[1], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 			Button thirdButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Third Button");
 			thirdButton.GetComponentInChildren<Text>().text = pairs[2].action.ToString() + " " + pairs[2].val.ToString();
-			ApplyActionToButton(thirdButton, pairs[2]);
+			ApplyActionToButton(thirdButton, pairs[2], costs, actionsMenu);
 			thirdButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 		}
 	}
 
-	private void ApplyActionToButton(Button button, ActionValPair pair){
+	private void ApplyActionToButton(Button button, ActionValPair pair, List<Cost> costs, GameObject menu){
 		//apply appropriate action
 		switch (pair.action) {
 		case Toolbox.BasicAction.Move:
 			button.onClick.AddListener(() => {
-				player.moves += pair.val;
-				player.UpdateLabels();
+				if (MeetsCosts(costs)){
+					player.PayCosts(costs);
+					player.moves += pair.val;
+					player.UpdateLabels();
+					player.DiscardCard(this);
+					Destroy(menu);
+				}
 			});
 			break;
 		case Toolbox.BasicAction.Influence:
 			button.onClick.AddListener(() => {
-				player.influence += pair.val;
-				player.UpdateLabels();
+				if (MeetsCosts(costs)){
+					player.PayCosts(costs);
+					player.influence += pair.val;
+					player.UpdateLabels();
+					player.DiscardCard(this);
+					Destroy(menu);
+				}
 			});
 			break;
 		case Toolbox.BasicAction.Heal:
 			button.onClick.AddListener(() => {
-				player.DoHeal(pair.val);
+				if (MeetsCosts(costs)){
+					player.PayCosts(costs);
+					player.DoHeal(pair.val);
+					player.DiscardCard(this);
+					Destroy(menu);
+				}
 			});
 			break;
 		case Toolbox.BasicAction.Block:
 			button.onClick.AddListener(() => {
-				player.AddBlock(pair.val, pair.colour);
+				if (MeetsCosts(costs)){
+					player.PayCosts(costs);
+					player.AddBlock(pair.val, pair.colour);
+					player.DiscardCard(this);
+					Destroy(menu);
+				}
 			});
 			break;
 		case Toolbox.BasicAction.RangedAttack:
 		case Toolbox.BasicAction.Attack:
 			button.onClick.AddListener(() => {
-				player.AddAttack(pair.val, pair.colour);
+				if (MeetsCosts(costs)){
+					player.PayCosts(costs);
+					player.AddAttack(pair.val, pair.colour);
+					player.DiscardCard(this);
+					Destroy(menu);
+				}
 			});
 			break;
 		default:
 			break;
 		}
-		//put card in discard pile
-		button.onClick.AddListener(() => player.DiscardCard(this));
+	}
+
+	public bool MeetsCosts(List<Cost> costs) {
+		foreach (Cost cost in costs){
+			switch (cost.colour){
+			case Toolbox.EnergyColour.Blue:
+				if(player.blueEnergy < cost.val){
+					return false;
+				}
+				break;
+			case Toolbox.EnergyColour.Green:
+				if(player.greenEnergy < cost.val){
+					return false;
+				}
+				break;
+			case Toolbox.EnergyColour.Red:
+				if(player.redEnergy < cost.val){
+					return false;
+				}
+				break;
+			case Toolbox.EnergyColour.White:
+				if(player.whiteEnergy < cost.val){
+					return false;
+				}
+				break;
+			case Toolbox.EnergyColour.Dark:
+				if(player.darkEnergy < cost.val){
+					return false;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
+	
+	public Toolbox.EnergyColour ColourToEnergy(){
+		switch (cardColour){
+		case Toolbox.CardColour.Blue:
+			return Toolbox.EnergyColour.Blue;
+		case Toolbox.CardColour.Green:
+			return Toolbox.EnergyColour.Green;
+		case Toolbox.CardColour.Red:
+			return Toolbox.EnergyColour.Red;
+		case Toolbox.CardColour.White:
+			return Toolbox.EnergyColour.White;
+		default:
+			return Toolbox.EnergyColour.Dark;
+		}
+	}
+
+	public string CostString(List<Cost> costs){
+		string returnString = "";
+		if (costs.Count == 0){
+			return returnString;
+		} else {
+			returnString = " For ";
+			for (int i = 0; i < costs.Count; i++ ){
+				if (i == 0 ){
+					returnString += costs[i].val.ToString() + " " + costs[i].colour.ToString();
+				} else if (i == costs.Count - 1){
+					returnString += "and " + costs[i].val.ToString() + " " + costs[i].colour.ToString();
+				} else {
+					returnString += ", " + costs[i].val.ToString() + " " + costs[i].colour.ToString();
+				}
+			}
+			return returnString;
+		}
 	}
 }
 
@@ -283,6 +392,16 @@ public class ActionValPair {
 	public ActionValPair(int myVal, Toolbox.BasicAction myAction, Toolbox.AttackType myColour = Toolbox.AttackType.Summon){
 		val = myVal;
 		action = myAction;
+		colour = myColour;
+	}
+}
+
+public class Cost {
+	public int val;
+	public Toolbox.EnergyColour colour;
+	
+	public Cost(int myVal, Toolbox.EnergyColour myColour){
+		val = myVal;
 		colour = myColour;
 	}
 }

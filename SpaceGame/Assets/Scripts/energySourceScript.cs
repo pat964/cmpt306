@@ -3,8 +3,10 @@ using System.Collections;
 
 public class energySourceScript : MonoBehaviour {
 
+	public playerScript player;
 	// Use this for initialization
 	void Start () {
+		player = transform.GetComponentInParent<playerScript>();
 		RollAll();
 	}
 	
@@ -13,10 +15,8 @@ public class energySourceScript : MonoBehaviour {
 	
 	}
 	public void RollAll() {
-		for(int i = 0; i < gameObject.transform.childCount; i++)
-		{
-			GameObject child = gameObject.transform.GetChild(i).gameObject;
-			child.SendMessage("Roll");
+		foreach(energyDiceScript dice in transform.GetComponentsInChildren<energyDiceScript>()){
+			dice.Roll();
 		}
 	}
 }

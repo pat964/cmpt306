@@ -27,13 +27,15 @@ public class playerScript : Photon.MonoBehaviour {
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
 	private GameObject hand, deck, discardPile;
-	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel;
+	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel, energyLabel;
 	private GameObject portalHex;
 	private Transform player;
 	public Canvas handCanvas, mainCanvas, overlayCanvas;
 	private Camera handCamera, mainCamera;
 	public Button endMovesButton, endActionButton, interactButton;
 	public bool canDrawCards = false;
+	public bool usedSource = false;
+	public int redEnergy, greenEnergy, blueEnergy, whiteEnergy, darkEnergy = 0;
 	// Use this for initialization
 	void Start () {
 		turnPhase = Toolbox.TurnPhase.Move;
@@ -62,6 +64,7 @@ public class playerScript : Photon.MonoBehaviour {
 		blockLabel.SetActive(false);
 		hand = handCanvas.transform.GetComponentsInChildren<Transform>().First(x => x.gameObject.name == "Hand").gameObject;
 		deck = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Deed Deck").gameObject;
+		energyLabel = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Energy Label").gameObject;
 		discardPile = transform.GetComponentsInChildren<Transform>().First (x => x.gameObject.name == "Discard Pile").gameObject;
 		InitDeckAndHand();
 		ArrangeHand(0);
@@ -76,7 +79,7 @@ public class playerScript : Photon.MonoBehaviour {
 		if(photonView.isMine)
 		{
 			overlayCanvas.enabled = true;
-			photonView.RPC("DisableOverlay", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
+			//photonView.RPC("DisableOverlay", PhotonTargets.OthersBuffered, overlayCanvas.gameObject.GetPhotonView().viewID);
 		}
 	}
 
@@ -132,6 +135,11 @@ public class playerScript : Photon.MonoBehaviour {
 			blockLabel.transform.GetChild(2).GetComponent<Text>().text = "F: " + blocks[2].ToString();
 			blockLabel.transform.GetChild(3).GetComponent<Text>().text = "CF: " + blocks[3].ToString();
 		}
+		energyLabel.transform.GetChild(0).GetComponent<Text>().text = "Green: " + greenEnergy.ToString();
+		energyLabel.transform.GetChild(1).GetComponent<Text>().text = "Blue: " + blueEnergy.ToString();
+		energyLabel.transform.GetChild(2).GetComponent<Text>().text = "Red: " + redEnergy.ToString();
+		energyLabel.transform.GetChild(3).GetComponent<Text>().text = "White: " + whiteEnergy.ToString();
+		energyLabel.transform.GetChild(4).GetComponent<Text>().text = "Dark: " + darkEnergy.ToString();
 	}
 
 	public void MoveToHex(HexScript hex){
@@ -446,6 +454,57 @@ public class playerScript : Photon.MonoBehaviour {
 			default:
 				break;
 			}
+	}
+
+	public void UseEnergyDice(energyDiceScript dice){
+		if(!usedSource){
+			switch(dice.colour) {
+			case Toolbox.EnergyColour.Blue:
+				blueEnergy++;
+				break;
+			case Toolbox.EnergyColour.White:
+				whiteEnergy++;
+				break;
+			case Toolbox.EnergyColour.Green:
+				greenEnergy++;
+				break;
+			case Toolbox.EnergyColour.Red:
+				redEnergy++;
+				break;
+			case Toolbox.EnergyColour.Dark:
+				darkEnergy++;
+				break;
+			default:
+				break;
+			}
+			usedSource = true;
+			dice.Roll();
+			UpdateLabels();
+		}
+	}
+
+	public void PayCosts(List<Cost> costs){
+		foreach (Cost cost in costs) {
+			switch (cost.colour){
+			case Toolbox.EnergyColour.Blue:
+				blueEnergy -= cost.val;
+				break;
+			case Toolbox.EnergyColour.Green:
+				greenEnergy -= cost.val;
+				break;
+			case Toolbox.EnergyColour.Red:
+				redEnergy -= cost.val;
+				break;
+			case Toolbox.EnergyColour.White:
+				whiteEnergy -= cost.val;
+				break;
+			case Toolbox.EnergyColour.Dark:
+				darkEnergy -= cost.val;
+				break;
+			default:
+				break;
+			}
+		}
 	}
 
 	[PunRPC] // adds the child to the parent across the whole network

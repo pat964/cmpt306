@@ -198,6 +198,12 @@ public class Manager : Photon.MonoBehaviour {
 			player.turnPhase = Toolbox.TurnPhase.Action;
 		} else if (phase == Toolbox.TurnPhase.End){
 			player.influence = 0;
+			player.greenEnergy = 0;
+			player.blueEnergy = 0;
+			player.redEnergy = 0;
+			player.whiteEnergy = 0;
+			player.darkEnergy = 0;
+			player.usedSource = false;
 			player.UpdateLabels();
 			player.ShowActionButton(false);
 			player.turnPhase = Toolbox.TurnPhase.End;
@@ -777,7 +783,7 @@ public class Toolbox : Singleton<Toolbox> {
 	public enum Resistance{Fire, Ice, Physical};
 	public enum AttackType{Physical, Fire, Ice, ColdFire, Summon};
 	public enum RuinType{Battle, Energy};
-	public enum EnergyColour{Red, Green, White, Blue, Gold, Dark};
+	public enum EnergyColour{Red, Green, White, Blue, Dark};
 	public enum Reward{sevenFame, tenFame, Unit, DMD, AdvancedAction, Artifact};
 	public enum InteractionType{Heal, Adv_Action, DMD, Artifact};
 
