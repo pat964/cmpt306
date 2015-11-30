@@ -772,6 +772,7 @@ public class Manager : Photon.MonoBehaviour {
 	[PunRPC] // hides this object from view
 	void Enable(int obj, bool enable) {
 		PhotonView o = PhotonView.Find (obj);
+		o.gameObject.SetActive(enable);
 		o.gameObject.GetComponent<EnemyScript> ().enabled = enable;
 	}
 }
