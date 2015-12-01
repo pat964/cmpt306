@@ -16,7 +16,7 @@ public class StartupManager : MonoBehaviour {
 		// Make menu
 		Rect content = new Rect((Screen.width - this.widthAndHeight.x)/2, (Screen.height - this.widthAndHeight.y)/2, this.widthAndHeight.x, this.widthAndHeight.y);
 		GUILayout.Space(20);
-		GUI.Box(content, "Welcome to [name of game]");
+		GUI.Box(content, "Welcome to Space Escape");
 		GUILayout.BeginArea(content);
 		GUILayout.Space(105);
 		
