@@ -41,6 +41,8 @@ public class GameOverManager : Photon.MonoBehaviour {
 		GUILayout.FlexibleSpace();
 		if (GUILayout.Button("Main Menu", GUILayout.Width(125)))
 		{
+			PhotonNetwork.LeaveRoom();
+			PhotonNetwork.Disconnect();
 			PhotonNetwork.LoadLevel(0);
 		}	
 		GUILayout.FlexibleSpace();
