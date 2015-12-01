@@ -298,8 +298,8 @@ public class Manager : Photon.MonoBehaviour {
 		float partitionWidth = battleCamera.pixelWidth / battleEnemies.Count;
 		for (int i = 0; i < battleEnemies.Count; i++){
 			battleEnemies[i].SetFacing(true);
-			scenePhotonView.RPC("Parenting", PhotonTargets.All, battleEnemies[i].gameObject.GetPhotonView().viewID, battleCamera.gameObject.GetPhotonView().viewID, false);
-			scenePhotonView.RPC("Enable", PhotonTargets.Others, battleEnemies[i].gameObject.GetPhotonView().viewID, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, battleEnemies[i].gameObject.GetPhotonView().viewID, battleCamera.gameObject.GetPhotonView().viewID, false);
+			scenePhotonView.RPC("Enable", PhotonTargets.OthersBuffered, battleEnemies[i].gameObject.GetPhotonView().viewID, false);
 			battleEnemies[i].transform.localScale = new Vector3(20, 20, 0);
 			battleEnemies[i].transform.position =
 				battleCamera.ScreenToWorldPoint(new Vector3(partitionWidth * i + partitionWidth / 2,
