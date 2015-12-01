@@ -17,6 +17,7 @@ public class EnemyScript : Photon.MonoBehaviour {
 	public Toggle myToggle;
 	public HexScript homeHex;
 	public bool defeated = false;
+	public bool isBattling = false;
 
 	GameObject enemySprite;
 

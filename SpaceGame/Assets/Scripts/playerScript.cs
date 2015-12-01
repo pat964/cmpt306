@@ -128,10 +128,12 @@ public class playerScript : Photon.MonoBehaviour {
 			}
 		}
 		fame = newFame;
-		PhotonNetwork.player.SetScore (newFame);
-		Debug.Log("Score: " + PhotonNetwork.player.GetScore());
-		Text fameTrack = transform.GetComponentInChildren<Canvas>().transform.GetChild (1).GetComponent<Text>();
-		UpdateLabels();
+		if (photonView.isMine) {
+			PhotonNetwork.player.SetScore (newFame);
+			Debug.Log ("Score: " + PhotonNetwork.player.GetScore ());
+			Text fameTrack = transform.GetComponentInChildren<Canvas> ().transform.GetChild (1).GetComponent<Text> ();
+			UpdateLabels ();
+		}
 	}
 	
 	public void IncreaseReputation(int amount){
@@ -177,8 +179,11 @@ public class playerScript : Photon.MonoBehaviour {
 		List<HexScript> newAdjacentRampagers = GetAdjacentRampagers();
 		if(oldAdjacentRampagers.Count > 0 && newAdjacentRampagers.Count > 0){
 			foreach (HexScript rampager in oldAdjacentRampagers.Intersect(newAdjacentRampagers)){
-				if (rampager.enemiesOnHex.Count > 0){
-					rampagingEnemies.Add(rampager.enemiesOnHex.ElementAt(0));
+				if (rampager.enemiesOnHex.Count > 0){ 
+					if (!rampager.enemiesOnHex.ElementAt(0).isBattling) {
+						rampager.enemiesOnHex.ElementAt(0).isBattling = true;
+						rampagingEnemies.Add(rampager.enemiesOnHex.ElementAt(0));
+					}
 				}
 			}
 		}
@@ -202,7 +207,10 @@ public class playerScript : Photon.MonoBehaviour {
 		List<EnemyScript> enemies = new List<EnemyScript>();
 		enemies.AddRange(hex.enemiesOnHex);
 		foreach(EnemyScript enemy in rampagingEnemies){
-			enemies.Add(enemy);
+			if (!enemy.isBattling) {
+				enemy.isBattling = true;
+				enemies.Add(enemy);
+			}
 		}
 		DoBattle(enemies);
 	}
