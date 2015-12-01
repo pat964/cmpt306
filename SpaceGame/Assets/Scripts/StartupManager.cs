@@ -8,8 +8,7 @@ using UnityEngine.UI;
 public class StartupManager : MonoBehaviour {
 
 	public Vector2 widthAndHeight = new Vector2(600, 400); // menu size
-	private Vector2 scrollPos = Vector2.zero; 
-	
+
 	// Sets up lobby GUI 
 	public void OnGUI()
 	{
