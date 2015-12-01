@@ -759,8 +759,7 @@ public class Manager : Photon.MonoBehaviour {
 	}
 
 	public static void GameOver(){
-		print ("Game Over!");
-		//do stuff
+		PhotonNetwork.LoadLevel (5);
 	}
 
 	
