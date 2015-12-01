@@ -172,7 +172,12 @@ public class NetworkManager : MonoBehaviour {
 	public void OnCreatedRoom()
 	{
 		Debug.Log("OnCreatedRoom");
-		PhotonNetwork.LoadLevel(2);
+		if (byte.Parse (roomSize) == 1) {
+			PhotonNetwork.LoadLevel (3);
+		} else {
+			PhotonNetwork.LoadLevel (2);
+		}
+
 	}
 
 	// Error stuff

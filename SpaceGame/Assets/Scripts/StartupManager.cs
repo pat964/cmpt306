@@ -47,7 +47,7 @@ public class StartupManager : MonoBehaviour {
 		// start tutorial
 		GUILayout.BeginHorizontal();
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("Play Tutorial", GUILayout.Width(125)))
+		if (GUILayout.Button("Tutorial", GUILayout.Width(125)))
 		{
 			PhotonNetwork.LoadLevel(4);
 		}		

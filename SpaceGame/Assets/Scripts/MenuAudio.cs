@@ -19,10 +19,4 @@ public class MenuAudio : MonoBehaviour {
 		DontDestroyOnLoad(this.gameObject);
 	}
 
-	public void OnLevelWasLoaded(int level)
-	{
-		if (level == 3 || level == 4)  {
-			Destroy (gameObject);
-		}
-	}
 }

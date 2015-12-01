@@ -2396,16 +2396,9 @@ public static class PhotonNetwork
     /// <param name="kickPlayer">The PhotonPlayer to kick.</param>
     public static bool CloseConnection(PhotonPlayer kickPlayer)
     {
-        if (!VerifyCanUseNetwork())
-        {
-            return false;
-        }
-
-        if (!player.isMasterClient)
-        {
-            Debug.LogError("CloseConnection: Only the masterclient can kick another player.");
-            return false;
-        }
+        if (!VerifyCanUseNetwork ()) {
+			return false;
+		}
 
         if (kickPlayer == null)
         {

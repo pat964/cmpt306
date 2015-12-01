@@ -42,7 +42,9 @@ public class Manager : Photon.MonoBehaviour {
 			BuildTileDeck ();
 			BuildMapFrame ();
 			ShuffleDecks();
+			PhotonNetwork.room.open = false;
 		}
+
 	}
 	
 	// Update is called once per frame
