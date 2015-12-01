@@ -195,6 +195,7 @@ public class Manager : Photon.MonoBehaviour {
 			if(player.canDrawCards){
 				player.DrawCards();
 				player.usedGlade = false;
+				player.GetComponentInChildren<energySourceScript>().RollAll();
 				player.timer = playerScript.TURN_TIMER;
 			}
 			SwitchToTurnPhase(Toolbox.TurnPhase.Move);

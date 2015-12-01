@@ -26,7 +26,7 @@ public class playerScript : Photon.MonoBehaviour {
 	public int[] blocks = Enumerable.Repeat(0, 4).ToArray();
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
-	private GameObject hand, deck, discardPile;
+	private GameObject hand, deck, discardPile, destroyedCards;
 	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel, energyLabel, handSizeLabel, fameLabel, armorLabel;
 	private GameObject portalHex;
 	private Transform player;
@@ -69,6 +69,7 @@ public class playerScript : Photon.MonoBehaviour {
 		player = transform.GetChild (0);
 		//portal hex is the seventh child of green tile zero.
 		portalHex = GameObject.Find("Green Tile 0").transform.GetChild(6).gameObject;
+		destroyedCards = GameObject.Find ("Destroyed Cards");
 		onHex = portalHex.GetComponent<HexScript>();
 		player.position = portalHex.transform.position;
 		attackLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Attack Label").gameObject;
@@ -291,6 +292,7 @@ public class playerScript : Photon.MonoBehaviour {
 				Transform card = hand.transform.GetChild (i);
 				card.gameObject.SetActive (true);
 				card.localPosition = new Vector2 (j * card.GetComponentInChildren<Image> ().sprite.bounds.size.x * card.GetComponentInChildren<RectTransform> ().localScale.x * 2, 0);
+				card.transform.localScale = new Vector3(1,1,1);
 			}
 		}
 	}
@@ -539,28 +541,34 @@ public class playerScript : Photon.MonoBehaviour {
 		}
 	}
 
-	public void PayCosts(List<Cost> costs){
+	public bool PayCosts(List<Cost> costs){
+		bool destroyCard = false;
 		foreach (Cost cost in costs) {
-			switch (cost.colour){
-			case Toolbox.EnergyColour.Blue:
-				blueEnergy -= cost.val;
-				break;
-			case Toolbox.EnergyColour.Green:
-				greenEnergy -= cost.val;
-				break;
-			case Toolbox.EnergyColour.Red:
-				redEnergy -= cost.val;
-				break;
-			case Toolbox.EnergyColour.White:
-				whiteEnergy -= cost.val;
-				break;
-			case Toolbox.EnergyColour.Dark:
-				darkEnergy -= cost.val;
-				break;
-			default:
-				break;
+			if(cost.sacrifice){
+				switch (cost.colour){
+				case Toolbox.EnergyColour.Blue:
+					blueEnergy -= cost.val;
+					break;
+				case Toolbox.EnergyColour.Green:
+					greenEnergy -= cost.val;
+					break;
+				case Toolbox.EnergyColour.Red:
+					redEnergy -= cost.val;
+					break;
+				case Toolbox.EnergyColour.White:
+					whiteEnergy -= cost.val;
+					break;
+				case Toolbox.EnergyColour.Dark:
+					darkEnergy -= cost.val;
+					break;
+				default:
+					break;
+				}
+			} else {
+				destroyCard = true;
 			}
 		}
+		return destroyCard;
 	}
 
 	public void CheckEndingEffect(){
@@ -593,6 +601,12 @@ public class playerScript : Photon.MonoBehaviour {
 			redEnergy++;
 			UpdateLabels();
 		}
+	}
+
+	public void DestroyCard(DeedCardScript card){
+		photonView.RPC ("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView ().viewID, destroyedCards.GetPhotonView ().viewID, false);
+		cardsInHand--;
+		ArrangeHand(0);
 	}
 
 	[PunRPC] // adds the child to the parent across the whole network

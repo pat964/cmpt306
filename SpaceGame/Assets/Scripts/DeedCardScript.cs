@@ -44,6 +44,9 @@ public class DeedCardScript : MonoBehaviour {
 			bottomCost.Add (new Cost(1, ColourToEnergy()));
 			bottomCost.Add (new Cost(1, Toolbox.EnergyColour.Dark));
 			break;
+		case Toolbox.CardType.Artifact:
+			bottomCost.Add (new Cost(0, Toolbox.EnergyColour.Dark, true));
+			break;
 		default:
 			break;
 		}
@@ -52,7 +55,6 @@ public class DeedCardScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		this.transform.localScale = new Vector3(1,1,1);
 
 	}
 	
@@ -261,10 +263,13 @@ public class DeedCardScript : MonoBehaviour {
 		case Toolbox.BasicAction.Move:
 			button.onClick.AddListener(() => {
 				if (MeetsCosts(costs)){
-					player.PayCosts(costs);
 					player.moves += pair.val;
 					player.UpdateLabels();
-					player.DiscardCard(this);
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
 					Destroy(menu);
 				}
 			});
@@ -272,10 +277,13 @@ public class DeedCardScript : MonoBehaviour {
 		case Toolbox.BasicAction.Influence:
 			button.onClick.AddListener(() => {
 				if (MeetsCosts(costs)){
-					player.PayCosts(costs);
 					player.influence += pair.val;
 					player.UpdateLabels();
-					player.DiscardCard(this);
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
 					Destroy(menu);
 				}
 			});
@@ -283,9 +291,12 @@ public class DeedCardScript : MonoBehaviour {
 		case Toolbox.BasicAction.Heal:
 			button.onClick.AddListener(() => {
 				if (MeetsCosts(costs)){
-					player.PayCosts(costs);
 					player.DoHeal(pair.val);
-					player.DiscardCard(this);
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
 					Destroy(menu);
 				}
 			});
@@ -293,9 +304,12 @@ public class DeedCardScript : MonoBehaviour {
 		case Toolbox.BasicAction.Block:
 			button.onClick.AddListener(() => {
 				if (MeetsCosts(costs)){
-					player.PayCosts(costs);
 					player.AddBlock(pair.val, pair.colour);
-					player.DiscardCard(this);
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
 					Destroy(menu);
 				}
 			});
@@ -304,9 +318,12 @@ public class DeedCardScript : MonoBehaviour {
 		case Toolbox.BasicAction.Attack:
 			button.onClick.AddListener(() => {
 				if (MeetsCosts(costs)){
-					player.PayCosts(costs);
 					player.AddAttack(pair.val, pair.colour);
-					player.DiscardCard(this);
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
 					Destroy(menu);
 				}
 			});
@@ -318,35 +335,38 @@ public class DeedCardScript : MonoBehaviour {
 
 	public bool MeetsCosts(List<Cost> costs) {
 		foreach (Cost cost in costs){
-			switch (cost.colour){
-			case Toolbox.EnergyColour.Blue:
-				if(player.blueEnergy < cost.val){
-					return false;
+			if(cost.sacrifice){
+				switch (cost.colour){
+				case Toolbox.EnergyColour.Blue:
+					if(player.blueEnergy < cost.val){
+						return false;
+					}
+					break;
+				case Toolbox.EnergyColour.Green:
+					if(player.greenEnergy < cost.val){
+						return false;
+					}
+					break;
+				case Toolbox.EnergyColour.Red:
+					if(player.redEnergy < cost.val){
+						return false;
+					}
+					break;
+				case Toolbox.EnergyColour.White:
+					if(player.whiteEnergy < cost.val){
+						return false;
+					}
+					break;
+				case Toolbox.EnergyColour.Dark:
+					if(player.darkEnergy < cost.val){
+						return false;
+					}
+					break;
+				default:
+					break;
 				}
-				break;
-			case Toolbox.EnergyColour.Green:
-				if(player.greenEnergy < cost.val){
-					return false;
-				}
-				break;
-			case Toolbox.EnergyColour.Red:
-				if(player.redEnergy < cost.val){
-					return false;
-				}
-				break;
-			case Toolbox.EnergyColour.White:
-				if(player.whiteEnergy < cost.val){
-					return false;
-				}
-				break;
-			case Toolbox.EnergyColour.Dark:
-				if(player.darkEnergy < cost.val){
-					return false;
-				}
-				break;
-			default:
-				break;
 			}
+
 		}
 		return true;
 	}
@@ -370,8 +390,10 @@ public class DeedCardScript : MonoBehaviour {
 		string returnString = "";
 		if (costs.Count == 0){
 			return returnString;
-		} else {
-			returnString = " For ";
+		} else if(costs.Any (x => x.sacrifice)){
+			return ". This will destroy the card!";
+		} else{
+			returnString = " for ";
 			for (int i = 0; i < costs.Count; i++ ){
 				if (i == 0 ){
 					returnString += costs[i].val.ToString() + " " + costs[i].colour.ToString();
@@ -422,9 +444,11 @@ public class ActionValPair {
 public class Cost {
 	public int val;
 	public Toolbox.EnergyColour colour;
+	public bool sacrifice;
 	
-	public Cost(int myVal, Toolbox.EnergyColour myColour){
+	public Cost(int myVal, Toolbox.EnergyColour myColour, bool mySacrifice = false){
 		val = myVal;
 		colour = myColour;
+		sacrifice = mySacrifice;
 	}
 }
