@@ -339,6 +339,7 @@ public class playerScript : Photon.MonoBehaviour {
 				if (hand.GetComponentsInChildren<DeedCardScript> (true).Any (x => x.cardType == Toolbox.CardType.Wound)) {
 					GameObject wound = hand.GetComponentsInChildren<DeedCardScript> (true).First (x => x.cardType == Toolbox.CardType.Wound).gameObject;
 					wound.transform.SetParent (GameObject.Find ("Wound Deck").transform, false);
+					cardsInHand--;
 					DoHeal (val - 1);
 				} else {
 					ArrangeHand (0);
