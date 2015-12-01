@@ -128,6 +128,7 @@ public class playerScript : Photon.MonoBehaviour {
 			}
 		}
 		fame = newFame;
+		PhotonNetwork.player.SetScore (newFame);
 		Text fameTrack = transform.GetComponentInChildren<Canvas>().transform.GetChild (1).GetComponent<Text>();
 		UpdateLabels();
 	}

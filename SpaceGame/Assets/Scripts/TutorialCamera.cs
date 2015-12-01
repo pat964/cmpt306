@@ -8,6 +8,7 @@ public class TutorialCamera : MonoBehaviour {
 	GameObject handView;
 	GameObject gameView;
 	GameObject woundView;
+	GameObject actionsView;
 	int cameraSelect;
 
 	// Use this for initialization
@@ -18,6 +19,7 @@ public class TutorialCamera : MonoBehaviour {
 		handView = GameObject.Find ("Background - hand");
 		gameView = GameObject.Find ("Background - General Game");
 		woundView = GameObject.Find ("Wound Background");
+		actionsView = GameObject.Find ("Actions background");
 		cameraPos = new Vector3 (0, 0, -10);
 
 	}
@@ -39,6 +41,10 @@ public class TutorialCamera : MonoBehaviour {
 			}
 			else if (cameraSelect == 5){
 				transform.position = woundView.transform.position + cameraPos;
+				cameraSelect++;
+			}
+			else if (cameraSelect == 6){
+				transform.position = actionsView.transform.position + cameraPos;
 				cameraSelect = 1;
 			}
 			else if (cameraSelect == 1){
