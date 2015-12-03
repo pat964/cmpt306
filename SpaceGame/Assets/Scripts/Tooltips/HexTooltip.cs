@@ -7,8 +7,9 @@ public class HexTooltip : MonoBehaviour {
 	// code learned from following example below so some similarities may appear
 	// http://answers.unity3d.com/questions/44811/tooltip-when-mousing-over-a-game-object.html
 	
-	public string toolTipText = ""; 
-	private string currentToolTipText = "";
+	public string toolTipText = "";
+	private string currentToolTipText = ""; 
+	private string toolTipAdditionalText = ""; // extra feature help info
 	private GUIStyle guiStyleFore;
 	private GUIStyle guiStyleBack;
 	private int delay; // the delay time for the tooltip to appear
@@ -42,38 +43,48 @@ public class HexTooltip : MonoBehaviour {
 		// adds the hex feature info
 		string feature = "";
 		if (thisHex.hexFeature.ToString ().Equals("Portal")) {
-			feature = "\nFEATURE:   Portal";
+			feature = "\nFEATURE:   Crash site";
+			toolTipAdditionalText = "\nThe shattered remains of your poor rocket lie here.";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Glade")) {
 			feature = "\nFEATURE:   Glade";
+			toolTipAdditionalText = "\nYou can do so and so here";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Town")) {
 			feature = "\nFEATURE:   Town";
+			toolTipAdditionalText = "\n";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Monastary")) {
 			feature = "\nFEATURE:   Monastary";
+			toolTipAdditionalText = "\n";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Base")) {
 			feature = "\nFEATURE:   Base";
+			toolTipAdditionalText = "\n";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("DarkMatterResearch")) {
 			feature = "\nFEATURE:   Dark Matter Research";
+			toolTipAdditionalText = "\n";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Maze")) {
 			feature = "\nFEATURE:   Maze";
+			toolTipAdditionalText = "\n";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Labyrinth")) {
 			feature = "\nFEATURE:   Labyrinth";
+			toolTipAdditionalText = "\n";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals ("RampageGreen") &&
 		    thisHex.hexFeature.ToString ().Equals ("RampageRed") ) {
 			feature = "\nFEATURE:   Rampaging Alien";
+			toolTipAdditionalText = "\n";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals ("CityWhite") &&
 		         thisHex.hexFeature.ToString ().Equals ("CityRed") &&
 		         thisHex.hexFeature.ToString ().Equals ("CityGreen") &&
 		         thisHex.hexFeature.ToString ().Equals ("CityBlue")) {
 			feature = "\nFEATURE:   City";
+			toolTipAdditionalText = "\n";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals ("MineBlue") &&
 		         thisHex.hexFeature.ToString ().Equals ("MineRed") &&
@@ -81,6 +92,7 @@ public class HexTooltip : MonoBehaviour {
 		         thisHex.hexFeature.ToString ().Equals ("MineWhite") &&
 		         thisHex.hexFeature.ToString ().Equals ("MineDeep")) {
 			feature = "\nFEATURE:   Energy Mine";
+			toolTipAdditionalText = "\n";
 		} 
 		else {
 		}
@@ -91,7 +103,10 @@ public class HexTooltip : MonoBehaviour {
 	// Shows the tool tip after a delay because we may not want to see hex data all the time
 	public void OnMouseOver() {
 		delay++;
-		if (delay > 75) {
+		if (delay > 150) { // if user is looking at this long enough, add help text
+			currentToolTipText = toolTipText + toolTipAdditionalText;
+		}
+		else if (delay > 75) { // else just show regular text
 			currentToolTipText = toolTipText;
 		}
 	}
