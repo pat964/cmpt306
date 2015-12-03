@@ -27,7 +27,7 @@ public class playerScript : Photon.MonoBehaviour {
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
 	private GameObject hand, deck, discardPile, destroyedCards;
-	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel, energyLabel, handSizeLabel, fameLabel, armorLabel, usesLabel;
+	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel, energyLabel, handSizeLabel, fameLabel, armorLabel, usesLabel, turnPhaseLabel, deckSizeLabel;
 	private GameObject portalHex;
 	private Transform player;
 	public Canvas handCanvas, mainCanvas, overlayCanvas;
@@ -78,6 +78,8 @@ public class playerScript : Photon.MonoBehaviour {
 		timerLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Timer").gameObject;
 		retreatLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Retreat Label").gameObject;
 		usesLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Uses Remaining").gameObject;
+		turnPhaseLabel = mainCanvas.transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Phase Label").gameObject;
+		deckSizeLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Deck Size Label").gameObject;
 		attackLabel.SetActive(false);
 		blockLabel.SetActive(false);
 		hand = handCanvas.transform.GetComponentsInChildren<Transform>().First(x => x.gameObject.name == "Hand").gameObject;
@@ -100,6 +102,7 @@ public class playerScript : Photon.MonoBehaviour {
 		ShowRestButton(false);
 		ShowInteractionButton(false);
 		ShowActionButton(false);
+		UpdateLabels();
 	}
 
 	public Transform getPlayer() {
@@ -162,14 +165,14 @@ public class playerScript : Photon.MonoBehaviour {
 		transform.GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Influence Label").text = "Influence: " + influence.ToString();
 
 		if (attackLabel.activeSelf && blockLabel.activeSelf){
-			attackLabel.transform.GetChild(0).GetComponent<Text>().text = "P: " + attacks[0].ToString();
-			attackLabel.transform.GetChild(1).GetComponent<Text>().text = "I: " + attacks[1].ToString();
-			attackLabel.transform.GetChild(2).GetComponent<Text>().text = "F: " + attacks[2].ToString();
-			attackLabel.transform.GetChild(3).GetComponent<Text>().text = "CF: " + attacks[3].ToString();
-			blockLabel.transform.GetChild(0).GetComponent<Text>().text = "P: " + blocks[0].ToString();
-			blockLabel.transform.GetChild(1).GetComponent<Text>().text = "I: " + blocks[1].ToString();
-			blockLabel.transform.GetChild(2).GetComponent<Text>().text = "F: " + blocks[2].ToString();
-			blockLabel.transform.GetChild(3).GetComponent<Text>().text = "CF: " + blocks[3].ToString();
+			attackLabel.transform.GetChild(0).GetComponent<Text>().text = "Physical: " + attacks[0].ToString();
+			attackLabel.transform.GetChild(1).GetComponent<Text>().text = "Ice: " + attacks[1].ToString();
+			attackLabel.transform.GetChild(2).GetComponent<Text>().text = "Fire: " + attacks[2].ToString();
+			attackLabel.transform.GetChild(3).GetComponent<Text>().text = "Cold Fire: " + attacks[3].ToString();
+			blockLabel.transform.GetChild(0).GetComponent<Text>().text = "Physical: " + blocks[0].ToString();
+			blockLabel.transform.GetChild(1).GetComponent<Text>().text = "Ice: " + blocks[1].ToString();
+			blockLabel.transform.GetChild(2).GetComponent<Text>().text = "Fire: " + blocks[2].ToString();
+			blockLabel.transform.GetChild(3).GetComponent<Text>().text = "Cold Fire: " + blocks[3].ToString();
 		}
 		energyLabel.transform.GetChild(0).GetComponent<Text>().text = "Green: " + greenEnergy.ToString();
 		energyLabel.transform.GetChild(1).GetComponent<Text>().text = "Blue: " + blueEnergy.ToString();
@@ -181,6 +184,8 @@ public class playerScript : Photon.MonoBehaviour {
 		fameLabel.GetComponent<Text>().text = "Fame: " + fame.ToString();
 		armorLabel.GetComponent<Text>().text = "Armor: " + armor.ToString();
 		usesLabel.GetComponent<Text>().text = "Uses Remaining: " + sourceUsesLeft.ToString();
+		deckSizeLabel.GetComponent<Text>().text = "Deck Size: " + deck.transform.childCount;
+		turnPhaseLabel.GetComponent<Text>().text = "Phase: " + turnPhase.ToString();
 	}
 
 	public void MoveToHex(HexScript hex){
@@ -304,6 +309,7 @@ public class playerScript : Photon.MonoBehaviour {
 				card.localPosition = new Vector2 (j * card.GetComponentInChildren<Image> ().sprite.bounds.size.x * card.GetComponentInChildren<RectTransform> ().localScale.x * 2, 0);
 				card.transform.localScale = new Vector3(1,1,1);
 			}
+			UpdateLabels();
 		}
 	}
 
@@ -429,7 +435,7 @@ public class playerScript : Photon.MonoBehaviour {
 		List<Interaction> interactions = new List<Interaction>();
 		switch (onHex.hexFeature){
 		case (Toolbox.HexFeature.Base):
-			interactions.Add(new Interaction(7, Toolbox.InteractionType.Adv_Action));
+			interactions.Add(new Interaction(6, Toolbox.InteractionType.Adv_Action));
 			break;
 		case (Toolbox.HexFeature.DarkMatterResearch):
 			interactions.Add(new Interaction(7, Toolbox.InteractionType.DMD));
@@ -439,7 +445,7 @@ public class playerScript : Photon.MonoBehaviour {
 			interactions.Add(new Interaction(2, Toolbox.InteractionType.Heal));
 			break;
 		case (Toolbox.HexFeature.Town):
-			interactions.Add(new Interaction(10, Toolbox.InteractionType.Adv_Action));
+			interactions.Add(new Interaction(7, Toolbox.InteractionType.Adv_Action));
 			interactions.Add(new Interaction(3, Toolbox.InteractionType.Heal));
 			break;
 		default:

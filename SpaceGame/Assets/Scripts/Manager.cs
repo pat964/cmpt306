@@ -176,13 +176,14 @@ public class Manager : Photon.MonoBehaviour {
 			player.ShowActionButton(false);
 			player.turnPhase = Toolbox.TurnPhase.Move;
 			player.CheckStartingEffect();
+			player.UpdateLabels();
 		} else if (phase == Toolbox.TurnPhase.Action){
 			player.ShowMoveButton(false);
 			player.ShowActionButton(true);
 			player.CheckForInteraction();
 			player.moves = 0;
-			player.UpdateLabels();
 			player.turnPhase = Toolbox.TurnPhase.Action;
+			player.UpdateLabels();
 		} else if (phase == Toolbox.TurnPhase.End){
 			player.CheckEndingEffect();
 			player.influence = 0;
@@ -447,6 +448,10 @@ public class Manager : Photon.MonoBehaviour {
 	}
 
 	private static void SetUpAttackPhase() {
+		//clear blocks
+		player.blocks = Enumerable.Repeat(0, 4).ToArray();
+		player.UpdateLabels();
+
 		player.battlePhase = Toolbox.BattlePhase.Attack;
 		GameObject.Find("Battle Phase Label").GetComponent<Text>().text = "Phase: Attack";
 		
@@ -473,6 +478,10 @@ public class Manager : Photon.MonoBehaviour {
 
 	private static void SetUpEndPhase ()
 	{
+		//clear attacks
+		player.attacks = Enumerable.Repeat(0, 4).ToArray();
+		player.UpdateLabels();
+
 		player.battlePhase = Toolbox.BattlePhase.None;
 		//Change label and add summary
 		GameObject.Find("Battle Phase Label").GetComponent<Text>().text = "Phase: Battle Finished";
