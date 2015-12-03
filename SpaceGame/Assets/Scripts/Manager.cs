@@ -113,6 +113,10 @@ public class Manager : Photon.MonoBehaviour {
 			int index = Toolbox.random.Next(0, cityTiles.transform.childCount);
 			photonView.RPC("Parenting", PhotonTargets.AllBuffered, cityTiles.transform.GetChild(index).gameObject.GetPhotonView().viewID, tileDeck.GetPhotonView().viewID);
 		}
+		while(greenTiles.transform.childCount > 0){
+			int index = Toolbox.random.Next(0, greenTiles.transform.childCount);
+			photonView.RPC("Parenting", PhotonTargets.AllBuffered, greenTiles.transform.GetChild(index).gameObject.GetPhotonView().viewID, tileDeck.GetPhotonView().viewID);
+		}
 	}
 	
 	private void BuildMapFrame() {

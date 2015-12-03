@@ -569,7 +569,7 @@ public class playerScript : Photon.MonoBehaviour {
 		ShowRestButton(false);
 		bool destroyCard = false;
 		foreach (Cost cost in costs) {
-			if(cost.sacrifice){
+			if(!cost.sacrifice){
 				switch (cost.colour){
 				case Toolbox.EnergyColour.Blue:
 					blueEnergy -= cost.val;
@@ -593,6 +593,7 @@ public class playerScript : Photon.MonoBehaviour {
 				destroyCard = true;
 			}
 		}
+		UpdateLabels();
 		return destroyCard;
 	}
 

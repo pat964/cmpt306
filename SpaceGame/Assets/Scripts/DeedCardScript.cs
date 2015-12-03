@@ -352,7 +352,7 @@ public class DeedCardScript : MonoBehaviour {
 
 	public bool MeetsCosts(List<Cost> costs) {
 		foreach (Cost cost in costs){
-			if(cost.sacrifice){
+			if(!cost.sacrifice){
 				switch (cost.colour){
 				case Toolbox.EnergyColour.Blue:
 					if(player.blueEnergy < cost.val){
