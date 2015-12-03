@@ -187,7 +187,7 @@ public class Manager : Photon.MonoBehaviour {
 			player.redEnergy = 0;
 			player.whiteEnergy = 0;
 			player.darkEnergy = 0;
-			player.usedSource = false;
+			player.sourceUsesLeft = 1;
 			player.UpdateLabels();
 			player.ShowActionButton(false);
 			player.turnPhase = Toolbox.TurnPhase.End;
@@ -809,7 +809,7 @@ public class Toolbox : Singleton<Toolbox> {
 	public enum TurnPhase{Move, Action, End};
 	public enum CardType{Action, DMD, Artifact, Wound};
 	public enum ActionType{Move, Influence, Combat, Heal, Special, Action};
-	public enum BasicAction{Influence, Move, RangedAttack, Attack, Block, Heal, ReduceAttack};
+	public enum BasicAction{Influence, Move, Ranged_Attack, Attack, Block, Heal, ReduceAttack, Source_Uses};
 	public enum BattlePhase{Ranged, Block, Attack, None};
 	public enum CardColour{Red, Blue, Green, White, Artifact, Wound};
 	public enum TileType{Green, Brown, City};

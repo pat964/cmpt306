@@ -145,6 +145,9 @@ public class DeedCardScript : MonoBehaviour {
 
 	private void createActionMenu(CardAction action, List<Cost> costs){
 		List<ActionValPair> pairs = new List<ActionValPair>();
+		if (action.actions.Any(x => x == Toolbox.BasicAction.Source_Uses)){
+			pairs.Add (new ActionValPair(action.sourceVal, Toolbox.BasicAction.Source_Uses));
+		}
 		switch (player.turnPhase) {
 		case Toolbox.TurnPhase.Move:
 			if (action.actions.Any(x => x == Toolbox.BasicAction.Move)){
@@ -158,7 +161,7 @@ public class DeedCardScript : MonoBehaviour {
 			if(player.isBattling){
 				switch (player.battlePhase){
 				case Toolbox.BattlePhase.Ranged:
-					if (action.actions.Any(x => x == Toolbox.BasicAction.RangedAttack)){
+					if (action.actions.Any(x => x == Toolbox.BasicAction.Ranged_Attack)){
 						pairs.Add (new ActionValPair(action.attackVal, Toolbox.BasicAction.Attack, action.attackColour));
 					}
 					break;
@@ -168,7 +171,7 @@ public class DeedCardScript : MonoBehaviour {
 					}
 					break;
 				case Toolbox.BattlePhase.Attack:
-					if (action.actions.Any(x => x == Toolbox.BasicAction.Attack || x == Toolbox.BasicAction.RangedAttack)){
+					if (action.actions.Any(x => x == Toolbox.BasicAction.Attack || x == Toolbox.BasicAction.Ranged_Attack)){
 						pairs.Add (new ActionValPair(action.attackVal, Toolbox.BasicAction.Attack, action.attackColour));
 					}
 					break;
@@ -260,6 +263,20 @@ public class DeedCardScript : MonoBehaviour {
 	private void ApplyActionToButton(Button button, ActionValPair pair, List<Cost> costs, GameObject menu){
 		//apply appropriate action
 		switch (pair.action) {
+		case Toolbox.BasicAction.Source_Uses:
+			button.onClick.AddListener(() => {
+				if (MeetsCosts(costs)){
+					player.sourceUsesLeft += pair.val;
+					player.UpdateLabels();
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
+					Destroy(menu);
+				}
+			});
+			break;
 		case Toolbox.BasicAction.Move:
 			button.onClick.AddListener(() => {
 				if (MeetsCosts(costs)){
@@ -314,7 +331,7 @@ public class DeedCardScript : MonoBehaviour {
 				}
 			});
 			break;
-		case Toolbox.BasicAction.RangedAttack:
+		case Toolbox.BasicAction.Ranged_Attack:
 		case Toolbox.BasicAction.Attack:
 			button.onClick.AddListener(() => {
 				if (MeetsCosts(costs)){
@@ -411,12 +428,12 @@ public class DeedCardScript : MonoBehaviour {
 [System.Serializable] 
 public class CardAction {
 	public List<Toolbox.BasicAction> actions;
-	public int attackVal, blockVal, influenceVal, moveVal, healVal;
+	public int attackVal, blockVal, influenceVal, moveVal, healVal, sourceVal;
 	public Toolbox.AttackType attackColour, blockColour;
 
 	public CardAction(List<Toolbox.BasicAction> myActions, int myAttackVal=0, int myBlockVal=0, int myInfluenceVal=0,
 	                  int myHealVal=0, int myMoveVal=0, Toolbox.AttackType myAttackColour = Toolbox.AttackType.Summon,
-	                  Toolbox.AttackType myBlockColour = Toolbox.AttackType.Summon) {
+	                  Toolbox.AttackType myBlockColour = Toolbox.AttackType.Summon, int mySourceVal=0) {
 		actions = myActions;
 		attackVal = myAttackVal;
 		blockVal = myBlockVal;
@@ -425,6 +442,7 @@ public class CardAction {
 		healVal = myHealVal;
 		attackColour = myAttackColour;
 		blockColour = myBlockColour;
+		sourceVal = mySourceVal;
 	}
 
 }

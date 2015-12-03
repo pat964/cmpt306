@@ -27,7 +27,7 @@ public class playerScript : Photon.MonoBehaviour {
 	public HexScript onHex;
 	public List<EnemyScript> rampagingEnemies = new List<EnemyScript>();
 	private GameObject hand, deck, discardPile, destroyedCards;
-	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel, energyLabel, handSizeLabel, fameLabel, armorLabel;
+	public GameObject attackLabel, blockLabel, timerLabel, retreatLabel, energyLabel, handSizeLabel, fameLabel, armorLabel, usesLabel;
 	private GameObject portalHex;
 	private Transform player;
 	public Canvas handCanvas, mainCanvas, overlayCanvas;
@@ -35,7 +35,8 @@ public class playerScript : Photon.MonoBehaviour {
 	public Button endMovesButton, endActionButton, interactButton, restButton;
 	public bool canDrawCards = false;
 	public bool usedGlade = false;
-	public bool usedSource, isResting = false;
+	public int sourceUsesLeft = 1;
+	public bool isResting = false;
 	public int redEnergy, greenEnergy, blueEnergy, whiteEnergy, darkEnergy = 0;
 	public int[] handSizeIncreaseLevels;
 	// Use this for initialization
@@ -76,6 +77,7 @@ public class playerScript : Photon.MonoBehaviour {
 		blockLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Block Label").gameObject;
 		timerLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Timer").gameObject;
 		retreatLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Retreat Label").gameObject;
+		usesLabel = GetComponentInChildren<Canvas>().transform.GetComponentsInChildren<Text>().First(x => x.gameObject.name == "Uses Remaining").gameObject;
 		attackLabel.SetActive(false);
 		blockLabel.SetActive(false);
 		hand = handCanvas.transform.GetComponentsInChildren<Transform>().First(x => x.gameObject.name == "Hand").gameObject;
@@ -178,6 +180,7 @@ public class playerScript : Photon.MonoBehaviour {
 		handSizeLabel.GetComponent<Text>().text = "Hand Size: " + maxHandSize.ToString();
 		fameLabel.GetComponent<Text>().text = "Fame: " + fame.ToString();
 		armorLabel.GetComponent<Text>().text = "Armor: " + armor.ToString();
+		usesLabel.GetComponent<Text>().text = "Uses Remaining: " + sourceUsesLeft.ToString();
 	}
 
 	public void MoveToHex(HexScript hex){
@@ -536,7 +539,7 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public void UseEnergyDice(energyDiceScript dice){
-		if(!usedSource){
+		if(sourceUsesLeft > 0){
 			switch(dice.colour) {
 			case Toolbox.EnergyColour.Blue:
 				blueEnergy++;
@@ -556,7 +559,7 @@ public class playerScript : Photon.MonoBehaviour {
 			default:
 				break;
 			}
-			usedSource = true;
+			sourceUsesLeft--;
 			dice.Roll();
 			UpdateLabels();
 		}
