@@ -32,10 +32,10 @@ public class playerScript : Photon.MonoBehaviour {
 	private Transform player;
 	public Canvas handCanvas, mainCanvas, overlayCanvas;
 	private Camera handCamera, mainCamera;
-	public Button endMovesButton, endActionButton, interactButton;
+	public Button endMovesButton, endActionButton, interactButton, restButton;
 	public bool canDrawCards = false;
 	public bool usedGlade = false;
-	public bool usedSource = false;
+	public bool usedSource, isResting = false;
 	public int redEnergy, greenEnergy, blueEnergy, whiteEnergy, darkEnergy = 0;
 	public int[] handSizeIncreaseLevels;
 	// Use this for initialization
@@ -93,6 +93,9 @@ public class playerScript : Photon.MonoBehaviour {
 		endActionButton.onClick.AddListener(() => Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End));
 		interactButton = mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Interaction Button");
 		interactButton.onClick.AddListener(() => PrepInteractionMenu());
+		restButton = mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Rest Button");
+		restButton.onClick.AddListener(() => DoRest());
+		ShowRestButton(false);
 		ShowInteractionButton(false);
 		ShowActionButton(false);
 	}
@@ -111,6 +114,10 @@ public class playerScript : Photon.MonoBehaviour {
 			} else {
 				canDrawCards = true;
 				timerLabel.transform.GetComponentInChildren<Text> ().text = "You Will Draw After Your Turn!";
+				if (isResting){
+					isResting = false;
+					Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End);
+				}
 			}
 			if (isRetreating) {
 				retreatLabel.gameObject.SetActive (true);
@@ -394,6 +401,20 @@ public class playerScript : Photon.MonoBehaviour {
 	public void ShowInteractionButton(bool show) {
 		interactButton.gameObject.SetActive(show);
 	}
+	
+	public void ShowRestButton(bool show) {
+		restButton.gameObject.SetActive(show);
+	}
+
+	public void DoRest() {
+		isResting = true;
+		foreach(DeedCardScript card in hand.transform.GetComponentsInChildren<DeedCardScript>(true)) {
+			DiscardCard(card);
+		}
+		ShowMoveButton(false);
+		ShowRestButton(false);
+		ShowActionButton(false);
+	}
 
 	public void CheckForInteraction() {
 		if(onHex.hexType == Toolbox.HexType.Interaction){
@@ -542,6 +563,7 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public bool PayCosts(List<Cost> costs){
+		ShowRestButton(false);
 		bool destroyCard = false;
 		foreach (Cost cost in costs) {
 			if(cost.sacrifice){
