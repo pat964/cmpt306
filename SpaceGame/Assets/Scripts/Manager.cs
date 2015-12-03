@@ -299,7 +299,6 @@ public class Manager : Photon.MonoBehaviour {
 
 	private static void SetupEnemies ()
 	{
-		Debug.Log (battleEnemies.Count);
 		float partitionWidth = battleCamera.pixelWidth / battleEnemies.Count;
 		for (int i = 0; i < battleEnemies.Count; i++){
 			battleEnemies[i].SetFacing(true);
@@ -718,8 +717,6 @@ public class Manager : Photon.MonoBehaviour {
 			DiscardEnemy(enemy);
 		} else {
 			enemy.isBattling = false;
-			Debug.Log(enemy.transform.position);
-			Debug.Log(enemy.homeHex.transform.position);
 			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, enemy.homeHex.gameObject.GetPhotonView().viewID, false);
 			scenePhotonView.RPC("Enable", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
 			enemy.transform.position = enemy.homeHex.transform.position;
