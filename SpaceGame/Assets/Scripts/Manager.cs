@@ -290,7 +290,7 @@ public class Manager : Photon.MonoBehaviour {
 		Manager.ChangeCameras("Battle");
 		player.SetBattleUI(true);
 		player.isBattling = true;
-		player.onHex.isBattling = true;
+		scenePhotonView.RPC("HexIsBattling", PhotonTargets.All, player.onHex.gameObject.GetPhotonView().viewID, true);
 		player.attacks = Enumerable.Repeat(0, 4).ToArray();
 		player.blocks = Enumerable.Repeat(0, 4).ToArray();
 		SetupEnemies();
@@ -659,7 +659,7 @@ public class Manager : Photon.MonoBehaviour {
 		//Destroy Skip Button and summary label
 		Destroy (GameObject.Find("Skip Button"));
 		Destroy (GameObject.Find ("Summary Label"));
-		player.onHex.isBattling = false;
+		scenePhotonView.RPC("HexIsBattling", PhotonTargets.All, player.onHex.gameObject.GetPhotonView().viewID, false);
 
 		//Resolve each enemy seperately
 		foreach(EnemyScript enemy in battleEnemies){
@@ -716,8 +716,8 @@ public class Manager : Photon.MonoBehaviour {
 			enemy.siteFortification = false;
 			DiscardEnemy(enemy);
 		} else {
-			enemy.isBattling = false;
-			scenePhotonView.RPC("Parenting", PhotonTargets.AllBuffered, enemy.gameObject.GetPhotonView().viewID, enemy.homeHex.gameObject.GetPhotonView().viewID, false);
+			scenePhotonView.RPC("EnemyIsBattling", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, false);
+			scenePhotonView.RPC("Parenting", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, enemy.homeHex.gameObject.GetPhotonView().viewID, false);
 			scenePhotonView.RPC("Enable", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
 			enemy.transform.position = enemy.homeHex.transform.position;
 
@@ -795,6 +795,19 @@ public class Manager : Photon.MonoBehaviour {
 		o.gameObject.GetComponent<Renderer>().enabled = enable;
 		o.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer> ().enabled = enable;
 	}
+
+	[PunRPC] // set isBattling to true or false for all
+	void HexIsBattling(int obj, bool isBattling) {
+		PhotonView o = PhotonView.Find (obj);
+		o.gameObject.GetComponent<HexScript>().isBattling = isBattling;
+	}
+
+	[PunRPC] // set isBattling to true or false for all
+	void EnemyIsBattling(int obj, bool isBattling) {
+		PhotonView o = PhotonView.Find (obj);
+		o.gameObject.GetComponent<EnemyScript>().isBattling = isBattling;
+	}
+
 }
 
 /// <summary>
