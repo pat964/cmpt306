@@ -290,7 +290,10 @@ public class Manager : Photon.MonoBehaviour {
 		Manager.ChangeCameras("Battle");
 		player.SetBattleUI(true);
 		player.isBattling = true;
-		scenePhotonView.RPC("HexIsBattling", PhotonTargets.All, player.onHex.gameObject.GetPhotonView().viewID, true);
+
+		foreach (EnemyScript enemy in battleEnemies) {
+			scenePhotonView.RPC("HexIsBattling", PhotonTargets.All, enemy.homeHex.gameObject.GetPhotonView().viewID, true);
+		}
 		player.attacks = Enumerable.Repeat(0, 4).ToArray();
 		player.blocks = Enumerable.Repeat(0, 4).ToArray();
 		SetupEnemies();
@@ -659,8 +662,9 @@ public class Manager : Photon.MonoBehaviour {
 		//Destroy Skip Button and summary label
 		Destroy (GameObject.Find("Skip Button"));
 		Destroy (GameObject.Find ("Summary Label"));
-		scenePhotonView.RPC("HexIsBattling", PhotonTargets.All, player.onHex.gameObject.GetPhotonView().viewID, false);
-
+		foreach (EnemyScript enemy in battleEnemies) {
+			scenePhotonView.RPC("HexIsBattling", PhotonTargets.All, enemy.homeHex.gameObject.GetPhotonView().viewID, false);
+		}
 		//Resolve each enemy seperately
 		foreach(EnemyScript enemy in battleEnemies){
 			CleanUpEnemy(enemy);

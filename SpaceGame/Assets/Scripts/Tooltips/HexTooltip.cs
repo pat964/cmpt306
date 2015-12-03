@@ -13,6 +13,8 @@ public class HexTooltip : MonoBehaviour {
 	private GUIStyle guiStyleFore;
 	private GUIStyle guiStyleBack;
 	private int delay; // the delay time for the tooltip to appear
+	private const int TIP_DELAY = 75; // time until the tooltip appears
+	private const int HELP_DELAY = 125; // time until additional help is added
 
 	public void Start()
 	{
@@ -103,10 +105,10 @@ public class HexTooltip : MonoBehaviour {
 	// Shows the tool tip after a delay because we may not want to see hex data all the time
 	public void OnMouseOver() {
 		delay++;
-		if (delay > 150) { // if user is looking at this long enough, add help text
+		if (delay > HELP_DELAY) { // if user is looking at this long enough, add help text
 			currentToolTipText = toolTipText + toolTipAdditionalText;
 		}
-		else if (delay > 75) { // else just show regular text
+		else if (delay > TIP_DELAY) { // else just show regular text
 			currentToolTipText = toolTipText;
 		}
 	}
