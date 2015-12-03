@@ -1,24 +1,39 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(PhotonView))]
-public class PlayerTooltip : Photon.MonoBehaviour {
-
+[RequireComponent(typeof(EnemyScript))]
+public class EnemyTooltip : Photon.MonoBehaviour {
+	
 	// code learned from following example below so some similarities may appear
 	// http://answers.unity3d.com/questions/44811/tooltip-when-mousing-over-a-game-object.html
-
+	
 	public string toolTipText = ""; 
 	private string currentToolTipText = "";
 	private GUIStyle guiStyleFore;
 	private GUIStyle guiStyleBack;
-	private string player;
-	
+
 	public void Start()
 	{
-		player = "Player: " + this.photonView.owner.name;
-		string fame =  "\nFame: " + this.photonView.owner.GetScore();
-		toolTipText = player + fame;
+		string name = "NAME:   " + this.GetComponent<EnemyScript>().enemyName;
 
+		string armor =  "\nARMOR:   " + this.GetComponent<EnemyScript>().armor;
+
+		string resistances =  "\nRESISTANCES:";
+		for (int i = 0; i < this.GetComponent<EnemyScript>().resistances.Count; i++) {
+			resistances = resistances + "   " + this.GetComponent<EnemyScript>().resistances[i];
+		}
+		if (0 == this.GetComponent<EnemyScript> ().resistances.Count) {
+			resistances = resistances + "   None";
+		}
+
+		string attacks =  "\nATTACKS: ";
+		for (int i = 0; i < this.GetComponent<EnemyScript>().attacks.Count; i++) {
+			attacks = attacks + "\nType: " + this.GetComponent<EnemyScript>().attacks[i].type;
+			attacks = attacks + "   Strength: " + this.GetComponent<EnemyScript>().attacks[i].value;
+		}
+
+		toolTipText = name + armor + resistances + attacks;
+		
 		guiStyleFore = new GUIStyle();
 		guiStyleFore.normal.textColor = Color.white;
 		guiStyleFore.alignment = TextAnchor.UpperCenter ;
@@ -27,11 +42,6 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 		guiStyleBack.normal.textColor = Color.black;
 		guiStyleBack.alignment = TextAnchor.UpperCenter ;
 		guiStyleBack.wordWrap = true;
-	}
-
-	public void Update() {
-		string fame =  "\nFame: " + this.photonView.owner.GetScore();
-		toolTipText = player + fame;
 	}
 
 	public void OnMouseEnter ()
@@ -46,7 +56,7 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 	
 	public void OnGUI()
 	{
-		if (currentToolTipText != "" && !this.photonView.isMine )
+		if (currentToolTipText != "")
 		{
 			float x = Event.current.mousePosition.x;
 			float y = Event.current.mousePosition.y;
@@ -54,5 +64,4 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 			GUI.Label (new Rect (x-150,y+20,300,60), currentToolTipText, guiStyleFore);
 		}
 	}
-
 }
