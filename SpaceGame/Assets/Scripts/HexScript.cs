@@ -15,6 +15,7 @@ public class HexScript : Photon.MonoBehaviour {
 	private playerScript player;
 	private Renderer myRenderer;
 	private float playerProximity;
+	public bool isBattling;
 
 	GameObject featureSprite;
 
@@ -70,7 +71,10 @@ public class HexScript : Photon.MonoBehaviour {
 	}
 
 	void HexClicked() {
-		if (!player.isRetreating){
+		if (isBattling) {
+			// can't move here
+		}
+		else if (!player.isRetreating){
 			if (playerAdjacent && player.moves >= HexScript.TerrainTypeToVal(terrainType) &&
 			    (hexType != Toolbox.HexType.Rampage || enemiesOnHex.Count == 0)) {
 				Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
