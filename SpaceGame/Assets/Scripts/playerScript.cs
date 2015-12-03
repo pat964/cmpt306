@@ -189,7 +189,7 @@ public class playerScript : Photon.MonoBehaviour {
 			foreach (HexScript rampager in oldAdjacentRampagers.Intersect(newAdjacentRampagers)){
 				if (rampager.enemiesOnHex.Count > 0){ 
 					if (!rampager.enemiesOnHex.ElementAt(0).isBattling) {
-						rampager.enemiesOnHex.ElementAt(0).isBattling = true;
+						photonView.RPC("EnemyIsBattling", PhotonTargets.All, rampager.enemiesOnHex.ElementAt(0).gameObject.GetPhotonView().viewID, true);
 						rampagingEnemies.Add(rampager.enemiesOnHex.ElementAt(0));
 					}
 				}
@@ -216,7 +216,7 @@ public class playerScript : Photon.MonoBehaviour {
 		enemies.AddRange(hex.enemiesOnHex);
 		foreach(EnemyScript enemy in rampagingEnemies){
 			if (!enemy.isBattling) {
-				enemy.isBattling = true;
+				photonView.RPC("IsBattling", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
 				enemies.Add(enemy);
 			}
 		}
@@ -650,6 +650,12 @@ public class playerScript : Photon.MonoBehaviour {
 	void DisableCanvas(int canvas) {
 		PhotonView c = PhotonView.Find (canvas);
 		c.enabled = false;
+	}
+
+	[PunRPC] // set isBattling to true or false for all
+	void EnemyIsBattling(int obj, bool isBattling) {
+		PhotonView o = PhotonView.Find (obj);
+		o.gameObject.GetComponent<EnemyScript>().isBattling = isBattling;
 	}
 	
 	public class Interaction {
