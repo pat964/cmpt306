@@ -14,10 +14,11 @@ public class EnemyTooltip : Photon.MonoBehaviour {
 
 	public void Start()
 	{
+		// the name of the enemy
 		string name = "NAME:   " + this.GetComponent<EnemyScript>().enemyName;
-
+		// the armor of the enemy
 		string armor =  "\nARMOR:   " + this.GetComponent<EnemyScript>().armor;
-
+		// the resistances
 		string resistances =  "\nRESISTANCES:";
 		for (int i = 0; i < this.GetComponent<EnemyScript>().resistances.Count; i++) {
 			resistances = resistances + "   " + this.GetComponent<EnemyScript>().resistances[i];
@@ -25,7 +26,7 @@ public class EnemyTooltip : Photon.MonoBehaviour {
 		if (0 == this.GetComponent<EnemyScript> ().resistances.Count) {
 			resistances = resistances + "   None";
 		}
-
+		// the attacks
 		string attacks =  "\nATTACKS: ";
 		for (int i = 0; i < this.GetComponent<EnemyScript>().attacks.Count; i++) {
 			attacks = attacks + "\nType: " + this.GetComponent<EnemyScript>().attacks[i].type;
@@ -33,7 +34,8 @@ public class EnemyTooltip : Photon.MonoBehaviour {
 		}
 
 		toolTipText = name + armor + resistances + attacks;
-		
+
+		// set up
 		guiStyleFore = new GUIStyle();
 		guiStyleFore.normal.textColor = Color.white;
 		guiStyleFore.alignment = TextAnchor.UpperCenter ;
@@ -53,7 +55,8 @@ public class EnemyTooltip : Photon.MonoBehaviour {
 	{
 		currentToolTipText = "";
 	}
-	
+
+	// sets up the text
 	public void OnGUI()
 	{
 		if (currentToolTipText != "")

@@ -15,10 +15,12 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 	
 	public void Start()
 	{
+		// sets up tooltip text
 		player = "PLAYER:   " + this.photonView.owner.name;
 		string fame =  "\nFAME:   " + this.photonView.owner.GetScore();
 		toolTipText = player + fame;
 
+		// sets up tooltip
 		guiStyleFore = new GUIStyle();
 		guiStyleFore.normal.textColor = Color.white;
 		guiStyleFore.alignment = TextAnchor.UpperCenter ;
@@ -29,6 +31,7 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 		guiStyleBack.wordWrap = true;
 	}
 
+	// updates the score 
 	public void Update() {
 		string fame =  "\nFame: " + this.photonView.owner.GetScore();
 		toolTipText = player + fame;
@@ -43,7 +46,8 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 	{
 		currentToolTipText = "";
 	}
-	
+
+	// displays the tooltip if this player is not you
 	public void OnGUI()
 	{
 		if (currentToolTipText != "" && !this.photonView.isMine )

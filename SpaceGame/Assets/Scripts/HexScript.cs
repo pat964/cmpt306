@@ -100,7 +100,7 @@ public class HexScript : Photon.MonoBehaviour {
 		}
 	}
 
-	static int TerrainTypeToVal(Toolbox.TerrainType terrain){
+	public static int TerrainTypeToVal(Toolbox.TerrainType terrain){
 		int plainsVal = 2;
 		int hillsVal = 3;
 		int desertVal = 5;
