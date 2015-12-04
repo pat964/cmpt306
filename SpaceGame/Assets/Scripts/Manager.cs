@@ -24,7 +24,7 @@ public class Manager : Photon.MonoBehaviour {
 	// audio 
 	public static AudioSource retreatAudio;
 	public static AudioSource battleAudio;
-	public static AudioSource restAudio;
+	public static AudioSource winAudio;
 	public static MenuAudio menuAudio;
 
 	// Use this for initialization
@@ -34,7 +34,7 @@ public class Manager : Photon.MonoBehaviour {
 		AudioSource[] source = this.GetComponents<AudioSource> ();
 		retreatAudio = source [0];
 		battleAudio = source [1];
-		restAudio = source [2];
+		winAudio = source [2];
 		menuAudio = GameObject.Find ("GUI Background").GetComponent<MenuAudio> ();
 
 		player = PhotonNetwork.Instantiate ("Prefabs/PlayerContainer", Vector2.zero, new Quaternion (), 0).GetComponent<playerScript>();
@@ -522,6 +522,7 @@ public class Manager : Photon.MonoBehaviour {
 		summaryLabel.transform.localPosition = new Vector3(0, -25, 0);
 
 		if (battleEnemies.All(x => x.defeated)){
+			winAudio.Play();
 			summaryLabel.text = "Victory! All Enemies Defeated!";
 		} else {
 			player.isRetreating = true;
