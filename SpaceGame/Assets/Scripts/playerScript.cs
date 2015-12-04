@@ -251,6 +251,15 @@ public class playerScript : Photon.MonoBehaviour {
 		}
 	}
 
+	public void AddCardToDiscard(DeedCardScript card){
+		if (photonView.isMine) {
+			card.transform.SetParent(discardPile.transform);
+			//			photonView.RPC ("Parenting", PhotonTargets.AllBuffered, card.gameObject.GetPhotonView ().viewID, hand.gameObject.GetPhotonView ().viewID, false);
+			card.player = this;
+			ArrangeHand (0);
+		}
+	}
+
 	private List<HexScript> GetAdjacentRampagers(){
 		Collider2D[] AdjacentHexes = Physics2D.OverlapCircleAll(player.position, player.GetComponent<Renderer>().bounds.size.y + 1);
 		List<HexScript> myReturn = new List<HexScript>();

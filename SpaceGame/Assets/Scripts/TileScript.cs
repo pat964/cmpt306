@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 public class TileScript : Photon.MonoBehaviour {
 
@@ -37,6 +38,13 @@ public class TileScript : Photon.MonoBehaviour {
 		HexScript h = PhotonView.Find (hex).transform.GetComponent<HexScript>();
 		EnemyScript e = PhotonView.Find (newEnemy).transform.GetComponent<EnemyScript>();
 		e.homeHex = h;
+		if(h.hexType == Toolbox.HexType.Garrison){
+			
+			if(!e.specials.Any (x => x == Toolbox.EnemySpecial.Fortified)){
+				e.specials.Add(Toolbox.EnemySpecial.Fortified);
+				e.transform.GetComponent<EnemyTooltip>().Start();
+			}
+		}
 	}
 	
 	public void SetEnemies(){

@@ -50,23 +50,23 @@ public class HexTooltip : MonoBehaviour {
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Glade")) {
 			feature = "\nFEATURE:   Glade";
-			toolTipAdditionalText = "\nYou can do so and so here";
+			toolTipAdditionalText = "\nOnce Per timer, ending on here Heals 1.\nStarting a turn here gains you one Dark Energy.";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Town")) {
 			feature = "\nFEATURE:   Town";
-			toolTipAdditionalText = "\n";
+			toolTipAdditionalText = "\nThe residents of the town will give you an Advanced Action for 7 Influence.\nThey will also Heal 1 for 3 Influence.";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Monastary")) {
 			feature = "\nFEATURE:   Monastary";
-			toolTipAdditionalText = "\n";
+			toolTipAdditionalText = "\nThe monks of the Monastary will give you a precious artifact for 10 Influence.\nThey will also Heal 1 for 2 Influence.";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Base")) {
 			feature = "\nFEATURE:   Base";
-			toolTipAdditionalText = "\n";
+			toolTipAdditionalText = "\nThe soldiers at the base will give you an Advanced Action for 6 Influence.";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("DarkMatterResearch")) {
-			feature = "\nFEATURE:   Dark Matter Research";
-			toolTipAdditionalText = "\n";
+			feature = "\nFEATURE:   Dark Matter Research Lab";
+			toolTipAdditionalText = "\nThe scientists at the Dark Matter Research Lab will give you a powerful Dark Matter Device for 7 influence.";
 		}
 		else if (thisHex.hexFeature.ToString ().Equals("Maze")) {
 			feature = "\nFEATURE:   Maze";
@@ -76,27 +76,28 @@ public class HexTooltip : MonoBehaviour {
 			feature = "\nFEATURE:   Labyrinth";
 			toolTipAdditionalText = "\n";
 		}
-		else if (thisHex.hexFeature.ToString ().Equals ("RampageGreen") &&
+		else if (thisHex.hexFeature.ToString ().Equals ("RampageGreen") ||
 		    thisHex.hexFeature.ToString ().Equals ("RampageRed") ) {
 			feature = "\nFEATURE:   Rampaging Alien";
-			toolTipAdditionalText = "\n";
+			toolTipAdditionalText = "\nYou cannot move here, but moving adjacent to here twice in a row will provoke the vicious aliens to battle!";
 		}
-		else if (thisHex.hexFeature.ToString ().Equals ("CityWhite") &&
-		         thisHex.hexFeature.ToString ().Equals ("CityRed") &&
-		         thisHex.hexFeature.ToString ().Equals ("CityGreen") &&
+		else if (thisHex.hexFeature.ToString ().Equals ("CityWhite") ||
+		         thisHex.hexFeature.ToString ().Equals ("CityRed") ||
+		         thisHex.hexFeature.ToString ().Equals ("CityGreen") ||
 		         thisHex.hexFeature.ToString ().Equals ("CityBlue")) {
 			feature = "\nFEATURE:   City";
-			toolTipAdditionalText = "\n";
+			toolTipAdditionalText = "\nFreedom! The city facilitates intergalactic travel.\nGain 5 fame and end the game.";
 		}
-		else if (thisHex.hexFeature.ToString ().Equals ("MineBlue") &&
-		         thisHex.hexFeature.ToString ().Equals ("MineRed") &&
-		         thisHex.hexFeature.ToString ().Equals ("MineGreen") &&
-		         thisHex.hexFeature.ToString ().Equals ("MineWhite") &&
+		else if (thisHex.hexFeature.ToString ().Equals ("MineBlue") ||
+		         thisHex.hexFeature.ToString ().Equals ("MineRed") ||
+		         thisHex.hexFeature.ToString ().Equals ("MineGreen") ||
+		         thisHex.hexFeature.ToString ().Equals ("MineWhite") ||
 		         thisHex.hexFeature.ToString ().Equals ("MineDeep")) {
 			feature = "\nFEATURE:   Energy Mine";
-			toolTipAdditionalText = "\n";
+			toolTipAdditionalText = "\nBeginning your turn here will give you an energy of the mine's colour";
 		} 
 		else {
+			toolTipAdditionalText = "";
 		}
 
 		toolTipText = terrain + cost + feature;

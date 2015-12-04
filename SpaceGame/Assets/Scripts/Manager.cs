@@ -344,6 +344,23 @@ public class Manager : Photon.MonoBehaviour {
 				}
 			}
 
+			//Initiate enemy special labels
+			Text enemySpecialLabel = ((GameObject)Instantiate(Resources.Load("Prefabs/Label"))).GetComponent<Text>();
+			enemySpecialLabel.transform.SetParent(battleArea.transform, false);
+			enemySpecialLabel.transform.position = (battleEnemies[i].transform.position);
+			enemySpecialLabel.transform.position = new Vector3(enemySpecialLabel.transform.position.x + 10f, enemySpecialLabel.transform.position.y, enemySpecialLabel.transform.position.z);
+			battleEnemies[i].myLabels.Add(enemySpecialLabel.gameObject);
+			enemySpecialLabel.alignment = TextAnchor.MiddleLeft;
+			enemySpecialLabel.text = "";
+			foreach( Toolbox.EnemySpecial special in battleEnemies[i].specials){
+				if(special == Toolbox.EnemySpecial.Fortified || 
+				   special == Toolbox.EnemySpecial.Brutal ||
+				   special == Toolbox.EnemySpecial.Poison ||
+				   special == Toolbox.EnemySpecial.Swift){
+					enemySpecialLabel.text += special.ToString() + "\n";
+				}
+			}
+
 			//Intantiate Attack labels
 			for (int j = 0; j < battleEnemies[i].attacks.Count; j++){
 				Text enemyAttackLabel = ((GameObject)Instantiate(Resources.Load("Prefabs/Label"))).GetComponent<Text>();
@@ -526,11 +543,10 @@ public class Manager : Photon.MonoBehaviour {
 			return;
 		}
 		foreach(EnemyScript enemy in selectedEnemies){
-			/*remove fortification for now
 			if (isRanged && 
 			    (enemy.specials.Contains(Toolbox.EnemySpecial.Fortified) || enemy.siteFortification) ) {
 				return;
-			}*/
+			}
 			armorSum += enemy.armor;
 		}
 
@@ -587,6 +603,7 @@ public class Manager : Photon.MonoBehaviour {
 
 	private static void DoBlock(){
 		Toolbox.EnemyAttack selectedAttack = null;
+		int attackVal = 0;
 		foreach (EnemyScript enemy in battleEnemies){
 			if (!enemy.defeated){
 				foreach(Toolbox.EnemyAttack attack in enemy.attacks){
@@ -595,6 +612,10 @@ public class Manager : Photon.MonoBehaviour {
 							return;
 						} else{
 							selectedAttack = attack;
+							attackVal = selectedAttack.value;
+							if(enemy.specials.Any(x => x == Toolbox.EnemySpecial.Swift)){
+								attackVal *= 2;
+							}
 						}
 					}
 				}
@@ -603,22 +624,22 @@ public class Manager : Photon.MonoBehaviour {
 		bool blocked = false;
 		switch (selectedAttack.type){
 		case Toolbox.AttackType.Physical:
-			if(selectedAttack.value - player.blocks[0] - player.blocks[1] - player.blocks[2] - player.blocks[3] <= 0){
+			if(attackVal - player.blocks[0] - player.blocks[1] - player.blocks[2] - player.blocks[3] <= 0){
 				blocked = true;
 			}
 			break;
 		case Toolbox.AttackType.Ice:
-			if(selectedAttack.value - player.blocks[0]/2f - player.blocks[1]/2f - player.blocks[2] - player.blocks[3] <= 0){
+			if(attackVal - player.blocks[0]/2f - player.blocks[1]/2f - player.blocks[2] - player.blocks[3] <= 0){
 				blocked = true;
 			}
 			break;
 		case Toolbox.AttackType.Fire:
-			if(selectedAttack.value - player.blocks[0]/2f - player.blocks[1] - player.blocks[2]/2f - player.blocks[3] <= 0){
+			if(attackVal - player.blocks[0]/2f - player.blocks[1] - player.blocks[2]/2f - player.blocks[3] <= 0){
 				blocked = true;
 			}
 			break;
 		case Toolbox.AttackType.ColdFire:
-			if(selectedAttack.value - player.blocks[0]/2f - player.blocks[1]/2f - player.blocks[2]/2f - player.blocks[3] <= 0){
+			if(attackVal - player.blocks[0]/2f - player.blocks[1]/2f - player.blocks[2]/2f - player.blocks[3] <= 0){
 				blocked = true;
 			}
 			break;
@@ -653,18 +674,28 @@ public class Manager : Photon.MonoBehaviour {
 
 		foreach(Toolbox.EnemyAttack attack in landedAttacks){
 			int damage = attack.value;
+			if (attack.myEnemy.specials.Any(x => x == Toolbox.EnemySpecial.Brutal)){
+				damage *= 2;
+			}
 			int woundsTaken = 0;
 			if (damage > 0){
 				do {
 					player.AddCardToHand(GameObject.Find("Wound Deck").transform.GetComponentInChildren<DeedCardScript>());
+					if (attack.myEnemy.specials.Any (x => x == Toolbox.EnemySpecial.Poison)){
+						player.AddCardToDiscard(GameObject.Find("Wound Deck").transform.GetComponentInChildren<DeedCardScript>());
+					}
 					damage -= player.armor;
 					woundsTaken++;
 				} while (damage > 0);
 			}
+			attack.label.text = string.Format("Took {0} ",  woundsTaken);
+			if (attack.myEnemy.specials.Any (x => x == Toolbox.EnemySpecial.Poison)){
+				attack.label.text += "Poisoned ";
+			}
 			if (woundsTaken == 1){
-				attack.label.text ="Took 1 Hit!";
+				attack.label.text +="Hit!";
 			} else{
-				attack.label.text = string.Format("Took {0} Hits!", woundsTaken);
+				attack.label.text += "Hits!";
 			}
 			attack.myToggle.gameObject.SetActive(false);
 		}
@@ -727,6 +758,10 @@ public class Manager : Photon.MonoBehaviour {
 				enemy.homeHex.isSafe = true;
 				if (enemy.homeHex.hexType == Toolbox.HexType.Garrison){
 					enemy.homeHex.hexType = Toolbox.HexType.Interaction;
+				} else if (enemy.homeHex.hexType == Toolbox.HexType.Rampage){
+					enemy.homeHex.hexFeature = Toolbox.HexFeature.Empty;
+					enemy.homeHex.hexType = Toolbox.HexType.Empty;
+					enemy.homeHex.transform.GetComponent<HexTooltip>().Start();
 				}
 			}
 			enemy.homeHex = null;
@@ -850,7 +885,7 @@ public class Toolbox : Singleton<Toolbox> {
 						   TerrorLair, CityWhite, CityRed, CityGreen, CityBlue, Maze, Labyrinth, RefugeeCamp,
 						   MineDeep};
 	public enum EnemyColour{Green, Grey, Purple, Brown, Red, White};
-	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, Elusive, Brutal, Swiftness, Poison,
+	public enum EnemySpecial{Fortified, DoubleFortified, ArcaneImmune, Elusive, Brutal, Swift, Poison,
 		Assassination, Paralyze, Cumbersome, NegReputation, PosReputation};
 	public enum Resistance{Fire, Ice, Physical};
 	public enum AttackType{Physical, Fire, Ice, ColdFire, Summon};
@@ -866,6 +901,7 @@ public class Toolbox : Singleton<Toolbox> {
 		public bool blocked = false;
 		public Text label;
 		public Toggle myToggle;
+		public EnemyScript myEnemy;
 	};
 	public bool isDay = true;
 	

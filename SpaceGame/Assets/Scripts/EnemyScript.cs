@@ -26,6 +26,9 @@ public class EnemyScript : Photon.MonoBehaviour {
 		myLabels = new List<GameObject>();
 		enemySprite = (GameObject) Instantiate(Resources.Load("Prefabs/EnemySprite"));
 		LoadEnemySprite();
+		foreach(Toolbox.EnemyAttack attack in attacks){
+			attack.myEnemy = this;
+		}
 
 	}
 	

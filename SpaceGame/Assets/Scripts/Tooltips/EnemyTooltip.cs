@@ -11,29 +11,50 @@ public class EnemyTooltip : Photon.MonoBehaviour {
 	private string currentToolTipText = "";
 	private GUIStyle guiStyleFore;
 	private GUIStyle guiStyleBack;
+	private EnemyScript enemy;
 
 	public void Start()
 	{
+		enemy = this.GetComponent<EnemyScript>();
 		// the name of the enemy
-		string name = "NAME:   " + this.GetComponent<EnemyScript>().enemyName;
+		string name = "NAME:   " + enemy.enemyName;
 		// the armor of the enemy
-		string armor =  "\nARMOR:   " + this.GetComponent<EnemyScript>().armor;
+		string armor =  "\nARMOR:   " + enemy.armor;
 		// the resistances
 		string resistances =  "\nRESISTANCES:";
-		for (int i = 0; i < this.GetComponent<EnemyScript>().resistances.Count; i++) {
-			resistances = resistances + "   " + this.GetComponent<EnemyScript>().resistances[i];
+		for (int i = 0; i < enemy.resistances.Count; i++) {
+			resistances = resistances + "   " + enemy.resistances[i];
 		}
 		if (0 == this.GetComponent<EnemyScript> ().resistances.Count) {
 			resistances = resistances + "   None";
 		}
 		// the attacks
 		string attacks =  "\nATTACKS: ";
-		for (int i = 0; i < this.GetComponent<EnemyScript>().attacks.Count; i++) {
-			attacks = attacks + "\nType: " + this.GetComponent<EnemyScript>().attacks[i].type;
-			attacks = attacks + "   Strength: " + this.GetComponent<EnemyScript>().attacks[i].value;
+		for (int i = 0; i < enemy.attacks.Count; i++) {
+			attacks = attacks + "\nType: " + enemy.attacks[i].type;
+			attacks = attacks + "   Strength: " + enemy.attacks[i].value;
 		}
 
-		toolTipText = name + armor + resistances + attacks;
+		//the specials
+		string specials = "\nSPECIALS: ";
+		int specialCount = 0;
+		foreach( Toolbox.EnemySpecial special in enemy.specials){
+			if(special == Toolbox.EnemySpecial.Fortified || 
+			   special == Toolbox.EnemySpecial.Brutal ||
+			   special == Toolbox.EnemySpecial.Poison ||
+			   special == Toolbox.EnemySpecial.Swift){
+				specialCount++;
+				specials += "\n" + special.ToString();
+			}
+		}
+		if (specialCount == 0){
+			specials += "\nNone";
+		}
+
+		//the fame
+		string fame = "\nFAME: " + enemy.fame;
+
+		toolTipText = name + armor + resistances + attacks + specials + fame;
 
 		// set up
 		guiStyleFore = new GUIStyle();
