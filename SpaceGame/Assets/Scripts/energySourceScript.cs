@@ -4,6 +4,7 @@ using System.Collections;
 public class energySourceScript : MonoBehaviour {
 
 	public playerScript player;
+
 	// Use this for initialization
 	void Start () {
 		player = transform.GetComponentInParent<playerScript>();
