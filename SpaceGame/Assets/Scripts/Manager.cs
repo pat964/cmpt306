@@ -14,19 +14,30 @@ public class Manager : Photon.MonoBehaviour {
 	private static int NUM_BROWN_TILES = 3; 
 	private static int NUM_CITY_TILES = 1; 
 	private GameObject gameBoard;
-	private static Manager manager;
 	private static Camera mainCamera, battleCamera, handCamera;
 	private static Canvas battleArea, handCanvas, mainCanvas;
 	private static playerScript player;
 	private static List<EnemyScript> battleEnemies = new List<EnemyScript>();
 	private static PhotonView scenePhotonView;
-
 	public Transform tileFrame;
+
+	// audio 
+	public static AudioSource retreatAudio;
+	public static AudioSource battleAudio;
+	public static AudioSource restAudio;
+	public static MenuAudio menuAudio;
+
 	// Use this for initialization
 	void Start () {
 
+		// set up audio
+		AudioSource[] source = this.GetComponents<AudioSource> ();
+		retreatAudio = source [0];
+		battleAudio = source [1];
+		restAudio = source [2];
+		menuAudio = GameObject.Find ("GUI Background").GetComponent<MenuAudio> ();
+
 		player = PhotonNetwork.Instantiate ("Prefabs/PlayerContainer", Vector2.zero, new Quaternion (), 0).GetComponent<playerScript>();
-		manager = this;
 		scenePhotonView = this.GetComponent<PhotonView>();
 		gameBoard = GameObject.Find ("Game Board");
 		mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
@@ -290,6 +301,8 @@ public class Manager : Photon.MonoBehaviour {
 	public static void InitiateBattle (List<EnemyScript> enemies)
 	{
 		// TODO: Go through battle, and add info popups
+		battleAudio.Play();
+		menuAudio.StopAudio ();
 		SwitchToTurnPhase(Toolbox.TurnPhase.Action);
 		player.ShowActionButton(false);
 		battleEnemies.InsertRange(0, enemies);
@@ -507,11 +520,12 @@ public class Manager : Photon.MonoBehaviour {
 		summaryLabel.name = "Summary Label";
 		summaryLabel.transform.SetParent(GameObject.Find("Battle Phase Label").transform, false);
 		summaryLabel.transform.localPosition = new Vector3(0, -25, 0);
+
 		if (battleEnemies.All(x => x.defeated)){
 			summaryLabel.text = "Victory! All Enemies Defeated!";
 		} else {
 			player.isRetreating = true;
-			manager.GetComponent<AudioSource>().Play();
+			retreatAudio.Play();
 			int defeatedCount = 0;
 			foreach (EnemyScript enemy in battleEnemies){
 				if (enemy.defeated){
@@ -530,6 +544,9 @@ public class Manager : Photon.MonoBehaviour {
 		skipButton.transform.position = new Vector2(battleArea.transform.position.x, skipButton.transform.position.y);
 		skipButton.onClick.RemoveAllListeners();
 		skipButton.onClick.AddListener(() => { CleanUpBattle(); });
+		// change back audio
+		menuAudio.PlayAudio ();
+		battleAudio.Stop ();
 
 	}
 

@@ -4,6 +4,7 @@ using System.Collections;
 public class MenuAudio : MonoBehaviour {
 
 	private static MenuAudio instance = null;
+	public static bool isPlaying = true;
 
 	public static MenuAudio Instance {
 		get { return instance; }
@@ -18,5 +19,17 @@ public class MenuAudio : MonoBehaviour {
 		}
 		DontDestroyOnLoad(this.gameObject);
 	}
+
+	// Stop audio
+	public void StopAudio() {
+		instance.GetComponent<AudioSource>().Stop();
+	}
+
+	// Play audio
+	public void PlayAudio() {
+		instance.GetComponent<AudioSource>().Play();
+	}
+
+
 
 }
