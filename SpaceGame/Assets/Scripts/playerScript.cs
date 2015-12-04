@@ -39,8 +39,14 @@ public class playerScript : Photon.MonoBehaviour {
 	public bool isResting = false;
 	public int redEnergy, greenEnergy, blueEnergy, whiteEnergy, darkEnergy = 0;
 	public int[] handSizeIncreaseLevels;
+	// audio
+	public AudioSource restAudio;
+	public MenuAudio menuAudio;
+
 	// Use this for initialization
 	void Start () {
+		menuAudio = GameObject.Find ("GUI Background").GetComponent<MenuAudio> ();
+
 		overlayCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Common Area Overlay");
 		mainCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Main Canvas");
 		handCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Hand Canvas");
@@ -121,6 +127,8 @@ public class playerScript : Photon.MonoBehaviour {
 				timerLabel.transform.GetComponentInChildren<Text> ().text = "You Will Draw After Your Turn!";
 				if (isResting){
 					isResting = false;
+					menuAudio.PlayAudio();
+					restAudio.Stop();
 					Manager.SwitchToTurnPhase(Toolbox.TurnPhase.End);
 				}
 			}
@@ -448,6 +456,10 @@ public class playerScript : Photon.MonoBehaviour {
 	}
 
 	public void DoRest() {
+
+		restAudio.Play ();
+		menuAudio.StopAudio ();
+
 		isResting = true;
 		foreach(DeedCardScript card in hand.transform.GetComponentsInChildren<DeedCardScript>(true)) {
 			DiscardCard(card);
