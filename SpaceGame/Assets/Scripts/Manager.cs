@@ -14,6 +14,7 @@ public class Manager : Photon.MonoBehaviour {
 	private static int NUM_BROWN_TILES = 3; 
 	private static int NUM_CITY_TILES = 1; 
 	private GameObject gameBoard;
+	private static Manager manager;
 	private static Camera mainCamera, battleCamera, handCamera;
 	private static Canvas battleArea, handCanvas, mainCanvas;
 	private static playerScript player;
@@ -25,7 +26,7 @@ public class Manager : Photon.MonoBehaviour {
 	void Start () {
 
 		player = PhotonNetwork.Instantiate ("Prefabs/PlayerContainer", Vector2.zero, new Quaternion (), 0).GetComponent<playerScript>();
-
+		manager = this;
 		scenePhotonView = this.GetComponent<PhotonView>();
 		gameBoard = GameObject.Find ("Game Board");
 		mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
@@ -510,6 +511,7 @@ public class Manager : Photon.MonoBehaviour {
 			summaryLabel.text = "Victory! All Enemies Defeated!";
 		} else {
 			player.isRetreating = true;
+			manager.GetComponent<AudioSource>().Play();
 			int defeatedCount = 0;
 			foreach (EnemyScript enemy in battleEnemies){
 				if (enemy.defeated){
