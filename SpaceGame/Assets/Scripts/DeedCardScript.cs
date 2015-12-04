@@ -148,6 +148,21 @@ public class DeedCardScript : MonoBehaviour {
 		if (action.actions.Any(x => x == Toolbox.BasicAction.Source_Uses)){
 			pairs.Add (new ActionValPair(action.sourceVal, Toolbox.BasicAction.Source_Uses));
 		}
+		if (action.actions.Any(x => x == Toolbox.BasicAction.Add_Energy_Blue)){
+				pairs.Add (new ActionValPair(action.blueVal, Toolbox.BasicAction.Add_Energy_Blue));
+		}
+		if (action.actions.Any(x => x == Toolbox.BasicAction.Add_Energy_Red)){
+			pairs.Add (new ActionValPair(action.redVal, Toolbox.BasicAction.Add_Energy_Red));
+		}
+		if (action.actions.Any(x => x == Toolbox.BasicAction.Add_Energy_Green)){
+			pairs.Add (new ActionValPair(action.greenVal, Toolbox.BasicAction.Add_Energy_Green));
+		}
+		if (action.actions.Any(x => x == Toolbox.BasicAction.Add_Energy_White)){
+			pairs.Add (new ActionValPair(action.whiteVal, Toolbox.BasicAction.Add_Energy_White));
+		}
+		if (action.actions.Any(x => x == Toolbox.BasicAction.Add_Energy_Dark)){
+			pairs.Add (new ActionValPair(action.darkVal, Toolbox.BasicAction.Add_Energy_Dark));
+		}
 		switch (player.turnPhase) {
 		case Toolbox.TurnPhase.Move:
 			if (action.actions.Any(x => x == Toolbox.BasicAction.Move)){
@@ -162,7 +177,7 @@ public class DeedCardScript : MonoBehaviour {
 				switch (player.battlePhase){
 				case Toolbox.BattlePhase.Ranged:
 					if (action.actions.Any(x => x == Toolbox.BasicAction.Ranged_Attack)){
-						pairs.Add (new ActionValPair(action.attackVal, Toolbox.BasicAction.Attack, action.attackColour));
+						pairs.Add (new ActionValPair(action.attackVal, Toolbox.BasicAction.Ranged_Attack, action.attackColour));
 					}
 					break;
 				case Toolbox.BattlePhase.Block:
@@ -203,7 +218,7 @@ public class DeedCardScript : MonoBehaviour {
 			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
 			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action " + CostString(costs);
 			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
-			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
+			firstButton.GetComponentInChildren<Text>().text = ButtonString(pairs[0]);
 			ApplyActionToButton(firstButton, pairs[0], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 		} else if (pairs.Count == 2) {
@@ -212,7 +227,7 @@ public class DeedCardScript : MonoBehaviour {
 			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
 			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action" + CostString(costs);
 			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
-			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
+			firstButton.GetComponentInChildren<Text>().text = ButtonString(pairs[0]);
 			ApplyActionToButton(firstButton, pairs[0], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 			Button secondButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
@@ -225,15 +240,15 @@ public class DeedCardScript : MonoBehaviour {
 			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
 			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action" + CostString(costs);
 			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
-			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
+			firstButton.GetComponentInChildren<Text>().text = ButtonString(pairs[0]);
 			ApplyActionToButton(firstButton, pairs[0], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 			Button secondButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
-			secondButton.GetComponentInChildren<Text>().text = pairs[1].action.ToString() + " " + pairs[1].val.ToString();
+			secondButton.GetComponentInChildren<Text>().text = ButtonString(pairs[1]);
 			ApplyActionToButton(secondButton, pairs[1], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 			Button thirdButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Third Button");
-			thirdButton.GetComponentInChildren<Text>().text = pairs[2].action.ToString() + " " + pairs[2].val.ToString();
+			thirdButton.GetComponentInChildren<Text>().text = ButtonString(pairs[2]);
 			ApplyActionToButton(thirdButton, pairs[2], costs, actionsMenu);
 			thirdButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 		} else if (pairs.Count == 4) {
@@ -242,19 +257,19 @@ public class DeedCardScript : MonoBehaviour {
 			actionsMenu.transform.SetParent(player.handCanvas.transform, false);
 			actionsMenu.transform.GetComponentInChildren<Text>().text = "Choose Action" + CostString(costs);
 			Button firstButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
-			firstButton.GetComponentInChildren<Text>().text = pairs[0].action.ToString() + " " + pairs[0].val.ToString();
+			firstButton.GetComponentInChildren<Text>().text = ButtonString(pairs[0]);
 			ApplyActionToButton(firstButton, pairs[0], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 			Button secondButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
-			secondButton.GetComponentInChildren<Text>().text = pairs[1].action.ToString() + " " + pairs[1].val.ToString();
+			secondButton.GetComponentInChildren<Text>().text = ButtonString(pairs[1]);
 			ApplyActionToButton(secondButton, pairs[1], costs, actionsMenu);
 			firstButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 			Button thirdButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Third Button");
-			thirdButton.GetComponentInChildren<Text>().text = pairs[2].action.ToString() + " " + pairs[2].val.ToString();
+			thirdButton.GetComponentInChildren<Text>().text = ButtonString(pairs[2]);
 			ApplyActionToButton(thirdButton, pairs[2], costs, actionsMenu);
 			thirdButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 			Button fourthButton = actionsMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Fourth Button");
-			fourthButton.GetComponentInChildren<Text>().text = pairs[3].action.ToString() + " " + pairs[3].val.ToString();
+			fourthButton.GetComponentInChildren<Text>().text = ButtonString(pairs[3]);
 			ApplyActionToButton(fourthButton, pairs[3], costs, actionsMenu);
 			fourthButton.onClick.AddListener(() => {Destroy (actionsMenu);});
 		}
@@ -263,6 +278,71 @@ public class DeedCardScript : MonoBehaviour {
 	private void ApplyActionToButton(Button button, ActionValPair pair, List<Cost> costs, GameObject menu){
 		//apply appropriate action
 		switch (pair.action) {
+		case Toolbox.BasicAction.Add_Energy_Red:
+			button.onClick.AddListener(() => {
+				if (MeetsCosts(costs)){
+					player.AddEnergy(pair.val, Toolbox.EnergyColour.Red);
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
+					Destroy(menu);
+				}
+			});
+			break;
+		case Toolbox.BasicAction.Add_Energy_Blue:
+			button.onClick.AddListener(() => {
+				if (MeetsCosts(costs)){
+					player.AddEnergy(pair.val, Toolbox.EnergyColour.Blue);
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
+					Destroy(menu);
+				}
+			});
+			break;
+		case Toolbox.BasicAction.Add_Energy_White:
+			button.onClick.AddListener(() => {
+				if (MeetsCosts(costs)){
+					player.AddEnergy(pair.val, Toolbox.EnergyColour.White);
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
+					Destroy(menu);
+				}
+			});
+			break;
+		case Toolbox.BasicAction.Add_Energy_Green:
+			button.onClick.AddListener(() => {
+				if (MeetsCosts(costs)){
+					player.AddEnergy(pair.val, Toolbox.EnergyColour.Green);
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
+					Destroy(menu);
+				}
+			});
+			break;
+		case Toolbox.BasicAction.Add_Energy_Dark:
+			button.onClick.AddListener(() => {
+				if (MeetsCosts(costs)){
+					player.AddEnergy(pair.val, Toolbox.EnergyColour.Dark);
+					if(player.PayCosts(costs)){
+						player.DestroyCard(this);
+					} else {
+						player.DiscardCard(this);
+					}
+					Destroy(menu);
+				}
+			});
+			break;
 		case Toolbox.BasicAction.Source_Uses:
 			button.onClick.AddListener(() => {
 				if (MeetsCosts(costs)){
@@ -321,7 +401,7 @@ public class DeedCardScript : MonoBehaviour {
 		case Toolbox.BasicAction.Block:
 			button.onClick.AddListener(() => {
 				if (MeetsCosts(costs)){
-					player.AddBlock(pair.val, pair.colour);
+					player.AddBlock(pair.val, pair.attackColour);
 					if(player.PayCosts(costs)){
 						player.DestroyCard(this);
 					} else {
@@ -335,7 +415,7 @@ public class DeedCardScript : MonoBehaviour {
 		case Toolbox.BasicAction.Attack:
 			button.onClick.AddListener(() => {
 				if (MeetsCosts(costs)){
-					player.AddAttack(pair.val, pair.colour);
+					player.AddAttack(pair.val, pair.attackColour);
 					if(player.PayCosts(costs)){
 						player.DestroyCard(this);
 					} else {
@@ -423,17 +503,53 @@ public class DeedCardScript : MonoBehaviour {
 			return returnString;
 		}
 	}
+
+	public string ButtonString(ActionValPair pair){
+		string returnString = "";
+		switch (pair.action){
+		case Toolbox.BasicAction.Block:
+		case Toolbox.BasicAction.Attack:
+			returnString +=  pair.attackColour.ToString() + " " + pair.action.ToString() + " " +  pair.val.ToString();
+			break;
+		case Toolbox.BasicAction.Ranged_Attack:
+			returnString += "Ranged " + pair.attackColour.ToString() + " Attack " + pair.val.ToString();
+			break;
+		case Toolbox.BasicAction.Add_Energy_Red:
+			returnString += "Add " + pair.val.ToString() + " " + Toolbox.EnergyColour.Red.ToString() + " Energy";
+			break;
+		case Toolbox.BasicAction.Add_Energy_Blue:
+			returnString += "Add " + pair.val.ToString() + " " + Toolbox.EnergyColour.Blue.ToString() + " Energy";
+			break;
+		case Toolbox.BasicAction.Add_Energy_Green:
+			returnString += "Add " + pair.val.ToString() + " " + Toolbox.EnergyColour.Green.ToString() + " Energy";
+			break;
+		case Toolbox.BasicAction.Add_Energy_White:
+			returnString += "Add " + pair.val.ToString() + " " + Toolbox.EnergyColour.White.ToString() + " Energy";
+			break;
+		case Toolbox.BasicAction.Add_Energy_Dark:
+			returnString += "Add " + pair.val.ToString() + " " + Toolbox.EnergyColour.Dark.ToString() + " Energy";
+			break;
+		case Toolbox.BasicAction.Source_Uses:
+			returnString += "Add " + pair.val.ToString() + " Source Uses";
+			break;
+		default:
+			returnString += pair.action.ToString() + " " + pair.val.ToString();
+			break;
+		}
+		return returnString;
+	}
 }
 
 [System.Serializable] 
 public class CardAction {
 	public List<Toolbox.BasicAction> actions;
-	public int attackVal, blockVal, influenceVal, moveVal, healVal, sourceVal;
+	public int attackVal, blockVal, influenceVal, moveVal, healVal, sourceVal, whiteVal, blueVal, greenVal, redVal, darkVal;
 	public Toolbox.AttackType attackColour, blockColour;
 
 	public CardAction(List<Toolbox.BasicAction> myActions, int myAttackVal=0, int myBlockVal=0, int myInfluenceVal=0,
 	                  int myHealVal=0, int myMoveVal=0, Toolbox.AttackType myAttackColour = Toolbox.AttackType.Summon,
-	                  Toolbox.AttackType myBlockColour = Toolbox.AttackType.Summon, int mySourceVal=0) {
+	                  Toolbox.AttackType myBlockColour = Toolbox.AttackType.Summon, int mySourceVal=0,
+	                  int myWhiteVal = 0, int myRedVal = 0, int myBlueVal = 0, int myGreenVal = 0, int myDarkVal = 0) {
 		actions = myActions;
 		attackVal = myAttackVal;
 		blockVal = myBlockVal;
@@ -443,6 +559,11 @@ public class CardAction {
 		attackColour = myAttackColour;
 		blockColour = myBlockColour;
 		sourceVal = mySourceVal;
+		whiteVal = myWhiteVal;
+		blueVal = myBlueVal;
+		redVal = myRedVal;
+		greenVal = myGreenVal;
+		darkVal = myDarkVal;
 	}
 
 }
@@ -450,12 +571,13 @@ public class CardAction {
 public class ActionValPair {
 	public int val;
 	public Toolbox.BasicAction action;
-	public Toolbox.AttackType colour;
+	public Toolbox.AttackType attackColour;
+	public Toolbox.EnergyColour energyColour;
 
-	public ActionValPair(int myVal, Toolbox.BasicAction myAction, Toolbox.AttackType myColour = Toolbox.AttackType.Summon){
+	public ActionValPair(int myVal, Toolbox.BasicAction myAction, Toolbox.AttackType myAttackColour = Toolbox.AttackType.Summon){
 		val = myVal;
 		action = myAction;
-		colour = myColour;
+		attackColour = myAttackColour;
 	}
 }
 

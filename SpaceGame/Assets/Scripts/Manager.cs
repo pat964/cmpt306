@@ -874,7 +874,8 @@ public class Toolbox : Singleton<Toolbox> {
 	public enum TurnPhase{Move, Action, End};
 	public enum CardType{Action, DMD, Artifact, Wound};
 	public enum ActionType{Move, Influence, Combat, Heal, Special, Action};
-	public enum BasicAction{Influence, Move, Ranged_Attack, Attack, Block, Heal, ReduceAttack, Source_Uses};
+	public enum BasicAction{Influence, Move, Ranged_Attack, Attack, Block, Heal, ReduceAttack, Source_Uses,
+		Add_Energy_Red, Add_Energy_Blue, Add_Energy_Green, Add_Energy_White, Add_Energy_Dark};
 	public enum BattlePhase{Ranged, Block, Attack, None};
 	public enum CardColour{Red, Blue, Green, White, Artifact, Wound};
 	public enum TileType{Green, Brown, City};

@@ -369,6 +369,29 @@ public class playerScript : Photon.MonoBehaviour {
 		}
 		UpdateLabels();
 	}
+	
+	public void AddEnergy(int val, Toolbox.EnergyColour colour){
+		switch (colour) {
+		case Toolbox.EnergyColour.Dark:
+			darkEnergy += val;
+			break;
+		case Toolbox.EnergyColour.Red:
+			redEnergy += val;
+			break;
+		case Toolbox.EnergyColour.White:
+			whiteEnergy += val;
+			break;
+		case Toolbox.EnergyColour.Green:
+			greenEnergy += val;
+			break;
+		case Toolbox.EnergyColour.Blue:
+			blueEnergy += val;
+			break;
+		default:
+			break;
+		}
+		UpdateLabels();
+	}
 
 	public void DoHeal(int val){
 		if (photonView.isMine) {
