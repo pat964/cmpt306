@@ -20,7 +20,10 @@ public class energyDiceScript : Photon.MonoBehaviour {
 	
 	}
 
-	public void Roll(){
+	public void Roll(bool playAudio){
+		if (playAudio) {
+			this.GetComponent<AudioSource> ().Play ();
+		}
 		System.Array values = System.Enum.GetValues (typeof(Toolbox.EnergyColour));
 		SetColour((Toolbox.EnergyColour)values.GetValue(Toolbox.random.Next(values.Length)));
 	}

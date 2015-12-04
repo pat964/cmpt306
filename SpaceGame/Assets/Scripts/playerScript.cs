@@ -598,7 +598,7 @@ public class playerScript : Photon.MonoBehaviour {
 				break;
 			}
 			sourceUsesLeft--;
-			dice.Roll();
+			dice.Roll(true);
 			UpdateLabels();
 		}
 	}
