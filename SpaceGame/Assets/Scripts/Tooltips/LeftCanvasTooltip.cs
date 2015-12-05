@@ -57,7 +57,7 @@ public class LeftCanvasTooltip : MonoBehaviour {
 		{
 			float x = Event.current.mousePosition.x;
 			float y = Event.current.mousePosition.y;
-			GUI.Label (new Rect (x-21,y+21,200,100), currentToolTipText, guiStyleBack);
+			GUI.Label (new Rect (x-19,y+21,200,100), currentToolTipText, guiStyleBack);
 			GUI.Label (new Rect (x-20,y+20,200,100), currentToolTipText, guiStyleFore);
 		}
 	}

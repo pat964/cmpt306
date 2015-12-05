@@ -14,7 +14,7 @@ public class HexTooltip : MonoBehaviour {
 	private GUIStyle guiStyleBack;
 	private int delay; // the delay time for the tooltip to appear
 	private const int TIP_DELAY = 75; // time until the tooltip appears
-	private const int HELP_DELAY = 125; // time until additional help is added
+	private const int HELP_DELAY = 150; // time until additional help is added
 
 	public void Start()
 	{

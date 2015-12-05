@@ -16,12 +16,12 @@ public class CanvasTooltips : MonoBehaviour {
 	{
 		displayTip = false;
 		guiStyleFore = new GUIStyle();
-		guiStyleFore.normal.textColor = Color.white;
-		guiStyleFore.alignment = TextAnchor.UpperLeft;
+		guiStyleFore.normal.textColor = Color.yellow;
+		guiStyleFore.alignment = TextAnchor.UpperCenter;
 		guiStyleFore.wordWrap = true;
 		guiStyleBack = new GUIStyle();
 		guiStyleBack.normal.textColor = Color.black;
-		guiStyleBack.alignment = TextAnchor.UpperLeft;
+		guiStyleBack.alignment = TextAnchor.UpperCenter;
 		guiStyleBack.wordWrap = true;
 	}
 
@@ -55,8 +55,8 @@ public class CanvasTooltips : MonoBehaviour {
 		{
 			float x = Event.current.mousePosition.x;
 			float y = Event.current.mousePosition.y;
-			GUI.Label (new Rect (x-149,y+21,300,60), currentToolTipText, guiStyleBack);
-			GUI.Label (new Rect (x-150,y+20,300,60), currentToolTipText, guiStyleFore);
+			GUI.Label (new Rect (x-99,y-50,200,60), currentToolTipText, guiStyleBack);
+			GUI.Label (new Rect (x-100,y-51,200,60), currentToolTipText, guiStyleFore);
 		}
 	}
 }

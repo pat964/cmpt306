@@ -28,15 +28,9 @@ public class EnemyTooltip : Photon.MonoBehaviour {
 		if (0 == this.GetComponent<EnemyScript> ().resistances.Count) {
 			resistances = resistances + "   None";
 		}
-		// the attacks
-		string attacks =  "\nATTACKS: ";
-		for (int i = 0; i < enemy.attacks.Count; i++) {
-			attacks = attacks + "\nType: " + enemy.attacks[i].type;
-			attacks = attacks + "   Strength: " + enemy.attacks[i].value;
-		}
 
 		//the specials
-		string specials = "\nSPECIALS: ";
+		string specials = "\nSPECIALS:";
 		int specialCount = 0;
 		foreach( Toolbox.EnemySpecial special in enemy.specials){
 			if(special == Toolbox.EnemySpecial.Fortified || 
@@ -44,7 +38,7 @@ public class EnemyTooltip : Photon.MonoBehaviour {
 			   special == Toolbox.EnemySpecial.Poison ||
 			   special == Toolbox.EnemySpecial.Swift){
 				specialCount++;
-				specials += "\n" + special.ToString();
+				specials += "   " + special.ToString();
 			}
 		}
 		if (specialCount == 0){
@@ -52,9 +46,17 @@ public class EnemyTooltip : Photon.MonoBehaviour {
 		}
 
 		//the fame
-		string fame = "\nFAME: " + enemy.fame;
+		string fame = "\nFAME:   " + enemy.fame;
 
-		toolTipText = name + armor + resistances + attacks + specials + fame;
+		// the attacks
+		string attacks =  "\nATTACKS: ";
+		for (int i = 0; i < enemy.attacks.Count; i++) {
+			attacks = attacks + "\nType: " + enemy.attacks[i].type;
+			attacks = attacks + "   Strength: " + enemy.attacks[i].value;
+		}
+
+
+		toolTipText = name + fame + armor + resistances + specials + attacks;
 
 		// set up
 		guiStyleFore = new GUIStyle();
