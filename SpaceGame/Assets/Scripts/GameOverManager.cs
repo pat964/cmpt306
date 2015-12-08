@@ -4,10 +4,11 @@ using System.Collections;
 public class GameOverManager : Photon.MonoBehaviour {
 
 	public Vector2 widthAndHeight = new Vector2(600, 400); // menu size
-
+	private Scorekeeper scorekeeper;
 	// Sets up lobby GUI 
 	public void OnGUI()
 	{
+		scorekeeper = GameObject.Find ("Scorekeeper").GetComponent<Scorekeeper>();
 
 		
 		// Make menu
@@ -29,7 +30,7 @@ public class GameOverManager : Photon.MonoBehaviour {
 			GUILayout.Space(150);
 			GUILayout.Label(players[i].name, GUILayout.Width(180));
 			GUILayout.FlexibleSpace();
-			GUILayout.Label(players[i].GetScore() + " fame points", GUILayout.Width(100));
+			GUILayout.Label(scorekeeper.getScore(players[i].ID) + " fame points", GUILayout.Width(100));
 			GUILayout.Space(150);
 			GUILayout.EndHorizontal();
 		}

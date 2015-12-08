@@ -12,12 +12,15 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 	private GUIStyle guiStyleFore;
 	private GUIStyle guiStyleBack;
 	private string player;
-	
+	private Scorekeeper scorekeeper;
+
 	public void Start()
 	{
+		scorekeeper = GameObject.Find ("Scorekeeper").GetComponent<Scorekeeper>();
+
 		// sets up tooltip text
 		player = "PLAYER:   " + this.photonView.owner.name;
-		string fame =  "\nFAME:   " + this.photonView.owner.GetScore();
+		string fame =  "\nFAME:   " + scorekeeper.getScore(this.photonView.owner.ID);
 		toolTipText = player + fame;
 
 		// sets up tooltip
@@ -33,7 +36,7 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 
 	// updates the score 
 	public void Update() {
-		string fame =  "\nFame: " + this.photonView.owner.GetScore();
+		string fame =  "\nFame: " + scorekeeper.getScore(this.photonView.owner.ID);
 		toolTipText = player + fame;
 	}
 
