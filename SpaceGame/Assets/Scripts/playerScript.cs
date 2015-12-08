@@ -234,6 +234,8 @@ public class playerScript : Photon.MonoBehaviour {
 			if (!enemy.isBattling) {
 				photonView.RPC("IsBattling", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
 				enemies.Add(enemy);
+			} else if (!enemies.Contains (enemy)) {
+				enemies.Add(enemy);
 			}
 		}
 		DoBattle(enemies);
