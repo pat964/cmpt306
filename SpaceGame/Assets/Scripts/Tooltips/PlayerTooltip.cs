@@ -17,10 +17,9 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 	public void Start()
 	{
 		scorekeeper = GameObject.Find ("Scorekeeper").GetComponent<Scorekeeper>();
-
 		// sets up tooltip text
-		player = "PLAYER:   " + this.photonView.owner.name;
-		string fame =  "\nFAME:   " + scorekeeper.getScore(this.photonView.owner.ID);
+		player = "PLAYER:   " + this.photonView.owner.name ;
+		string fame =  "\nFAME:   ";
 		toolTipText = player + fame;
 
 		// sets up tooltip
@@ -36,7 +35,10 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 
 	// updates the score 
 	public void Update() {
-		string fame =  "\nFame: " + scorekeeper.getScore(this.photonView.owner.ID);
+		string fame = "\nFAME:   ";
+		if (scorekeeper.containsScore (this.photonView.owner.ID)) {
+			fame = fame + scorekeeper.getScore (this.photonView.owner.ID);
+		}
 		toolTipText = player + fame;
 	}
 

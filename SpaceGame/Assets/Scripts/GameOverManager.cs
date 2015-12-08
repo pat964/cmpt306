@@ -41,6 +41,8 @@ public class GameOverManager : Photon.MonoBehaviour {
 		GUILayout.FlexibleSpace();
 		if (GUILayout.Button("Main Menu", GUILayout.Width(125)))
 		{
+			scorekeeper = GameObject.Find ("Scorekeeper").GetComponent<Scorekeeper>();
+			scorekeeper.clearScore();
 			PhotonNetwork.LeaveRoom();
 			PhotonNetwork.Disconnect();
 			PhotonNetwork.LoadLevel(0);

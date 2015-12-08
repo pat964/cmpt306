@@ -49,8 +49,7 @@ public class playerScript : Photon.MonoBehaviour {
 	void Start () {
 		menuAudio = GameObject.Find ("GUI Background").GetComponent<MenuAudio> ();
 		scorekeeper = GameObject.Find ("Scorekeeper").GetComponent<Scorekeeper>();
-		scorekeeper.clearScore();
-
+		photonView.RPC("SetScore", PhotonTargets.AllBuffered, PhotonNetwork.player.ID, 0);
 
 		overlayCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Common Area Overlay");
 		mainCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Main Canvas");
