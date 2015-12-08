@@ -28,7 +28,12 @@ public class GameOverManager : Photon.MonoBehaviour {
 		{
 			GUILayout.BeginHorizontal();
 			GUILayout.Space(150);
-			GUILayout.Label(players[i].name, GUILayout.Width(180));
+			if (PhotonNetwork.offlineMode) {
+				GUILayout.Label("Your score: ", GUILayout.Width(180));
+			}
+			else {
+				GUILayout.Label(players[i].name, GUILayout.Width(180));
+			}
 			GUILayout.FlexibleSpace();
 			GUILayout.Label(scorekeeper.getScore(players[i].ID) + " fame points", GUILayout.Width(100));
 			GUILayout.Space(150);
