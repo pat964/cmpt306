@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class playerScript : Photon.MonoBehaviour {
 	private static int MAX_REP = 5;
@@ -42,10 +43,13 @@ public class playerScript : Photon.MonoBehaviour {
 	// audio
 	public AudioSource restAudio;
 	public MenuAudio menuAudio;
+	private Scorekeeper scorekeeper;
 
 	// Use this for initialization
 	void Start () {
 		menuAudio = GameObject.Find ("GUI Background").GetComponent<MenuAudio> ();
+		scorekeeper = GameObject.Find ("Scorekeeper").GetComponent<Scorekeeper>();
+		photonView.RPC("SetScore", PhotonTargets.AllBuffered, PhotonNetwork.player.ID, 0);
 
 		overlayCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Common Area Overlay");
 		mainCanvas = transform.GetComponentsInChildren<Canvas>().First(x => x.gameObject.name == "Main Canvas");
@@ -153,10 +157,11 @@ public class playerScript : Photon.MonoBehaviour {
 		}
 		fame = newFame;
 		if (photonView.isMine) {
-			PhotonNetwork.player.SetScore (newFame);
-			Debug.Log ("Score: " + PhotonNetwork.player.GetScore ());
+			photonView.RPC("SetScore", PhotonTargets.AllBuffered, PhotonNetwork.player.ID, newFame);
 			Text fameTrack = transform.GetComponentInChildren<Canvas> ().transform.GetChild (1).GetComponent<Text> ();
 			UpdateLabels ();
+			Debug.Log(scorekeeper.getScore (PhotonNetwork.player.ID));
+
 		}
 	}
 	
@@ -748,6 +753,12 @@ public class playerScript : Photon.MonoBehaviour {
 		PhotonView o = PhotonView.Find (obj);
 		o.gameObject.GetComponent<EnemyScript>().isBattling = isBattling;
 	}
+
+	[PunRPC]
+	void SetScore(int playerid, int score) {
+		scorekeeper.setScore (playerid, score);
+	}
+
 	
 	public class Interaction {
 		public int val;

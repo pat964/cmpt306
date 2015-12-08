@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine.UI;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 
 // Made following photon demo so some similarities may exist
@@ -47,7 +48,6 @@ public class NetworkManager : MonoBehaviour {
 			return;
 		}
 		
-		
 		// Make lobby menu
 		Rect content = new Rect((Screen.width - this.widthAndHeight.x)/2, (Screen.height - this.widthAndHeight.y)/2, this.widthAndHeight.x, this.widthAndHeight.y);
 		GUILayout.Space(20);
@@ -91,6 +91,7 @@ public class NetworkManager : MonoBehaviour {
 			else {
 				PhotonNetwork.playerName = playerName; 
 				PlayerPrefs.SetString("playerName", playerName); 
+				PhotonNetwork.player.SetScore(0);
 				PhotonNetwork.CreateRoom(this.roomName, new RoomOptions() {maxPlayers = byte.Parse(roomSize)}, null);
 			}
 		}
