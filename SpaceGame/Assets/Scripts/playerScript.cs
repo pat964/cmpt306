@@ -220,7 +220,7 @@ public class playerScript : Photon.MonoBehaviour {
 			} else {
 				if (rampagingEnemies.Count > 0){
 					foreach(EnemyScript enemy in rampagingEnemies){
-						photonView.RPC("IsBattling", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
+						photonView.RPC("EnemyIsBattling", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
 					}
 					DoBattle(rampagingEnemies);
 				}
@@ -237,7 +237,7 @@ public class playerScript : Photon.MonoBehaviour {
 		enemies.AddRange(hex.enemiesOnHex);
 		foreach(EnemyScript enemy in rampagingEnemies){
 			if (!enemy.isBattling) {
-				photonView.RPC("IsBattling", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
+				photonView.RPC("EnemyIsBattling", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
 				enemies.Add(enemy);
 			}
 		}
