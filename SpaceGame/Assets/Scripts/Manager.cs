@@ -190,6 +190,9 @@ public class Manager : Photon.MonoBehaviour {
 			player.CheckStartingEffect();
 			player.UpdateLabels();
 		} else if (phase == Toolbox.TurnPhase.Action){
+			if(player.rampagersAdjacent()){
+				player.ShowProvokeButton(true);
+			}
 			player.ShowMoveButton(false);
 			player.ShowActionButton(true);
 			player.CheckForInteraction();
@@ -197,6 +200,7 @@ public class Manager : Photon.MonoBehaviour {
 			player.turnPhase = Toolbox.TurnPhase.Action;
 			player.UpdateLabels();
 		} else if (phase == Toolbox.TurnPhase.End){
+			player.ShowProvokeButton(false);
 			player.CheckEndingEffect();
 			player.influence = 0;
 			player.greenEnergy = 0;

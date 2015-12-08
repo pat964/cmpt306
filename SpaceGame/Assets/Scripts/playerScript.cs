@@ -32,7 +32,7 @@ public class playerScript : Photon.MonoBehaviour {
 	private Transform player;
 	public Canvas handCanvas, mainCanvas, overlayCanvas;
 	private Camera handCamera, mainCamera;
-	public Button endMovesButton, endActionButton, interactButton, restButton;
+	public Button endMovesButton, endActionButton, interactButton, restButton, provokeButton;
 	public bool canDrawCards = false;
 	public bool usedGlade = false;
 	public int sourceUsesLeft = 1;
@@ -105,6 +105,9 @@ public class playerScript : Photon.MonoBehaviour {
 		interactButton.onClick.AddListener(() => PrepInteractionMenu());
 		restButton = mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Rest Button");
 		restButton.onClick.AddListener(() => DoRest());
+		provokeButton = mainCanvas.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Provoke Button");
+		provokeButton.onClick.AddListener(() => ProvokeRampagers());
+		ShowProvokeButton(false);
 		ShowRestButton(false);
 		ShowInteractionButton(false);
 		ShowActionButton(false);
@@ -455,6 +458,10 @@ public class playerScript : Photon.MonoBehaviour {
 		restButton.gameObject.SetActive(show);
 	}
 
+	public void ShowProvokeButton(bool show){
+		provokeButton.gameObject.SetActive(show);
+	}
+
 	public void DoRest() {
 
 		restAudio.Play ();
@@ -510,7 +517,7 @@ public class playerScript : Photon.MonoBehaviour {
 			Button firstButton = interactionMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
 			firstButton.GetComponent<RectTransform>().sizeDelta = new Vector2(190f, 30f);
 			firstButton.GetComponentInChildren<Text>().text = interactions[0].type.ToString() + " for " + interactions[0].val.ToString() + " influence";
-			ApplyInteractionToButton(firstButton, interactions[0]);
+			ApplyInteractionToButton(firstButton, interactions[0], interactionMenu);
 			Button secondButton = interactionMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
 			secondButton.GetComponentInChildren<Text>().text = "Take no action";
 			secondButton.onClick.AddListener(() => {Destroy (interactionMenu);});
@@ -521,19 +528,20 @@ public class playerScript : Photon.MonoBehaviour {
 			Button firstButton = interactionMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "First Button");
 			firstButton.GetComponent<RectTransform>().sizeDelta = new Vector2(190f, 30f);
 			firstButton.GetComponentInChildren<Text>().text = interactions[0].type.ToString() + " for " + interactions[0].val.ToString() + " influence";
-			ApplyInteractionToButton(firstButton, interactions[0]);
+			ApplyInteractionToButton(firstButton, interactions[0], interactionMenu);
 			Button secondButton = interactionMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Second Button");
 			secondButton.GetComponent<RectTransform>().sizeDelta = new Vector2(190f, 30f);
 			secondButton.GetComponentInChildren<Text>().text = interactions[1].type.ToString() + " for " + interactions[1].val.ToString() + " influence";
-			ApplyInteractionToButton(secondButton, interactions[1]);
+			ApplyInteractionToButton(secondButton, interactions[1], interactionMenu);
 			Button thirdButton = interactionMenu.transform.GetComponentsInChildren<Button>().First(x => x.gameObject.name == "Third Button");
 			thirdButton.GetComponentInChildren<Text>().text = "Take no action";
 			thirdButton.onClick.AddListener(() => {Destroy (interactionMenu);});
 		}
 	}
 
-	public void ApplyInteractionToButton(Button button, Interaction interaction){
+	public void ApplyInteractionToButton(Button button, Interaction interaction, GameObject parentMenu){
 		Transform newCard;
+		bool applied = false;
 			switch (interaction.type) {
 			case Toolbox.InteractionType.Adv_Action:
 				button.onClick.AddListener(() => {
@@ -543,6 +551,7 @@ public class playerScript : Photon.MonoBehaviour {
 						newCard = advActionDeck.transform.GetChild(0);
 						AddCardToHand(newCard.GetComponent<DeedCardScript>());
 						influence -= interaction.val;
+						applied = true;
 						UpdateLabels();
 					}
 				}
@@ -556,6 +565,7 @@ public class playerScript : Photon.MonoBehaviour {
 						newCard = dmdDeck.transform.GetChild(0);
 						AddCardToHand(newCard.GetComponent<DeedCardScript>());
 						influence -= interaction.val;
+						applied = true;
 						UpdateLabels();
 					}
 				}
@@ -569,6 +579,7 @@ public class playerScript : Photon.MonoBehaviour {
 						newCard = artifactDeck.transform.GetChild(0);
 						AddCardToHand(newCard.GetComponent<DeedCardScript>());
 						influence -= interaction.val;
+						applied = true;
 						UpdateLabels();
 					}
 				}
@@ -579,6 +590,7 @@ public class playerScript : Photon.MonoBehaviour {
 					if (interaction.val <= influence) {
 						DoHeal(1);
 						influence -= interaction.val;
+						applied = true;
 						UpdateLabels();
 					}
 				});
@@ -586,6 +598,12 @@ public class playerScript : Photon.MonoBehaviour {
 			default:
 				break;
 			}
+		
+		button.onClick.AddListener(() => {
+			if (applied) {
+				Destroy (parentMenu);
+			}
+		});
 	}
 
 	public void UseEnergyDice(energyDiceScript dice){
@@ -677,6 +695,23 @@ public class playerScript : Photon.MonoBehaviour {
 			redEnergy++;
 			UpdateLabels();
 		}
+	}
+
+	public bool rampagersAdjacent(){
+		List<HexScript> newAdjacentRampagers = GetAdjacentRampagers();
+		if(newAdjacentRampagers.Count > 0){
+			return true;
+		}
+		return false;
+	}
+
+	public void ProvokeRampagers(){
+		List<EnemyScript> enemies = new List<EnemyScript>();
+		List<HexScript> rampagers = GetAdjacentRampagers();
+		foreach(HexScript hex in rampagers){
+			enemies.Add(hex.enemiesOnHex.ElementAt(0));
+		}
+		DoBattle(enemies);
 	}
 
 	public void DestroyCard(DeedCardScript card){
