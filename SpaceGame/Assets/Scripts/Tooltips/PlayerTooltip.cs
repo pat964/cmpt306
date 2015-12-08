@@ -36,8 +36,10 @@ public class PlayerTooltip : Photon.MonoBehaviour {
 	// updates the score 
 	public void Update() {
 		string fame = "\nFAME:   ";
-		if (scorekeeper.containsScore (this.photonView.owner.ID)) {
-			fame = fame + scorekeeper.getScore (this.photonView.owner.ID);
+		if (scorekeeper != null) {
+			if (scorekeeper.containsScore (this.photonView.owner.ID)) {
+				fame = fame + scorekeeper.getScore (this.photonView.owner.ID);
+			}
 		}
 		toolTipText = player + fame;
 	}
