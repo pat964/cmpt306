@@ -9,10 +9,16 @@ public class StartupManager : MonoBehaviour {
 
 	public Vector2 widthAndHeight = new Vector2(600, 400); // menu size
 
+	public void Start() {
+		PhotonNetwork.LeaveRoom();
+		PhotonNetwork.Disconnect();
+	}
+
+
 	// Sets up lobby GUI 
 	public void OnGUI()
 	{
-		
+
 		// Make menu
 		Rect content = new Rect((Screen.width - this.widthAndHeight.x)/2, (Screen.height - this.widthAndHeight.y)/2, this.widthAndHeight.x, this.widthAndHeight.y);
 		GUILayout.Space(20);
@@ -36,7 +42,6 @@ public class StartupManager : MonoBehaviour {
 		GUILayout.FlexibleSpace();
 		if (GUILayout.Button("Play Offline", GUILayout.Width(125)))
 		{
-			PhotonNetwork.Disconnect ();
 			PhotonNetwork.offlineMode = true;
 			PhotonNetwork.CreateRoom("Offline");
 		}		

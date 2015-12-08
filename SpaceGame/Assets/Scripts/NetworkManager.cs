@@ -91,7 +91,6 @@ public class NetworkManager : MonoBehaviour {
 			else {
 				PhotonNetwork.playerName = playerName; 
 				PlayerPrefs.SetString("playerName", playerName); 
-				PhotonNetwork.player.SetScore(0);
 				PhotonNetwork.CreateRoom(this.roomName, new RoomOptions() {maxPlayers = byte.Parse(roomSize)}, null);
 			}
 		}
