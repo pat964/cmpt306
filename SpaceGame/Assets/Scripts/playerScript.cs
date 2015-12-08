@@ -208,7 +208,6 @@ public class playerScript : Photon.MonoBehaviour {
 			foreach (HexScript rampager in oldAdjacentRampagers.Intersect(newAdjacentRampagers)){
 				if (rampager.enemiesOnHex.Count > 0){ 
 					if (!rampager.enemiesOnHex.ElementAt(0).isBattling) {
-						photonView.RPC("EnemyIsBattling", PhotonTargets.All, rampager.enemiesOnHex.ElementAt(0).gameObject.GetPhotonView().viewID, true);
 						rampagingEnemies.Add(rampager.enemiesOnHex.ElementAt(0));
 					}
 				}
@@ -220,6 +219,9 @@ public class playerScript : Photon.MonoBehaviour {
 				DoGarrisonBattle(hex);
 			} else {
 				if (rampagingEnemies.Count > 0){
+					foreach(EnemyScript enemy in rampagingEnemies){
+						photonView.RPC("IsBattling", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
+					}
 					DoBattle(rampagingEnemies);
 				}
 			}
