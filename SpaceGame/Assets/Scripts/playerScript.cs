@@ -716,9 +716,15 @@ public class playerScript : Photon.MonoBehaviour {
 		List<EnemyScript> enemies = new List<EnemyScript>();
 		List<HexScript> rampagers = GetAdjacentRampagers();
 		foreach(HexScript hex in rampagers){
-			enemies.Add(hex.enemiesOnHex.ElementAt(0));
+			EnemyScript enemy = hex.enemiesOnHex.ElementAt(0);
+			if (!enemy.isBattling){
+				photonView.RPC("EnemyIsBattling", PhotonTargets.All, enemy.gameObject.GetPhotonView().viewID, true);
+				enemies.Add(enemy);
+			}
 		}
-		DoBattle(enemies);
+		if(enemies.Count > 0){
+			DoBattle(enemies);
+		}
 	}
 
 	public void DestroyCard(DeedCardScript card){
