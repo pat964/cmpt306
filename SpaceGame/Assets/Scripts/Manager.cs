@@ -840,8 +840,9 @@ public class Manager : Photon.MonoBehaviour {
 		}
 	}
 
+	// ends the game
 	public static void GameOver(){
-		PhotonNetwork.LoadLevel (5);
+		scenePhotonView.RPC("MasterGameOver", PhotonTargets.MasterClient);
 	}
 
 	
@@ -885,6 +886,11 @@ public class Manager : Photon.MonoBehaviour {
 	void EnemyIsBattling(int obj, bool isBattling) {
 		PhotonView o = PhotonView.Find (obj);
 		o.gameObject.GetComponent<EnemyScript>().isBattling = isBattling;
+	}
+	
+	[PunRPC] // ends the game
+	void MasterGameOver(){
+		PhotonNetwork.LoadLevel (5);
 	}
 
 }
