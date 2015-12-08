@@ -645,6 +645,9 @@ public class Manager : Photon.MonoBehaviour {
 				}
 			}
 		}
+		if (selectedAttack == null){
+			return;
+		}
 		bool blocked = false;
 		switch (selectedAttack.type){
 		case Toolbox.AttackType.Physical:
