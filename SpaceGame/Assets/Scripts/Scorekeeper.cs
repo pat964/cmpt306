@@ -12,8 +12,6 @@ public class Scorekeeper : MonoBehaviour {
 	}
 
 	public void setScore(int playerID, int score) {
-		Debug.Log ("set: " + playerID);
-
 		scores[playerID] = score;
 	}
 
