@@ -102,13 +102,20 @@ public class HexScript : Photon.MonoBehaviour {
 
 	public static int TerrainTypeToVal(Toolbox.TerrainType terrain){
 		int plainsVal = 2;
-		int hillsVal = 3;
-		int desertVal = 5;
-		int forrestVal = 5;
+		int hillsVal = 2;
+		int desertVal = 4;
+		int forrestVal = 4;
 		int lakeVal = 999;
 		int mountainsVal = 999;
-		int wastelandVal = 4;
-		int swampVal = 5;
+		int wastelandVal = 3;
+		int swampVal = 4;
+//		int hillsVal = 3;
+//		int desertVal = 5;
+//		int forrestVal = 5;
+//		int lakeVal = 999;
+//		int mountainsVal = 999;
+//		int wastelandVal = 4;
+//		int swampVal = 5;
 		if (Toolbox.Instance.isDay) {
 			forrestVal = 3;
 		} else {
