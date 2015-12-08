@@ -762,7 +762,9 @@ public class playerScript : Photon.MonoBehaviour {
 
 	[PunRPC]
 	void SetScore(int playerid, int score) {
-		scorekeeper.setScore (playerid, score);
+		if (scorekeeper != null) {
+			scorekeeper.setScore (playerid, score);
+		}
 	}
 
 	
