@@ -1,0 +1,38 @@
+Playtesting feedback
+
+I playtested with one person who was a little familiar with card based board games and one who had no familiarity with card based board games
+
+
+1) Did you have fun?
+They had fun interacting with each other in multiplayer, but thought the game was a little complicated and confusing. 
+
+2) What confused you the most?
+They were both confused by cards the most - what could they play, what couldn't they play.
+
+3) What did you enjoy the most?
+One enjoyed getting a powerful artefact card the most, the other enjoyed winning a fight.
+
+4) What suggestions would you have for improvement?
+They both suggested simplifying the game and having easier enemies at the start. They both found movement too hard, and said it was too expensive to move around the board.
+
+
+5) What was your favourite card?
+First person said their artefact card - coldfire attack.
+Second person didn't have one.
+
+6) Did you find it too difficult? Too easy?
+They found it too difficult, it took them awhile to understand.
+
+7) What is your biggest criticism?
+Their biggest criticism was that it was too confusing.
+
+8) Did you find the tutorial and tooltips helpful?
+They thought the tutorial was too much of an info dump and could not remember much of it.
+
+9) Did you find some enemies or cards unbalanced?
+Yes, they thought the first enemies they encountered were too hard.
+
+10) What did you think about the interactive tiles?
+They liked buying cards and interacting with tiles, but said that these spaces should tell you when an action is performed, because there is nothing that tells you when you are healed and get a new card. 
+
+Overall they thought it should be simplified.
